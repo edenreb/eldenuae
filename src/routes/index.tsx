@@ -239,40 +239,46 @@ function ProcessRibbon() {
   );
 }
 
-function MaterialsStrip() {
-  const materials = [
-    { name: "Marble", tone: "from-stone to-marble" },
-    { name: "Walnut", tone: "from-[#3b2415] to-[#7a4c2b]" },
-    { name: "Brushed Brass", tone: "from-[#c9a25a] to-[#8a6a30]" },
-    { name: "Concrete", tone: "from-[#8a8a86] to-[#c9c9c3]" },
-    { name: "Emerald Stone", tone: "from-elden-green to-[#1e5233]" },
-    { name: "Glass", tone: "from-[#dfeaea] to-[#95b3b3]" },
-  ];
+function SectorsMarquee() {
+  // Duplicate list so the translate loop is seamless.
+  const loop = [...sectors, ...sectors];
   return (
-    <section className="py-24 md:py-32">
+    <section className="relative overflow-hidden border-y border-border/60 bg-elden-blue-deep py-20 text-primary-foreground md:py-28">
       <div className="mx-auto max-w-[1600px] px-6 md:px-10">
         <Reveal>
-          <p className="text-xs uppercase tracking-[0.35em] text-elden-green">Palette</p>
-          <h2 className="mt-4 max-w-2xl font-display text-4xl leading-[1.05] text-balance md:text-6xl">
-            Built from real materials. Rendered with real light.
-          </h2>
+          <div className="flex items-end justify-between">
+            <p className="text-xs uppercase tracking-[0.35em] text-elden-green-soft">
+              Sectors we serve
+            </p>
+            <p className="hidden text-[10px] uppercase tracking-[0.3em] text-white/50 md:block">
+              Six disciplines · one studio
+            </p>
+          </div>
         </Reveal>
-        <div className="mt-16 grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
-          {materials.map((m, i) => (
-            <Reveal key={m.name} delay={i * 0.05}>
-              <div className="group relative aspect-[3/4] overflow-hidden rounded-sm">
-                <div
-                  className={`grain-overlay absolute inset-0 bg-gradient-to-br ${m.tone} transition duration-700 group-hover:scale-105`}
-                />
-                <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-gradient-to-t from-black/60 to-transparent p-4 text-xs uppercase tracking-[0.25em] text-white">
-                  <span>{m.name}</span>
-                  <span className="tabular-nums opacity-70">0{i + 1}</span>
-                </div>
-              </div>
-            </Reveal>
+      </div>
+
+      <div
+        className="group relative mt-12 flex overflow-hidden"
+        style={{
+          maskImage:
+            "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
+          WebkitMaskImage:
+            "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
+        }}
+      >
+        <div className="flex shrink-0 animate-[marquee_38s_linear_infinite] gap-16 pr-16 group-hover:[animation-play-state:paused]">
+          {loop.map((s, i) => (
+            <span
+              key={`${s}-${i}`}
+              className="flex shrink-0 items-center gap-16 font-display text-5xl leading-none text-balance md:text-8xl"
+            >
+              {s}
+              <span className="text-elden-green">·</span>
+            </span>
           ))}
         </div>
       </div>
     </section>
   );
 }
+
