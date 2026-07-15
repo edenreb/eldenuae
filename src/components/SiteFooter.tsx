@@ -1,4 +1,6 @@
 import { Link } from "@tanstack/react-router";
+import eldenLogo from "@/assets/elden-logo.svg.asset.json";
+
 
 export function SiteFooter() {
   return (
