@@ -1,5 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import eldenLogo from "@/assets/elden-logo.svg.asset.json";
+
 
 const nav = [
   { to: "/", label: "Home" },
