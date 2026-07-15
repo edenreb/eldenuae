@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 const nav = [
@@ -13,6 +13,10 @@ const nav = [
 export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isHome = pathname === "/";
+  // Only the home hero starts with a dark image behind the nav.
+  const useLightText = isHome && !scrolled;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -24,9 +28,9 @@ export function SiteHeader() {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "backdrop-blur-xl bg-background/80 border-b border-border/60 text-foreground"
-          : "backdrop-blur-md bg-background/25 text-primary-foreground"
+        useLightText
+          ? "backdrop-blur-md bg-background/20 text-primary-foreground"
+          : "backdrop-blur-xl bg-background/85 border-b border-border/60 text-foreground"
       }`}
     >
       <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-4 md:px-10">
@@ -66,14 +70,18 @@ export function SiteHeader() {
         <button
           aria-label="Menu"
           onClick={() => setOpen((v) => !v)}
-          className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/70 bg-background/70 backdrop-blur"
+          className={`md:hidden inline-flex h-10 w-10 items-center justify-center rounded-full border backdrop-blur ${
+            useLightText
+              ? "border-white/40 bg-white/10"
+              : "border-border/70 bg-background/70"
+          }`}
         >
           <div className="relative h-3 w-5">
             <span
-              className={`absolute left-0 top-0 h-[1.5px] w-full bg-foreground transition ${open ? "translate-y-[6px] rotate-45" : ""}`}
+              className={`absolute left-0 top-0 h-[1.5px] w-full bg-current transition ${open ? "translate-y-[6px] rotate-45" : ""}`}
             />
             <span
-              className={`absolute left-0 bottom-0 h-[1.5px] w-full bg-foreground transition ${open ? "-translate-y-[6px] -rotate-45" : ""}`}
+              className={`absolute left-0 bottom-0 h-[1.5px] w-full bg-current transition ${open ? "-translate-y-[6px] -rotate-45" : ""}`}
             />
           </div>
         </button>
