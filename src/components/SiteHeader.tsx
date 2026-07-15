@@ -48,9 +48,8 @@ export function SiteHeader() {
               key={item.to}
               to={item.to}
               activeOptions={{ exact: item.to === "/" }}
-              activeProps={{ className: "text-elden-green" }}
-              inactiveProps={{ className: "text-foreground/80 hover:text-elden-blue" }}
-              className="rounded-full px-4 py-2 text-sm font-medium transition-colors"
+              activeProps={{ className: "!text-elden-green" }}
+              className="rounded-full px-4 py-2 text-sm font-medium opacity-90 transition hover:opacity-100"
             >
               {item.label}
             </Link>
