@@ -72,29 +72,8 @@ function Index() {
       {/* Process ribbon */}
       <ProcessRibbon />
 
-      {/* Sectors */}
-      <section className="border-y border-border/60 bg-elden-blue-deep text-primary-foreground">
-        <div className="mx-auto max-w-[1600px] px-6 py-24 md:px-10">
-          <Reveal>
-            <p className="text-xs uppercase tracking-[0.35em] text-elden-green-soft">Sectors</p>
-          </Reveal>
-          <div className="mt-8 flex flex-wrap gap-x-10 gap-y-2 font-display text-4xl leading-tight text-balance md:text-7xl">
-            {sectors.map((s, i) => (
-              <Reveal key={s} delay={i * 0.05}>
-                <span className="cursor-default transition hover:text-elden-green-soft">
-                  {s}
-                  {i < sectors.length - 1 && (
-                    <span className="mx-3 text-elden-green">·</span>
-                  )}
-                </span>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Materials strip */}
-      <MaterialsStrip />
+      {/* Sectors — sliding marquee */}
+      <SectorsMarquee />
 
       {/* CTA */}
       <section className="relative py-32 md:py-40">
