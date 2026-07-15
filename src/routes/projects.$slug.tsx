@@ -134,7 +134,7 @@ function ProjectDetail() {
           <Reveal>
             <p className="text-xs uppercase tracking-[0.35em] text-elden-green">The Story</p>
           </Reveal>
-          {project.narrative.map((para, i) => (
+          {project.narrative.map((para: string, i: number) => (
             <Reveal key={i} delay={0.05 + i * 0.05}>
               <p className="mt-8 font-display text-2xl leading-[1.35] text-balance md:text-4xl">
                 {para}
