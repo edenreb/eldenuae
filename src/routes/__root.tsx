@@ -130,6 +130,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <CustomCursor />
       <SiteHeader />
       <main className="min-h-screen">
         <Outlet />
