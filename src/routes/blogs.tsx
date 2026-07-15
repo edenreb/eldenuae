@@ -1,5 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Reveal } from "@/components/Reveal";
+import { posts } from "@/lib/posts";
 
 export const Route = createFileRoute("/blogs")({
   head: () => ({
@@ -14,41 +15,13 @@ export const Route = createFileRoute("/blogs")({
         property: "og:description",
         content: "News, advancements, and reflections from the Elden studio.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "/blogs" },
     ],
+    links: [{ rel: "canonical", href: "/blogs" }],
   }),
   component: BlogsPage,
 });
-
-const posts = [
-  {
-    date: "23 Apr 2022",
-    tag: "Site Practice",
-    title: "Site Safety Induction",
-    excerpt:
-      "At Elden, employee welfare starts with safety. As a specialist in interior fit-out, Elden undertakes projects across various sectors — each requiring its own induction protocol before a single tool leaves the store.",
-  },
-  {
-    date: "15 Mar 2024",
-    tag: "Joinery",
-    title: "Behind the scenes of a book-matched marble bar",
-    excerpt:
-      "How a single 3.6m slab of emerald marble travels from quarry to cafe — templated, cut, wet-polished and re-joined in a way you can never quite see.",
-  },
-  {
-    date: "02 Nov 2023",
-    tag: "MEP",
-    title: "Designing HVAC that you feel but never hear",
-    excerpt:
-      "Silent air handling in hospitality environments requires more than good equipment. A note on plenum design, cross-talk and where our engineers spend their obsessive hours.",
-  },
-  {
-    date: "10 Sep 2023",
-    tag: "Craft",
-    title: "Six materials, six sectors, one language",
-    excerpt:
-      "How we build a material palette that can travel from a gym to a fine-dining room and still feel like the same studio built both.",
-  },
-];
 
 function BlogsPage() {
   return (
@@ -71,21 +44,35 @@ function BlogsPage() {
         <div className="mx-auto max-w-4xl px-6 md:px-10">
           <div className="border-t border-border/70">
             {posts.map((p, i) => (
-              <Reveal key={p.title} delay={i * 0.04}>
-                <article className="grid gap-6 border-b border-border/70 py-14 md:grid-cols-[180px_1fr]">
+              <Reveal key={p.slug} delay={i * 0.04}>
+                <Link
+                  to="/blogs/$slug"
+                  params={{ slug: p.slug }}
+                  className="group grid gap-6 border-b border-border/70 py-14 md:grid-cols-[180px_1fr]"
+                >
                   <div>
                     <p className="text-[10px] uppercase tracking-[0.3em] text-elden-green">
                       {p.tag}
                     </p>
                     <p className="mt-3 text-sm text-muted-foreground">{p.date}</p>
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      {p.readingMinutes} min read
+                    </p>
                   </div>
                   <div>
-                    <h2 className="font-display text-3xl leading-tight md:text-5xl">{p.title}</h2>
+                    <h2 className="font-display text-3xl leading-tight md:text-5xl">
+                      <span className="bg-gradient-to-r from-elden-blue to-elden-blue bg-[length:0%_1px] bg-left-bottom bg-no-repeat transition-[background-size] duration-500 group-hover:bg-[length:100%_1px]">
+                        {p.title}
+                      </span>
+                    </h2>
                     <p className="mt-5 text-base leading-relaxed text-muted-foreground md:text-lg">
                       {p.excerpt}
                     </p>
+                    <span className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-elden-blue transition group-hover:gap-3">
+                      Read article <span aria-hidden>→</span>
+                    </span>
                   </div>
-                </article>
+                </Link>
               </Reveal>
             ))}
           </div>
