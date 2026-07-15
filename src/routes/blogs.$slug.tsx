@@ -124,7 +124,7 @@ function PostPage() {
       <section className="py-20 md:py-28">
         <div className="mx-auto max-w-3xl px-6 md:px-10">
           <article className="prose-elden">
-            {post.body.map((block, i) => (
+            {post.body.map((block: Post["body"][number], i: number) => (
               <Reveal key={i} delay={i * 0.03}>
                 <div className="mt-14 first:mt-0">
                   {block.heading && (
@@ -133,7 +133,7 @@ function PostPage() {
                     </h2>
                   )}
                   <div className={block.heading ? "mt-6 space-y-6" : "space-y-6"}>
-                    {block.paragraphs.map((p, j) => (
+                    {block.paragraphs.map((p: string, j: number) => (
                       <p
                         key={j}
                         className="text-lg leading-[1.75] text-foreground/85 md:text-xl"
