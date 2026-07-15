@@ -1,26 +1,30 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * A minimal, elegant custom cursor: a small solid dot with a soft mix-blend
- * ring that lags behind and enlarges over interactive elements. Disabled on
- * touch devices to avoid interference.
+ * Minimal elegant custom cursor. Renders after mount so we can safely detect
+ * pointer type and attach refs without SSR/hydration issues.
  */
 export function CustomCursor() {
-  const dotRef = useRef<HTMLDivElement>(null);
-  const ringRef = useRef<HTMLDivElement>(null);
   const [enabled, setEnabled] = useState(false);
   const [hover, setHover] = useState(false);
+  const dotRef = useRef<HTMLDivElement>(null);
+  const ringRef = useRef<HTMLDivElement>(null);
 
+  // Enable only on real pointer devices, after mount (avoids SSR mismatch).
   useEffect(() => {
-    const isFine =
-      typeof window !== "undefined" &&
-      window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-    if (!isFine) return;
-    setEnabled(true);
+    const isFine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    if (isFine) setEnabled(true);
+  }, []);
+
+  // Wire up movement once the cursor elements are actually in the DOM.
+  useEffect(() => {
+    if (!enabled) return;
+    const dot = dotRef.current;
+    const ring = ringRef.current;
+    if (!dot || !ring) return;
+
     document.documentElement.classList.add("cursor-none-root");
 
-    const dot = dotRef.current!;
-    const ring = ringRef.current!;
     let mx = window.innerWidth / 2;
     let my = window.innerHeight / 2;
     let rx = mx;
@@ -30,12 +34,18 @@ export function CustomCursor() {
       mx = e.clientX;
       my = e.clientY;
       dot.style.transform = `translate3d(${mx}px, ${my}px, 0) translate(-50%, -50%)`;
-
+      dot.style.opacity = "1";
+      ring.style.opacity = "1";
       const t = e.target as HTMLElement | null;
-      const interactive = !!t?.closest(
-        'a, button, [role="button"], input, textarea, select, label, [data-cursor="hover"]',
+      setHover(
+        !!t?.closest(
+          'a, button, [role="button"], input, textarea, select, label, [data-cursor="hover"]',
+        ),
       );
-      setHover(interactive);
+    };
+    const onLeave = () => {
+      dot.style.opacity = "0";
+      ring.style.opacity = "0";
     };
 
     let raf = 0;
@@ -47,26 +57,16 @@ export function CustomCursor() {
     };
     raf = requestAnimationFrame(loop);
 
-    const onLeave = () => {
-      dot.style.opacity = "0";
-      ring.style.opacity = "0";
-    };
-    const onEnter = () => {
-      dot.style.opacity = "1";
-      ring.style.opacity = "1";
-    };
-
     window.addEventListener("mousemove", onMove);
     document.addEventListener("mouseleave", onLeave);
-    document.addEventListener("mouseenter", onEnter);
+
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("mousemove", onMove);
       document.removeEventListener("mouseleave", onLeave);
-      document.removeEventListener("mouseenter", onEnter);
       document.documentElement.classList.remove("cursor-none-root");
     };
-  }, []);
+  }, [enabled]);
 
   if (!enabled) return null;
 
@@ -75,20 +75,21 @@ export function CustomCursor() {
       <div
         ref={dotRef}
         aria-hidden
-        className="pointer-events-none fixed left-0 top-0 z-[100] h-1.5 w-1.5 rounded-full bg-elden-green"
-        style={{ transition: "opacity 200ms ease" }}
+        className="pointer-events-none fixed left-0 top-0 z-[100] h-2 w-2 rounded-full bg-elden-green"
+        style={{ opacity: 0, transition: "opacity 200ms ease" }}
       />
       <div
         ref={ringRef}
         aria-hidden
-        className="pointer-events-none fixed left-0 top-0 z-[100] rounded-full border border-elden-blue/70"
+        className="pointer-events-none fixed left-0 top-0 z-[100] rounded-full border-2 border-elden-blue"
         style={{
-          width: hover ? 56 : 34,
-          height: hover ? 56 : 34,
+          width: hover ? 60 : 36,
+          height: hover ? 60 : 36,
+          opacity: 0,
           mixBlendMode: "difference",
           transition:
-            "width 220ms cubic-bezier(0.22,1,0.36,1), height 220ms cubic-bezier(0.22,1,0.36,1), opacity 200ms ease, background-color 200ms ease",
-          backgroundColor: hover ? "rgba(255,255,255,0.08)" : "transparent",
+            "width 220ms cubic-bezier(0.22,1,0.36,1), height 220ms cubic-bezier(0.22,1,0.36,1), opacity 200ms ease, background-color 200ms ease, border-color 200ms ease",
+          backgroundColor: hover ? "rgba(255,255,255,0.1)" : "transparent",
         }}
       />
     </>
