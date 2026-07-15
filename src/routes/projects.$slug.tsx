@@ -77,7 +77,7 @@ function ProjectDetail() {
             transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
           />
         </motion.div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-black/40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/50" />
 
         <div className="relative z-10 mx-auto flex h-full max-w-[1600px] flex-col justify-between px-6 pt-32 pb-16 text-primary-foreground md:px-10 md:pb-24">
           <motion.div
