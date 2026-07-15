@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { motion, useScroll, useSpring } from "motion/react";
-import { getPost, getRelated } from "@/lib/posts";
+import { getPost, getRelated, type Post } from "@/lib/posts";
 import { Reveal } from "@/components/Reveal";
 
 export const Route = createFileRoute("/blogs/$slug")({
