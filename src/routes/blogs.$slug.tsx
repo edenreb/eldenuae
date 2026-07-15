@@ -192,7 +192,7 @@ function PostPage() {
             Related from the studio
           </h2>
           <div className="mt-12 grid gap-8 md:grid-cols-3">
-            {related.map((r) => (
+            {related.map((r: Post) => (
               <Link
                 key={r.slug}
                 to="/blogs/$slug"
