@@ -36,7 +36,7 @@ export function SiteHeader() {
           </span>
           <span className="flex flex-col leading-none">
             <span className="font-display text-xl tracking-tight">Elden</span>
-            <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">
+            <span className="text-[10px] uppercase tracking-[0.25em] opacity-60">
               Interiors · Dubai
             </span>
           </span>
