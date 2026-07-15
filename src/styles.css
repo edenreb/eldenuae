@@ -134,3 +134,17 @@
     radial-gradient(1000px 500px at 80% 90%, color-mix(in oklab, var(--elden-green) 6%, transparent), transparent 60%),
     linear-gradient(180deg, var(--marble), var(--stone));
 }
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Hide native cursor when the custom cursor is mounted (desktop pointer only). */
+@media (hover: hover) and (pointer: fine) {
+  html.cursor-none-root,
+  html.cursor-none-root * {
+    cursor: none !important;
+  }
+}
+
