@@ -1,4 +1,6 @@
 import { Link } from "@tanstack/react-router";
+import eldenLogo from "@/assets/elden-logo.svg.asset.json";
+
 
 export function SiteFooter() {
   return (
@@ -55,9 +57,13 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-20 flex flex-wrap items-center justify-between gap-4 border-t border-primary-foreground/15 pt-6 text-xs text-primary-foreground/50">
-          <p>© {new Date().getFullYear()} Elden Interior Design LLC. All rights reserved.</p>
+          <div className="flex items-center gap-4">
+            <img src={eldenLogo.url} alt="Elden" className="h-6 w-auto brightness-0 invert opacity-80" />
+            <p>© {new Date().getFullYear()} Elden Interior Design LLC. All rights reserved.</p>
+          </div>
           <p>Interior Fit-out · Joinery · MEP · Dubai, UAE</p>
         </div>
+
       </div>
     </footer>
   );

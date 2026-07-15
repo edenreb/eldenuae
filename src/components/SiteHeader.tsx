@@ -1,5 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import eldenLogo from "@/assets/elden-logo.svg.asset.json";
+
 
 const nav = [
   { to: "/", label: "Home" },
@@ -35,16 +37,18 @@ export function SiteHeader() {
     >
       <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-4 md:px-10">
         <Link to="/" className="group flex items-center gap-2">
-          <span className="grid h-9 w-9 place-items-center rounded-full bg-elden-blue text-primary-foreground">
-            <span className="font-display text-lg leading-none">E</span>
-          </span>
-          <span className="flex flex-col leading-none">
-            <span className="font-display text-xl tracking-tight">Elden</span>
+          <img
+            src={eldenLogo.url}
+            alt="Elden"
+            className={`h-7 w-auto md:h-8 transition ${useLightText ? "brightness-0 invert" : ""}`}
+          />
+          <span className="hidden sm:flex flex-col leading-none">
             <span className="text-[10px] uppercase tracking-[0.25em] opacity-60">
               Interiors · Dubai
             </span>
           </span>
         </Link>
+
 
         <nav className="hidden items-center gap-1 md:flex">
           {nav.map((item) => (
