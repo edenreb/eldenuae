@@ -29,23 +29,20 @@ export function SiteHeader() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+      className={`fixed inset-x-4 md:inset-x-8 top-4 z-50 rounded-2xl transition-all duration-500 ${
         useLightText
-          ? "backdrop-blur-md bg-background/20 text-primary-foreground"
-          : "backdrop-blur-xl bg-background/85 border-b border-border/60 text-foreground"
+          ? "bg-transparent text-primary-foreground"
+          : "bg-background/60 backdrop-blur-2xl border border-white/10 shadow-lg shadow-black/5 text-foreground"
       }`}
     >
       <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-4 md:px-10">
         <Link to="/" className="group flex items-center gap-2">
           <img
-            src={eldenLogo.url}
+            src="/logo.svg"
             alt="Elden"
             className={`h-7 w-auto md:h-8 transition ${useLightText ? "brightness-0 invert" : ""}`}
           />
           <span className="hidden sm:flex flex-col leading-none">
-            <span className="text-[10px] uppercase tracking-[0.25em] opacity-60">
-              Interiors · Dubai
-            </span>
           </span>
         </Link>
 

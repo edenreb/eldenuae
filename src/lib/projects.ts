@@ -45,6 +45,24 @@ export const projects: Project[] = [
     ],
   },
   {
+    slug: "warehouse-gym-ibn-battuta",
+    name: "Warehouse Gym — Ibn Battuta",
+    sector: "Fitness",
+    location: "Ibn Battuta Mall, Dubai",
+    client: "The Warehouse Fitness Center LLC",
+    scope: "Fit-out, Joinery & MEP Works",
+    year: "2022",
+    image: warehouseGym,
+    gallery: [warehouseGym, corporateOffice, artGallery],
+    summary:
+      "A raw, industrial temple to strength — polished concrete, exposed services and warm timber, tuned for performance.",
+    narrative: [
+      "The brief was to translate Warehouse Gym's DNA — grit, honesty, and precision — into a mall footprint without softening a single edge.",
+      "We opened the ceiling, blacked out the services and let acoustic baffles carry the rhythm of the space. Every duct run was coordinated to double as visual language.",
+      "Full MEP design and execution was delivered in-house, from load calculations to smart lighting scenes that shift with the training programme.",
+    ],
+  },
+  {
     slug: "foret-cafe",
     name: "Forêt Café",
     sector: "Restaurants",
