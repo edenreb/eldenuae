@@ -4,6 +4,16 @@ import { useRef } from "react";
 import { HeroSchematic } from "@/components/HeroSchematic";
 import { Reveal, ParallaxImage } from "@/components/Reveal";
 import { projects } from "@/lib/projects";
+import clientWarehouse from "@/assets/clients/warehouse.png";
+import clientForet from "@/assets/clients/foret.png";
+import clientBikanerwala from "@/assets/clients/bikanerwala.png";
+import clientMaison from "@/assets/clients/maison.png";
+import clientAtelier from "@/assets/clients/atelier.png";
+import clientAurora from "@/assets/clients/aurora.png";
+import clientSelSucre from "@/assets/clients/selsucre.png";
+import clientMeridian from "@/assets/clients/meridian.png";
+import clientCostaAzul from "@/assets/clients/costaazul.png";
+import clientVervain from "@/assets/clients/vervain.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
