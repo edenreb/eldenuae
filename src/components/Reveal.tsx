@@ -27,7 +27,7 @@ export function ParallaxImage({
   src,
   alt,
   className = "",
-  strength = 80,
+  strength = 60,
 }: {
   src: string;
   alt: string;
@@ -40,15 +40,14 @@ export function ParallaxImage({
     offset: ["start end", "end start"],
   });
   const y = useTransform(scrollYProgress, [0, 1], [-strength, strength]);
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1.05, 1, 1.05]);
 
   return (
     <div ref={ref} className={`relative overflow-hidden ${className}`}>
       <motion.img
         src={src}
         alt={alt}
-        style={{ y, scale }}
-        className="h-full w-full object-cover"
+        style={{ y }}
+        className="absolute inset-0 h-[calc(100%+8rem)] w-full -translate-y-16 object-cover"
         loading="lazy"
         width={1600}
         height={1000}
@@ -56,3 +55,4 @@ export function ParallaxImage({
     </div>
   );
 }
+
