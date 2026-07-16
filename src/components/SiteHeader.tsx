@@ -1,6 +1,5 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import eldenLogo from "@/assets/elden-logo.svg.asset.json";
 
 
 const nav = [
@@ -29,18 +28,20 @@ export function SiteHeader() {
 
   return (
     <header
-      className={`fixed inset-x-4 md:inset-x-8 top-4 z-50 rounded-2xl transition-all duration-500 ${
-        useLightText
-          ? "bg-transparent text-primary-foreground"
-          : "bg-background/60 backdrop-blur-2xl border border-white/10 shadow-lg shadow-black/5 text-foreground"
+      className={`fixed inset-x-4 md:inset-x-8 top-4 z-50 rounded-2xl transition-colors duration-700 ${
+        useLightText ? "text-primary-foreground" : "text-foreground"
       }`}
     >
+      <div
+        className="pointer-events-none absolute inset-0 -z-10 rounded-2xl bg-background/60 backdrop-blur-2xl border border-white/10 shadow-lg shadow-black/5 transition-opacity duration-700"
+        style={{ opacity: scrolled ? 1 : 0 }}
+      />
       <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-4 md:px-10">
         <Link to="/" className="group flex items-center gap-2">
           <img
             src="/logo.svg"
             alt="Elden"
-            className={`h-7 w-auto md:h-8 transition ${useLightText ? "brightness-0 invert" : ""}`}
+            className={`h-7 w-auto md:h-8 transition-all duration-700 ${useLightText ? "brightness-0 invert" : ""}`}
           />
           <span className="hidden sm:flex flex-col leading-none">
           </span>
@@ -71,7 +72,7 @@ export function SiteHeader() {
         <button
           aria-label="Menu"
           onClick={() => setOpen((v) => !v)}
-          className={`md:hidden inline-flex h-10 w-10 items-center justify-center rounded-full border backdrop-blur ${
+          className={`md:hidden inline-flex h-10 w-10 items-center justify-center rounded-full border backdrop-blur transition-all duration-700 ${
             useLightText
               ? "border-white/40 bg-white/10"
               : "border-border/70 bg-background/70"
