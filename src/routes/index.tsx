@@ -4,14 +4,14 @@ import { useRef } from "react";
 import { HeroSchematic } from "@/components/HeroSchematic";
 import { Reveal, ParallaxImage } from "@/components/Reveal";
 import { projects } from "@/lib/projects";
-import clientWarehouse from "@/assets/clients/warehouse.png";
-import clientForet from "@/assets/clients/foret.png";
-import clientBikanerwala from "@/assets/clients/bikanerwala.png";
+import clientWarehouseGym from "@/assets/clients/warehousegym.png";
+import clientDu from "@/assets/clients/du.png";
+import clientBikanervala from "@/assets/clients/bikanervala.png";
 import clientMaison from "@/assets/clients/maison.png";
 import clientAtelier from "@/assets/clients/atelier.png";
-import clientAurora from "@/assets/clients/aurora.png";
+import clientVirgin from "@/assets/clients/virgin.png";
 import clientSelSucre from "@/assets/clients/selsucre.png";
-import clientMeridian from "@/assets/clients/meridian.png";
+import clientHolidayInn from "@/assets/clients/holidayinn.png";
 import clientCostaAzul from "@/assets/clients/costaazul.png";
 import clientVervain from "@/assets/clients/vervain.png";
 
@@ -298,14 +298,14 @@ function SectorsMarquee() {
 }
 
 const clients = [
-  { name: "The Warehouse Fitness Center", logo: clientWarehouse },
-  { name: "Forêt Hospitality", logo: clientForet },
-  { name: "Bikanerwala Foods", logo: clientBikanerwala },
+  { name: "Warehouse Gym", logo: clientWarehouseGym },
+  { name: "du", logo: clientDu },
+  { name: "Bikanervala", logo: clientBikanervala },
   { name: "Maison Privée", logo: clientMaison },
   { name: "Atelier Mode", logo: clientAtelier },
-  { name: "Aurora Holdings", logo: clientAurora },
+  { name: "Virgin", logo: clientVirgin },
   { name: "Sel & Sucre", logo: clientSelSucre },
-  { name: "Meridian Hotels", logo: clientMeridian },
+  { name: "Holiday Inn", logo: clientHolidayInn },
   { name: "Costa Azul Resorts", logo: clientCostaAzul },
   { name: "Vervain Gallery", logo: clientVervain },
 ];
