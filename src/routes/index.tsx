@@ -4,6 +4,16 @@ import { useRef } from "react";
 import { HeroSchematic } from "@/components/HeroSchematic";
 import { Reveal, ParallaxImage } from "@/components/Reveal";
 import { projects } from "@/lib/projects";
+import clientWarehouse from "@/assets/clients/warehouse.png";
+import clientForet from "@/assets/clients/foret.png";
+import clientBikanerwala from "@/assets/clients/bikanerwala.png";
+import clientMaison from "@/assets/clients/maison.png";
+import clientAtelier from "@/assets/clients/atelier.png";
+import clientAurora from "@/assets/clients/aurora.png";
+import clientSelSucre from "@/assets/clients/selsucre.png";
+import clientMeridian from "@/assets/clients/meridian.png";
+import clientCostaAzul from "@/assets/clients/costaazul.png";
+import clientVervain from "@/assets/clients/vervain.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -287,16 +297,16 @@ function SectorsMarquee() {
 }
 
 const clients = [
-  "The Warehouse Fitness Center LLC",
-  "Forêt Hospitality",
-  "Bikanerwala Foods",
-  "Private Residence Owner",
-  "Confidential Fashion House",
-  "Regional Holding Group",
-  "Independent Restaurateur",
-  "International Hotel Operator",
-  "Five-star Resort Operator",
-  "Private Collector",
+  { name: "The Warehouse Fitness Center", logo: clientWarehouse },
+  { name: "Forêt Hospitality", logo: clientForet },
+  { name: "Bikanerwala Foods", logo: clientBikanerwala },
+  { name: "Maison Privée", logo: clientMaison },
+  { name: "Atelier Mode", logo: clientAtelier },
+  { name: "Aurora Holdings", logo: clientAurora },
+  { name: "Sel & Sucre", logo: clientSelSucre },
+  { name: "Meridian Hotels", logo: clientMeridian },
+  { name: "Costa Azul Resorts", logo: clientCostaAzul },
+  { name: "Vervain Gallery", logo: clientVervain },
 ];
 
 function ClientsMarquee() {
@@ -311,7 +321,7 @@ function ClientsMarquee() {
         </Reveal>
       </div>
       <div
-        className="group relative mt-10 flex overflow-hidden"
+        className="relative mt-10 flex overflow-hidden"
         style={{
           maskImage:
             "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
@@ -319,20 +329,23 @@ function ClientsMarquee() {
             "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
         }}
       >
-        <div className="flex shrink-0 animate-[marquee_45s_linear_infinite] gap-14 pr-14 group-hover:[animation-play-state:paused]">
+        <div className="flex shrink-0 animate-[marquee_45s_linear_infinite] items-center gap-20 pr-20 md:gap-28 md:pr-28">
           {loop.map((c, i) => (
-            <span
-              key={`${c}-${i}`}
-              className="flex shrink-0 items-center gap-14 font-display text-2xl text-elden-blue-deep/80 md:text-4xl"
-            >
-              {c}
-              <span className="text-elden-green">◆</span>
-            </span>
+            <img
+              key={`${c.name}-${i}`}
+              src={c.logo}
+              alt={c.name}
+              loading="lazy"
+              width={1536}
+              height={512}
+              className="h-10 w-auto shrink-0 object-contain opacity-70 grayscale transition duration-500 hover:opacity-100 hover:grayscale-0 md:h-14"
+            />
           ))}
         </div>
       </div>
     </section>
   );
 }
+
 
 
