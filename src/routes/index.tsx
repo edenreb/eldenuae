@@ -298,14 +298,14 @@ function SectorsMarquee() {
 }
 
 const clients = [
-  { name: "The Warehouse Fitness Center", logo: clientWarehouse },
-  { name: "Forêt Hospitality", logo: clientForet },
-  { name: "Bikanerwala Foods", logo: clientBikanerwala },
+  { name: "Warehouse Gym", logo: clientWarehouseGym },
+  { name: "du", logo: clientDu },
+  { name: "Bikanervala", logo: clientBikanervala },
   { name: "Maison Privée", logo: clientMaison },
   { name: "Atelier Mode", logo: clientAtelier },
-  { name: "Aurora Holdings", logo: clientAurora },
+  { name: "Virgin", logo: clientVirgin },
   { name: "Sel & Sucre", logo: clientSelSucre },
-  { name: "Meridian Hotels", logo: clientMeridian },
+  { name: "Holiday Inn", logo: clientHolidayInn },
   { name: "Costa Azul Resorts", logo: clientCostaAzul },
   { name: "Vervain Gallery", logo: clientVervain },
 ];
