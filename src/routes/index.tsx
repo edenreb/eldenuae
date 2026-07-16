@@ -312,7 +312,7 @@ const clients = [
 function ClientsMarquee() {
   const loop = [...clients, ...clients];
   return (
-    <section className="relative overflow-hidden border-y border-border/60 bg-elden-stone/40 py-16 md:py-20">
+    <section className="relative overflow-hidden border-y border-border/60 bg-elden-stone/40 py-20 md:py-28">
       <div className="mx-auto max-w-[1600px] px-6 md:px-10">
         <Reveal>
           <p className="text-xs uppercase tracking-[0.35em] text-elden-blue-deep/70">
@@ -321,7 +321,7 @@ function ClientsMarquee() {
         </Reveal>
       </div>
       <div
-        className="relative mt-10 flex overflow-hidden"
+        className="relative mt-12 flex overflow-hidden"
         style={{
           maskImage:
             "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
@@ -329,7 +329,7 @@ function ClientsMarquee() {
             "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
         }}
       >
-        <div className="flex shrink-0 animate-[marquee_45s_linear_infinite] items-center gap-20 pr-20 md:gap-28 md:pr-28">
+        <div className="flex shrink-0 animate-[marquee_45s_linear_infinite] items-center gap-24 pr-24 md:gap-40 md:pr-40">
           {loop.map((c, i) => (
             <img
               key={`${c.name}-${i}`}
@@ -338,7 +338,7 @@ function ClientsMarquee() {
               loading="lazy"
               width={1536}
               height={512}
-              className="h-10 w-auto shrink-0 object-contain opacity-70 grayscale transition duration-500 hover:opacity-100 hover:grayscale-0 md:h-14"
+              className="h-16 w-auto shrink-0 object-contain opacity-70 grayscale transition duration-500 hover:opacity-100 hover:grayscale-0 md:h-28"
             />
           ))}
         </div>
