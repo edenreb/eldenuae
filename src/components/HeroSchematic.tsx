@@ -1,17 +1,14 @@
 import { useRef } from "react";
-import { motion, useScroll, useTransform, useSpring, MotionValue } from "motion/react";
+import { motion, useScroll, useTransform, useSpring, type MotionValue } from "motion/react";
 import frame1 from "@/assets/hero-frame-1.jpg";
 import frame2 from "@/assets/hero-frame-2.jpg";
 import frame3 from "@/assets/hero-frame-3.jpg";
 import frame4 from "@/assets/hero-frame-4.jpg";
-import frame5 from "@/assets/hero-frame-5.jpg";
-
 const frames = [
   { src: frame1, label: "Schematic" },
   { src: frame2, label: "Wireframe" },
   { src: frame3, label: "Massing" },
   { src: frame4, label: "Materials" },
-  { src: frame5, label: "Delivered" },
 ];
 
 function useFrameOpacity(progress: MotionValue<number>, index: number, total: number) {
@@ -37,17 +34,15 @@ export function HeroSchematic() {
   });
   const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.4 });
 
-  const stageProgress = [0, 1, 2, 3, 4].map((i) => useFrameOpacity(progress, i, 5));
+  const stageProgress = [0, 1, 2, 3].map((i) => useFrameOpacity(progress, i, 4));
 
   const captionY = useTransform(progress, [0, 1], [0, -60]);
   const gridOpacity = useTransform(progress, [0, 0.15, 0.6, 1], [1, 0.6, 0.2, 0]);
   const overlayScale = useTransform(progress, [0, 1], [1.08, 1]);
-  const stageIndex = useTransform(progress, (p) => Math.min(4, Math.round(p * 4)));
-
   return (
     <section
       ref={ref}
-      className="relative h-[500vh] bg-elden-blue-deep text-primary-foreground"
+      className="relative h-[400vh] bg-elden-blue-deep text-primary-foreground"
       aria-label="Hero: schematic to delivered interior"
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden">
@@ -113,52 +108,10 @@ export function HeroSchematic() {
             </p>
           </div>
 
-          <div className="flex items-end justify-between gap-6">
-            <StageIndicator index={stageIndex} />
-            <div className="hidden text-right text-xs uppercase tracking-[0.3em] text-primary-foreground/60 md:block">
-              Scroll <span className="ml-2 inline-block h-px w-16 translate-y-[-3px] bg-primary-foreground/50" />
-            </div>
-          </div>
         </motion.div>
       </div>
     </section>
   );
 }
 
-function StageIndicator({ index }: { index: MotionValue<number> }) {
-  return (
-    <div className="flex flex-col gap-3">
-      <p className="text-[10px] uppercase tracking-[0.35em] text-primary-foreground/50">
-        Build stage
-      </p>
-      <div className="flex items-center gap-2">
-        {frames.map((f, i) => (
-          <StageDot key={f.label} label={f.label} active={index} i={i} />
-        ))}
-      </div>
-    </div>
-  );
-}
 
-function StageDot({
-  label,
-  active,
-  i,
-}: {
-  label: string;
-  active: MotionValue<number>;
-  i: number;
-}) {
-  const width = useTransform(active, (v) => (Math.round(v) === i ? 44 : 12));
-  const opacity = useTransform(active, (v) => (Math.round(v) === i ? 1 : 0.35));
-  return (
-    <motion.div
-      style={{ width, opacity }}
-      className="flex h-6 items-center overflow-hidden rounded-full bg-primary-foreground/20 px-2"
-    >
-      <span className="whitespace-nowrap text-[10px] uppercase tracking-[0.25em] text-primary-foreground">
-        {label}
-      </span>
-    </motion.div>
-  );
-}
