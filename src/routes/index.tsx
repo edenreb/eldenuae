@@ -66,8 +66,12 @@ function Index() {
         </div>
       </section>
 
+      {/* Clients we've served — sliding list */}
+      <ClientsMarquee />
+
       {/* Featured projects — editorial */}
       <FeaturedProjects />
+
 
       {/* Process ribbon */}
       <ProcessRibbon />
