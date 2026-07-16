@@ -286,3 +286,53 @@ function SectorsMarquee() {
   );
 }
 
+const clients = [
+  "The Warehouse Fitness Center LLC",
+  "Forêt Hospitality",
+  "Bikanerwala Foods",
+  "Private Residence Owner",
+  "Confidential Fashion House",
+  "Regional Holding Group",
+  "Independent Restaurateur",
+  "International Hotel Operator",
+  "Five-star Resort Operator",
+  "Private Collector",
+];
+
+function ClientsMarquee() {
+  const loop = [...clients, ...clients];
+  return (
+    <section className="relative overflow-hidden border-y border-border/60 bg-elden-stone/40 py-16 md:py-20">
+      <div className="mx-auto max-w-[1600px] px-6 md:px-10">
+        <Reveal>
+          <p className="text-xs uppercase tracking-[0.35em] text-elden-blue-deep/70">
+            Clients we've served
+          </p>
+        </Reveal>
+      </div>
+      <div
+        className="group relative mt-10 flex overflow-hidden"
+        style={{
+          maskImage:
+            "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
+          WebkitMaskImage:
+            "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
+        }}
+      >
+        <div className="flex shrink-0 animate-[marquee_45s_linear_infinite] gap-14 pr-14 group-hover:[animation-play-state:paused]">
+          {loop.map((c, i) => (
+            <span
+              key={`${c}-${i}`}
+              className="flex shrink-0 items-center gap-14 font-display text-2xl text-elden-blue-deep/80 md:text-4xl"
+            >
+              {c}
+              <span className="text-elden-green">◆</span>
+            </span>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+
