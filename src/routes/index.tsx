@@ -166,14 +166,15 @@ function FeaturedProject({
         to="/projects/$slug"
         params={{ slug: project.slug }}
         className={`group grid items-center gap-10 md:grid-cols-[1.4fr_1fr] ${
-          flip ? "md:[&>*:first-child]:order-2" : ""
+          flip ? "md:grid-cols-[1fr_1.4fr] md:[&>*:first-child]:order-2" : ""
         }`}
       >
         <ParallaxImage
           src={project.image}
           alt={project.name}
-          className="aspect-[16/10] rounded-sm bg-muted"
+          className="aspect-[16/10] rounded-sm bg-transparent"
         />
+
         <div>
           <div className="flex items-center gap-3 text-[11px] uppercase tracking-[0.3em] text-elden-green">
             <span className="tabular-nums text-muted-foreground">
