@@ -186,22 +186,24 @@ function ProjectDetail() {
       </section>
 
       {/* Next */}
-      <section className="border-t border-border/60 bg-elden-blue-deep text-primary-foreground">
-        <Link
-          to="/projects/$slug"
-          params={{ slug: next.slug }}
-          className="group mx-auto flex max-w-[1600px] flex-col gap-8 px-6 py-20 md:flex-row md:items-center md:justify-between md:px-10 md:py-32"
-        >
-          <div>
-            <p className="text-[11px] uppercase tracking-[0.3em] text-elden-green-soft">
-              Next project
-            </p>
-            <h2 className="mt-4 font-display text-4xl leading-tight md:text-7xl">{next.name}</h2>
-          </div>
-          <span className="inline-flex items-center gap-3 text-sm transition group-hover:gap-5">
-            Continue <span aria-hidden>→</span>
-          </span>
-        </Link>
+      <section className="bg-background pb-16 pt-24 md:pb-20 md:pt-32">
+        <div className="mx-auto max-w-[1600px] px-6 md:px-10">
+          <Link
+            to="/projects/$slug"
+            params={{ slug: next.slug }}
+            className="group flex flex-col gap-8 rounded-2xl bg-elden-blue-deep px-8 py-16 text-primary-foreground md:flex-row md:items-center md:justify-between md:px-16 md:py-24"
+          >
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.3em] text-elden-green-soft">
+                Next project
+              </p>
+              <h2 className="mt-4 font-display text-4xl leading-tight md:text-7xl">{next.name}</h2>
+            </div>
+            <span className="inline-flex items-center gap-3 text-sm transition group-hover:gap-5">
+              Continue <span aria-hidden>→</span>
+            </span>
+          </Link>
+        </div>
       </section>
     </article>
   );
