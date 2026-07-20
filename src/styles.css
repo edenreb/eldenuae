@@ -140,6 +140,11 @@
   to   { transform: translateX(-50%); }
 }
 
+@keyframes marquee-right {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+
 /* Hide native cursor when the custom cursor is mounted (desktop pointer only). */
 @media (hover: hover) and (pointer: fine) {
   html.cursor-none-root,

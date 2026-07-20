@@ -4,16 +4,19 @@ import { useRef } from "react";
 import { HeroSchematic } from "@/components/HeroSchematic";
 import { Reveal, ParallaxImage } from "@/components/Reveal";
 import { projects } from "@/lib/projects";
-import clientWarehouseGym from "@/assets/clients/warehousegym.png";
-import clientDu from "@/assets/clients/du.png";
-import clientBikanervala from "@/assets/clients/bikanervala.png";
-import clientMaison from "@/assets/clients/maison.png";
-import clientAtelier from "@/assets/clients/atelier.png";
-import clientVirgin from "@/assets/clients/virgin.png";
-import clientSelSucre from "@/assets/clients/selsucre.png";
-import clientHolidayInn from "@/assets/clients/holidayinn.png";
-import clientCostaAzul from "@/assets/clients/costaazul.png";
-import clientVervain from "@/assets/clients/vervain.png";
+import client1 from "@/assets/clients/1.png";
+import client2 from "@/assets/clients/2.png";
+import client3 from "@/assets/clients/3.png";
+import client4 from "@/assets/clients/4.png";
+import client5 from "@/assets/clients/5.png";
+import client6 from "@/assets/clients/6.png";
+import client7 from "@/assets/clients/7.png";
+import client8 from "@/assets/clients/8.png";
+import client9 from "@/assets/clients/9.png";
+import client10 from "@/assets/clients/10.png";
+import client11 from "@/assets/clients/11.png";
+import client12 from "@/assets/clients/12.png";
+import client13 from "@/assets/clients/13.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -45,8 +48,11 @@ function Index() {
     <div className="bg-background">
       <HeroSchematic />
 
+      {/* Clients we've served — sliding list */}
+      <ClientsMarquee />
+
       {/* Manifesto */}
-      <section className="relative marble-surface py-32 md:py-48">
+      <section className="relative marble-surface py-24 md:py-32">
         <div className="mx-auto max-w-[1600px] px-6 md:px-10">
           <Reveal>
             <p className="text-xs uppercase tracking-[0.35em] text-elden-green">
@@ -76,9 +82,6 @@ function Index() {
         </div>
       </section>
 
-      {/* Clients we've served — sliding list */}
-      <ClientsMarquee />
-
       {/* Featured projects — editorial */}
       <FeaturedProjects />
 
@@ -90,7 +93,7 @@ function Index() {
       <SectorsMarquee />
 
       {/* CTA */}
-      <section className="relative py-32 md:py-40">
+      <section className="relative py-24 md:py-32">
         <div className="mx-auto max-w-[1400px] px-6 text-center md:px-10">
           <Reveal>
             <p className="text-xs uppercase tracking-[0.35em] text-elden-green">Begin</p>
@@ -258,7 +261,7 @@ function SectorsMarquee() {
   // Duplicate list so the translate loop is seamless.
   const loop = [...sectors, ...sectors];
   return (
-    <section className="relative overflow-hidden border-y border-border/60 bg-elden-blue-deep py-20 text-primary-foreground md:py-28">
+    <section className="relative overflow-hidden border-y border-border/60 bg-elden-blue-deep py-14 text-primary-foreground md:py-18">
       <div className="mx-auto max-w-[1600px] px-6 md:px-10">
         <Reveal>
           <div className="flex items-end justify-between">
@@ -281,11 +284,11 @@ function SectorsMarquee() {
             "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
         }}
       >
-        <div className="flex shrink-0 animate-[marquee_38s_linear_infinite] gap-16 pr-16 group-hover:[animation-play-state:paused]">
+        <div className="flex shrink-0 animate-[marquee-right_38s_linear_infinite] gap-16 pr-16 group-hover:[animation-play-state:paused]">
           {loop.map((s, i) => (
             <span
               key={`${s}-${i}`}
-              className="flex shrink-0 items-center gap-16 font-display text-5xl leading-none text-balance md:text-8xl"
+              className="flex shrink-0 items-center gap-16 font-display text-5xl leading-tight text-balance md:text-8xl"
             >
               {s}
               <span className="text-elden-green">·</span>
@@ -298,22 +301,25 @@ function SectorsMarquee() {
 }
 
 const clients = [
-  { name: "Warehouse Gym", logo: clientWarehouseGym },
-  { name: "du", logo: clientDu },
-  { name: "Bikanervala", logo: clientBikanervala },
-  { name: "Maison Privée", logo: clientMaison },
-  { name: "Atelier Mode", logo: clientAtelier },
-  { name: "Virgin", logo: clientVirgin },
-  { name: "Sel & Sucre", logo: clientSelSucre },
-  { name: "Holiday Inn", logo: clientHolidayInn },
-  { name: "Costa Azul Resorts", logo: clientCostaAzul },
-  { name: "Vervain Gallery", logo: clientVervain },
+  { name: "Zara", logo: client1 },
+  { name: "Holiday Inn", logo: client2 },
+  { name: "du", logo: client3 },
+  { name: "Golden Goose", logo: client4 },
+  { name: "Virgin", logo: client5 },
+  { name: "Bikanervala", logo: client6 },
+  { name: "SRG Properties", logo: client7 },
+  { name: "Warehouse Gym", logo: client8 },
+  { name: "GMG", logo: client9 },
+  { name: "Danube Home", logo: client10 },
+  { name: "Sharaf DG", logo: client11 },
+  { name: "Kulcha King", logo: client12 },
+  { name: "El Greco", logo: client13 },
 ];
 
 function ClientsMarquee() {
   const loop = [...clients, ...clients];
   return (
-    <section className="relative overflow-hidden border-y border-border/60 bg-elden-stone/40 py-20 md:py-28">
+    <section className="relative overflow-hidden border-y border-border/60 bg-elden-stone/40 py-10 md:py-12">
       <div className="mx-auto max-w-[1600px] px-6 md:px-10">
         <Reveal>
           <p className="text-xs uppercase tracking-[0.35em] text-elden-blue-deep/70">
@@ -330,13 +336,12 @@ function ClientsMarquee() {
             "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
         }}
       >
-        <div className="flex shrink-0 animate-[marquee_45s_linear_infinite] items-center gap-24 pr-24 md:gap-40 md:pr-40">
+        <div className="flex shrink-0 animate-[marquee_45s_linear_infinite] items-center gap-8 pr-8 md:gap-12 md:pr-12">
           {loop.map((c, i) => (
             <img
               key={`${c.name}-${i}`}
               src={c.logo}
               alt={c.name}
-              loading="lazy"
               width={1536}
               height={512}
               className="h-16 w-auto shrink-0 object-contain opacity-70 grayscale transition duration-500 hover:opacity-100 hover:grayscale-0 md:h-28"
