@@ -2,7 +2,11 @@ import holidayInn1 from "@/assets/holiday-inn-al-barsha/1.png";
 import holidayInn2 from "@/assets/holiday-inn-al-barsha/2.png";
 import holidayInn3 from "@/assets/holiday-inn-al-barsha/3.png";
 import holidayInn4 from "@/assets/holiday-inn-al-barsha/4.png";
-import warehouseGym1 from "@/assets/warehouse-gym-ibn-battuta/1.jpg";
+import warehouseGym1 from "@/assets/warehouse-gym-ibn-battuta/1.JPG";
+import warehouseGym2 from "@/assets/warehouse-gym-ibn-battuta/2.JPG";
+import warehouseGym3 from "@/assets/warehouse-gym-ibn-battuta/3.JPG";
+import warehouseGym4 from "@/assets/warehouse-gym-ibn-battuta/4.JPG";
+import warehouseGym5 from "@/assets/warehouse-gym-ibn-battuta/5.JPG";
 import foretCafe1 from "@/assets/foret-cafe/1.jpg";
 import bikanerwala1 from "@/assets/bikanerwala/1.jpg";
 import jumeiraClubhouse1 from "@/assets/jumeira-park-clubhouse/1.jpg";
@@ -57,7 +61,7 @@ export const projects: Project[] = [
     scope: "Fit-out, Joinery & MEP Works",
     year: "2022",
     image: warehouseGym1,
-    gallery: [warehouseGym1, corporateHeadquarters1, artGallery1],
+    gallery: [warehouseGym2, warehouseGym3, warehouseGym4, warehouseGym5],
     summary:
       "A raw, industrial temple to strength — polished concrete, exposed services and warm timber, tuned for performance.",
     narrative: [

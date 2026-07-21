@@ -145,48 +145,32 @@ function ProjectDetail() {
       </section>
 
       {/* Gallery */}
-      <section className="bg-background py-24 md:py-32">
+      <section className="bg-background pb-4 pt-24 md:pb-8 md:pt-32">
         <div className="mx-auto max-w-[1600px] px-6 md:px-10">
           <Reveal>
             <p className="text-xs uppercase tracking-[0.35em] text-elden-green">Gallery</p>
             <h2 className="mt-4 font-display text-4xl md:text-6xl">Inside the space.</h2>
           </Reveal>
 
-          <div className="mt-14 grid gap-6 md:grid-cols-12">
-            <div className="md:col-span-8">
-              <ParallaxImage
-                src={project.gallery[0]}
-                alt={`${project.name} — view 1`}
-                className="aspect-[16/10] rounded-sm bg-muted"
-              />
-            </div>
-            <div className="md:col-span-4">
-              <ParallaxImage
-                src={project.gallery[1] ?? project.image}
-                alt={`${project.name} — view 2`}
-                className="aspect-[3/4] rounded-sm bg-muted"
-              />
-            </div>
-            <div className="md:col-span-5">
-              <ParallaxImage
-                src={project.gallery[2] ?? project.image}
-                alt={`${project.name} — view 3`}
-                className="aspect-[4/5] rounded-sm bg-muted"
-              />
-            </div>
-            <div className="md:col-span-7">
-              <ParallaxImage
-                src={project.image}
-                alt={`${project.name} — view 4`}
-                className="aspect-[16/10] rounded-sm bg-muted"
-              />
-            </div>
+          <div className="mt-14 flex flex-wrap gap-6">
+            {project.gallery.map((src, i) => (
+              <div
+                key={i}
+                className={`w-full sm:w-[calc(50%-0.75rem)] ${project.gallery.length % 2 !== 0 && i === project.gallery.length - 1 ? "mx-auto" : ""}`}
+              >
+                <ParallaxImage
+                  src={src}
+                  alt={`${project.name} — view ${i + 1}`}
+                  className="aspect-[16/10] rounded-sm bg-muted"
+                />
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Next */}
-      <section className="bg-background pb-16 pt-24 md:pb-20 md:pt-32">
+      <section className="bg-background pb-8 pt-4 md:pb-16 md:pt-8">
         <div className="mx-auto max-w-[1600px] px-6 md:px-10">
           <Link
             to="/projects/$slug"

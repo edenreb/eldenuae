@@ -20,11 +20,11 @@ export function SiteHeader() {
   const useLightText = isHome && !scrolled;
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => setScrolled(window.scrollY > (isHome ? window.innerHeight * 3.5 : window.innerHeight * 0.95));
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [isHome]);
 
   return (
     <header
