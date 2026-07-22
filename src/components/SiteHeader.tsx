@@ -34,7 +34,7 @@ export function SiteHeader() {
     >
       <div
         className="pointer-events-none absolute inset-0 -z-10 rounded-2xl bg-background/60 backdrop-blur-2xl border border-white/10 shadow-lg shadow-black/5 transition-opacity duration-700"
-        style={{ opacity: scrolled ? 1 : 0 }}
+        style={{ opacity: isHome && !scrolled ? 0 : 1 }}
       />
       <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-4 md:px-10">
         <Link to="/" className="group flex items-center gap-2">
