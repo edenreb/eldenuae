@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
 import { Reveal } from "@/components/Reveal";
 
 export const Route = createFileRoute("/contact")({
@@ -22,8 +21,6 @@ export const Route = createFileRoute("/contact")({
 });
 
 function ContactPage() {
-  const [sent, setSent] = useState(false);
-
   return (
     <div className="bg-background">
       <section className="relative pt-40 pb-16 md:pt-56 md:pb-24">
@@ -85,73 +82,10 @@ function ContactPage() {
                 />
               </div>
             </Reveal>
-          </div>
 
-          {/* Form */}
-          <Reveal delay={0.05}>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                setSent(true);
-              }}
-              className="grain-overlay space-y-5 rounded-sm border border-border bg-card p-8 md:p-10"
-            >
-              <Field label="Your name" name="name" />
-              <Field label="Email" name="email" type="email" />
-              <Field label="Company (optional)" name="company" required={false} />
-              <Field label="Project location" name="location" />
-              <div>
-                <label className="mb-2 block text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-                  Tell us about the space
-                </label>
-                <textarea
-                  name="message"
-                  required
-                  rows={5}
-                  className="w-full resize-none rounded-sm border border-input bg-background px-4 py-3 text-base focus:border-elden-green focus:outline-none"
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={sent}
-                className="w-full rounded-full bg-elden-blue px-6 py-4 text-sm font-medium text-primary-foreground transition hover:bg-elden-blue-deep disabled:opacity-60"
-              >
-                {sent ? "Thank you — we'll be in touch shortly." : "Send enquiry"}
-              </button>
-            </form>
-          </Reveal>
+          </div>
         </div>
       </section>
-    </div>
-  );
-}
-
-function Field({
-  label,
-  name,
-  type = "text",
-  required = true,
-}: {
-  label: string;
-  name: string;
-  type?: string;
-  required?: boolean;
-}) {
-  return (
-    <div>
-      <label
-        htmlFor={name}
-        className="mb-2 block text-[10px] uppercase tracking-[0.3em] text-muted-foreground"
-      >
-        {label}
-      </label>
-      <input
-        id={name}
-        name={name}
-        type={type}
-        required={required}
-        className="w-full rounded-sm border border-input bg-background px-4 py-3 text-base focus:border-elden-green focus:outline-none"
-      />
     </div>
   );
 }
