@@ -40,7 +40,6 @@ import warehouseGymDIFC4 from "@/assets/warehouse-gym-difc/4.jpg";
 import warehouseGymDIFC5 from "@/assets/warehouse-gym-difc/5.jpg";
 import warehouseGymDIFC6 from "@/assets/warehouse-gym-difc/6.jpg";
 import warehouseGymDIFC7 from "@/assets/warehouse-gym-difc/7.jpg";
-import warehouseGymDIFC8 from "@/assets/warehouse-gym-difc/8.jpg";
 import nandos1 from "@/assets/nandos-al-ain-mall/1.png";
 import nandos2 from "@/assets/nandos-al-ain-mall/2.jpg";
 import nandos3 from "@/assets/nandos-al-ain-mall/3.jpg";
@@ -303,7 +302,7 @@ export const projects: Project[] = [
     scope: "Fit-out & MEP Works",
     year: "2024",
     image: warehouseGymDIFC1,
-    gallery: [warehouseGymDIFC2, warehouseGymDIFC3, warehouseGymDIFC4, warehouseGymDIFC5, warehouseGymDIFC6, warehouseGymDIFC7, warehouseGymDIFC8],
+    gallery: [warehouseGymDIFC2, warehouseGymDIFC3, warehouseGymDIFC4, warehouseGymDIFC5, warehouseGymDIFC6, warehouseGymDIFC7],
     summary: "A high-performance fitness space in the heart of DIFC.",
     narrative: ["Delivered in DIFC, this project extends Warehouse Gym's signature industrial aesthetic into a new financial district location."],
   },
