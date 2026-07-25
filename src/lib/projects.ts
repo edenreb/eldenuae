@@ -6,6 +6,7 @@ import warehouseGym1 from "@/assets/warehouse-gym-ibn-battuta/1.jpg";
 import warehouseGym2 from "@/assets/warehouse-gym-ibn-battuta/2.jpg";
 import warehouseGym3 from "@/assets/warehouse-gym-ibn-battuta/3.jpg";
 import warehouseGym4 from "@/assets/warehouse-gym-ibn-battuta/4.jpg";
+import warehouseGym5 from "@/assets/warehouse-gym-ibn-battuta/5.jpg";
 import foretCafe1 from "@/assets/foret-cafe/1.JPG";
 import foretCafe2 from "@/assets/foret-cafe/2.JPG";
 import foretCafe3 from "@/assets/foret-cafe/3.JPG";
@@ -230,7 +231,7 @@ export const projects: Project[] = [
     scope: "Fit-out, Joinery & MEP Works",
     year: "2022",
     image: warehouseGym1,
-    gallery: [warehouseGym2, warehouseGym3, warehouseGym4],
+    gallery: [warehouseGym2, warehouseGym3, warehouseGym4, warehouseGym5],
     summary:
       "A raw, industrial temple to strength — polished concrete, exposed services and warm timber, tuned for performance.",
     narrative: [
