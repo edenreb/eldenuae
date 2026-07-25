@@ -76,7 +76,7 @@ function ContactPage() {
               <div className="overflow-hidden rounded-sm border border-border">
                 <iframe
                   title="Elden studio location"
-                  src="https://www.openstreetmap.org/export/embed.html?bbox=55.22%2C25.12%2C55.26%2C25.16&layer=mapnik&marker=25.14%2C55.24"
+                  src="https://www.google.com/maps/embed?q=ELDEN+INTERIOR+DESIGN+LLC+Al+Quoz+Dubai"
                   className="h-72 w-full"
                   loading="lazy"
                 />
