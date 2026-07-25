@@ -45,7 +45,6 @@ function ContactPage() {
 
       <section className="pb-24">
         <div className="mx-auto grid max-w-[1600px] gap-16 px-6 md:grid-cols-[1fr_1.2fr] md:px-10">
-          {/* Info */}
           <div className="space-y-10">
             <Reveal>
               <div>
@@ -62,30 +61,42 @@ function ContactPage() {
               <div>
                 <p className="text-[10px] uppercase tracking-[0.3em] text-elden-green">Get in touch</p>
                 <p className="mt-3 font-display text-2xl leading-snug">
-                  <a className="hover:text-elden-blue" href="mailto:info@eldenuae.com">
-                    info@eldenuae.com
-                  </a>
-                  <br />
                   <a className="hover:text-elden-blue" href="tel:+97142276206">
                     +971 4 227 6206
+                  </a>
+                  <br />
+                  <a className="hover:text-elden-blue" href="mailto:info@eldenuae.com">
+                    info@eldenuae.com
                   </a>
                 </p>
               </div>
             </Reveal>
             <Reveal delay={0.1}>
-              <div className="overflow-hidden rounded-sm border border-border">
-                <iframe
-                  title="Elden studio location"
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3611.9511842160887!2d55.2428202763692!3d25.137341177749523!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f5d64d57cec61%3A0xfc48420d64831482!2sELDEN%20INTERIOR%20DESIGN%20LLC!5e0!3m2!1sen!2sae!4v1784977409068!5m2!1sen!2sae"
-                  className="h-72 w-full"
-                  loading="lazy"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  allowFullScreen
-                />
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.3em] text-elden-green">Directions</p>
+                <p className="mt-3">
+                  <a
+                    href="https://maps.google.com/maps?cid=18178852521169327234"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-lg bg-elden-blue px-5 py-3 font-semibold text-white hover:opacity-90"
+                  >
+                    Open in Google Maps
+                  </a>
+                </p>
               </div>
             </Reveal>
-
           </div>
+          <Reveal delay={0.1} className="min-h-[400px] overflow-hidden rounded-sm border border-border">
+            <iframe
+              title="Elden studio location"
+              src="https://maps.google.com/maps?cid=18178852521169327234&z=17&output=embed"
+              className="h-full min-h-[400px] w-full"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allowFullScreen
+            />
+          </Reveal>
         </div>
       </section>
     </div>
