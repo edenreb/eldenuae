@@ -2,11 +2,10 @@ import holidayInn1 from "@/assets/holiday-inn-al-barsha/1.png";
 import holidayInn2 from "@/assets/holiday-inn-al-barsha/2.png";
 import holidayInn3 from "@/assets/holiday-inn-al-barsha/3.png";
 import holidayInn4 from "@/assets/holiday-inn-al-barsha/4.png";
-import warehouseGym1 from "@/assets/warehouse-gym-ibn-battuta/1.JPG";
-import warehouseGym2 from "@/assets/warehouse-gym-ibn-battuta/2.JPG";
-import warehouseGym3 from "@/assets/warehouse-gym-ibn-battuta/3.JPG";
-import warehouseGym4 from "@/assets/warehouse-gym-ibn-battuta/4.JPG";
-import warehouseGym5 from "@/assets/warehouse-gym-ibn-battuta/5.JPG";
+import warehouseGym1 from "@/assets/warehouse-gym-ibn-battuta/1.jpg";
+import warehouseGym2 from "@/assets/warehouse-gym-ibn-battuta/2.jpg";
+import warehouseGym3 from "@/assets/warehouse-gym-ibn-battuta/3.jpg";
+import warehouseGym4 from "@/assets/warehouse-gym-ibn-battuta/4.jpg";
 import foretCafe1 from "@/assets/foret-cafe/1.JPG";
 import foretCafe2 from "@/assets/foret-cafe/2.JPG";
 import foretCafe3 from "@/assets/foret-cafe/3.JPG";
@@ -23,33 +22,45 @@ import commongrounds2 from "@/assets/common-grounds/2.jpg";
 import flagshipBoutique1 from "@/assets/flagship-boutique/1.jpg";
 import flagshipBoutique2 from "@/assets/flagship-boutique/2.jpg";
 import jumeiraClubhouse1 from "@/assets/jumeira-park-clubhouse/1.jpg";
+import jumeiraClubhouse2 from "@/assets/jumeira-park-clubhouse/2.jpg";
+import jumeiraClubhouse3 from "@/assets/jumeira-park-clubhouse/3.jpg";
+import jumeiraClubhouse4 from "@/assets/jumeira-park-clubhouse/4.jpg";
+import jumeiraClubhouse5 from "@/assets/jumeira-park-clubhouse/5.jpg";
 import corporateHeadquarters1 from "@/assets/corporate-headquarters/1.jpg";
 import fineDining1 from "@/assets/fine-dining-restaurant/1.jpg";
 import fineDining2 from "@/assets/fine-dining-restaurant/2.jpg";
 import hotelSuite1 from "@/assets/boutique-hotel-suite/1.jpg";
 import wellnessSpa1 from "@/assets/wellness-spa/1.jpg";
 import artGallery1 from "@/assets/contemporary-art-gallery/1.jpg";
-import warehouseGymDIFC1 from "@/assets/warehouse-gym-difc/1.JPG";
-import warehouseGymDIFC2 from "@/assets/warehouse-gym-difc/2.JPG";
-import warehouseGymDIFC3 from "@/assets/warehouse-gym-difc/3.JPG";
+import warehouseGymDIFC1 from "@/assets/warehouse-gym-difc/1.jpg";
+import warehouseGymDIFC2 from "@/assets/warehouse-gym-difc/2.jpg";
+import warehouseGymDIFC3 from "@/assets/warehouse-gym-difc/3.jpg";
+import warehouseGymDIFC4 from "@/assets/warehouse-gym-difc/4.jpg";
+import warehouseGymDIFC5 from "@/assets/warehouse-gym-difc/5.jpg";
+import warehouseGymDIFC6 from "@/assets/warehouse-gym-difc/6.jpg";
+import warehouseGymDIFC7 from "@/assets/warehouse-gym-difc/7.jpg";
+import warehouseGymDIFC8 from "@/assets/warehouse-gym-difc/8.jpg";
 import nandos1 from "@/assets/nandos-al-ain-mall/1.png";
 import nandos2 from "@/assets/nandos-al-ain-mall/2.jpg";
 import nandos3 from "@/assets/nandos-al-ain-mall/3.jpg";
-import warehouseGymKhawaneej1 from "@/assets/warehouse-gym-khawaneej/1.JPG";
-import warehouseGymKhawaneej2 from "@/assets/warehouse-gym-khawaneej/2.JPG";
-import warehouseGymKhawaneej3 from "@/assets/warehouse-gym-khawaneej/3.JPG";
-import warehouseGymKhawaneej4 from "@/assets/warehouse-gym-khawaneej/4.JPG";
-import warehouseGymKhawaneej5 from "@/assets/warehouse-gym-khawaneej/5.JPG";
-import warehouseGymKhawaneej6 from "@/assets/warehouse-gym-khawaneej/6.JPG";
-import warehouseGymYasBay1 from "@/assets/warehouse-gym-yas-bay/1.JPG";
-import warehouseGymYasBay2 from "@/assets/warehouse-gym-yas-bay/2.JPG";
-import warehouseGymYasBay3 from "@/assets/warehouse-gym-yas-bay/3.JPG";
-import warehouseGymYasBay4 from "@/assets/warehouse-gym-yas-bay/4.png";
+import warehouseGymKhawaneej1 from "@/assets/warehouse-gym-khawaneej/1.jpg";
+import warehouseGymKhawaneej2 from "@/assets/warehouse-gym-khawaneej/2.jpg";
+import warehouseGymKhawaneej3 from "@/assets/warehouse-gym-khawaneej/3.jpg";
+import warehouseGymKhawaneej4 from "@/assets/warehouse-gym-khawaneej/4.jpg";
+import warehouseGymKhawaneej5 from "@/assets/warehouse-gym-khawaneej/5.jpg";
+import warehouseGymYasBay1 from "@/assets/warehouse-gym-yas-bay/1.jpg";
+import warehouseGymYasBay2 from "@/assets/warehouse-gym-yas-bay/2.jpg";
+import warehouseGymYasBay3 from "@/assets/warehouse-gym-yas-bay/3.jpg";
+import warehouseGymYasBay4 from "@/assets/warehouse-gym-yas-bay/4.jpg";
 import warehouseGymYasBay5 from "@/assets/warehouse-gym-yas-bay/5.jpg";
-import warehouseGymYasBay6 from "@/assets/warehouse-gym-yas-bay/6.png";
-import warehouseGymYasBay7 from "@/assets/warehouse-gym-yas-bay/7.png";
-import warehouseGymYasBay8 from "@/assets/warehouse-gym-yas-bay/8.png";
-import warehouseGymYasBay9 from "@/assets/warehouse-gym-yas-bay/9.png";
+import warehouseGymYasBay6 from "@/assets/warehouse-gym-yas-bay/6.jpg";
+import warehouseGymYasBay7 from "@/assets/warehouse-gym-yas-bay/7.jpg";
+import warehouseGymYasBay8 from "@/assets/warehouse-gym-yas-bay/8.jpg";
+import warehouseGymYasBay9 from "@/assets/warehouse-gym-yas-bay/9.jpg";
+import warehouseGymYasBay10 from "@/assets/warehouse-gym-yas-bay/10.jpg";
+import warehouseGymYasBay11 from "@/assets/warehouse-gym-yas-bay/11.jpg";
+import warehouseGymYasBay12 from "@/assets/warehouse-gym-yas-bay/12.jpg";
+import warehouseGymYasBay13 from "@/assets/warehouse-gym-yas-bay/13.jpg";
 import natureland1 from "@/assets/natureland-supermarket/1.png";
 import natureland2 from "@/assets/natureland-supermarket/2.png";
 import watchAvenue1 from "@/assets/watch-avenue-difc/1.png";
@@ -77,23 +88,71 @@ import trouville1 from "@/assets/trouville-coffee-shop/1.jpg";
 import trouville2 from "@/assets/trouville-coffee-shop/2.jpg";
 import trouville3 from "@/assets/trouville-coffee-shop/3.jpg";
 import equitiesFirst1 from "@/assets/equities-first-office/1.jpg";
-import equitiesFirst2 from "@/assets/equities-first-office/2.png";
+import equitiesFirst2 from "@/assets/equities-first-office/2.jpg";
 import equitiesFirst3 from "@/assets/equities-first-office/3.jpg";
+import equitiesFirst4 from "@/assets/equities-first-office/4.jpg";
+import equitiesFirst5 from "@/assets/equities-first-office/5.jpg";
+import equitiesFirst6 from "@/assets/equities-first-office/6.jpg";
+import equitiesFirst7 from "@/assets/equities-first-office/7.jpg";
+import equitiesFirst8 from "@/assets/equities-first-office/8.jpg";
+import equitiesFirst9 from "@/assets/equities-first-office/9.jpg";
 import barakaOffice1 from "@/assets/baraka-office/1.png";
 import barakaOffice2 from "@/assets/baraka-office/2.png";
 import barakaOffice3 from "@/assets/baraka-office/3.png";
-import flor1 from "@/assets/flor-restaurant/1.png";
-import flor2 from "@/assets/flor-restaurant/2.png";
-import flor3 from "@/assets/flor-restaurant/3.png";
-import haldirams1 from "@/assets/haldirams-restaurant/1.png";
-import haldirams2 from "@/assets/haldirams-restaurant/2.png";
-import haldirams3 from "@/assets/haldirams-restaurant/3.png";
-import warehouseGymDSP1 from "@/assets/warehouse-gym-dubai-science-park/1.png";
-import warehouseGymDSP2 from "@/assets/warehouse-gym-dubai-science-park/2.png";
-import warehouseGymDSP3 from "@/assets/warehouse-gym-dubai-science-park/3.png";
-import londonSkin1 from "@/assets/london-skin-clinic/1.png";
-import londonSkin2 from "@/assets/london-skin-clinic/2.png";
-import londonSkin3 from "@/assets/london-skin-clinic/3.png";
+import flor1 from "@/assets/flor-restaurant/1.jpg";
+import flor2 from "@/assets/flor-restaurant/2.jpg";
+import flor3 from "@/assets/flor-restaurant/3.jpg";
+import flor4 from "@/assets/flor-restaurant/4.jpg";
+import flor5 from "@/assets/flor-restaurant/5.jpg";
+import flor6 from "@/assets/flor-restaurant/6.jpg";
+import flor7 from "@/assets/flor-restaurant/7.jpg";
+import flor8 from "@/assets/flor-restaurant/8.jpg";
+import flor9 from "@/assets/flor-restaurant/9.jpg";
+import flor10 from "@/assets/flor-restaurant/10.jpg";
+import flor11 from "@/assets/flor-restaurant/11.jpg";
+import flor12 from "@/assets/flor-restaurant/12.jpg";
+import flor13 from "@/assets/flor-restaurant/13.jpg";
+import flor14 from "@/assets/flor-restaurant/14.jpg";
+import flor15 from "@/assets/flor-restaurant/15.jpg";
+import flor16 from "@/assets/flor-restaurant/16.jpg";
+import flor17 from "@/assets/flor-restaurant/17.jpg";
+import flor18 from "@/assets/flor-restaurant/18.jpg";
+import flor19 from "@/assets/flor-restaurant/19.jpg";
+import flor20 from "@/assets/flor-restaurant/20.jpg";
+import flor21 from "@/assets/flor-restaurant/21.jpg";
+import flor22 from "@/assets/flor-restaurant/22.jpg";
+import flor23 from "@/assets/flor-restaurant/23.jpg";
+import haldirams1 from "@/assets/haldirams-restaurant/1.jpg";
+import haldirams2 from "@/assets/haldirams-restaurant/2.jpg";
+import haldirams3 from "@/assets/haldirams-restaurant/3.jpg";
+import haldirams4 from "@/assets/haldirams-restaurant/4.jpg";
+import haldirams5 from "@/assets/haldirams-restaurant/5.jpg";
+import haldirams6 from "@/assets/haldirams-restaurant/6.jpg";
+import haldirams7 from "@/assets/haldirams-restaurant/7.jpg";
+import haldirams8 from "@/assets/haldirams-restaurant/8.jpg";
+import haldirams9 from "@/assets/haldirams-restaurant/9.jpg";
+import haldirams10 from "@/assets/haldirams-restaurant/10.jpg";
+import haldirams11 from "@/assets/haldirams-restaurant/11.jpg";
+import haldirams12 from "@/assets/haldirams-restaurant/12.jpg";
+import warehouseGymDSP1 from "@/assets/warehouse-gym-dubai-science-park/1.jpg";
+import warehouseGymDSP2 from "@/assets/warehouse-gym-dubai-science-park/2.jpg";
+import warehouseGymDSP3 from "@/assets/warehouse-gym-dubai-science-park/3.jpg";
+import warehouseGymDSP4 from "@/assets/warehouse-gym-dubai-science-park/4.jpg";
+import warehouseGymDSP5 from "@/assets/warehouse-gym-dubai-science-park/5.jpg";
+import warehouseGymDSP6 from "@/assets/warehouse-gym-dubai-science-park/6.jpg";
+import warehouseGymDSP7 from "@/assets/warehouse-gym-dubai-science-park/7.jpg";
+import warehouseGymDSP8 from "@/assets/warehouse-gym-dubai-science-park/8.jpg";
+import warehouseGymDSP9 from "@/assets/warehouse-gym-dubai-science-park/9.jpg";
+import londonSkin1 from "@/assets/london-skin-clinic/1.jpg";
+import londonSkin2 from "@/assets/london-skin-clinic/2.jpg";
+import londonSkin3 from "@/assets/london-skin-clinic/3.jpg";
+import londonSkin4 from "@/assets/london-skin-clinic/4.jpg";
+import londonSkin5 from "@/assets/london-skin-clinic/5.jpg";
+import londonSkin6 from "@/assets/london-skin-clinic/6.jpg";
+import londonSkin7 from "@/assets/london-skin-clinic/7.jpg";
+import londonSkin8 from "@/assets/london-skin-clinic/8.jpg";
+import londonSkin9 from "@/assets/london-skin-clinic/9.jpg";
+import londonSkin10 from "@/assets/london-skin-clinic/10.jpg";
 import spxFlow1 from "@/assets/spx-flow-office/1.jpg";
 import spxFlow2 from "@/assets/spx-flow-office/2.jpg";
 import spxFlow3 from "@/assets/spx-flow-office/3.png";
@@ -114,11 +173,20 @@ import zaraMarina1 from "@/assets/zara-marina-mall/1.png";
 import zaraMarina2 from "@/assets/zara-marina-mall/2.jpg";
 import warehouseGymBizBay1 from "@/assets/warehouse-gym-business-bay/1.jpg";
 import warehouseGymBizBay2 from "@/assets/warehouse-gym-business-bay/2.jpg";
-import warehouseGymBizBay3 from "@/assets/warehouse-gym-business-bay/3.JPG";
-import warehouseGymBizBay4 from "@/assets/warehouse-gym-business-bay/4.JPG";
-import warehouseGymBizBay5 from "@/assets/warehouse-gym-business-bay/5.png";
-import warehouseGymD31 from "@/assets/warehouse-gym-d3/1.png";
-import warehouseGymD32 from "@/assets/warehouse-gym-d3/2.png";
+import warehouseGymBizBay3 from "@/assets/warehouse-gym-business-bay/3.jpg";
+import warehouseGymBizBay4 from "@/assets/warehouse-gym-business-bay/4.jpg";
+import warehouseGymBizBay5 from "@/assets/warehouse-gym-business-bay/5.jpg";
+import warehouseGymBizBay6 from "@/assets/warehouse-gym-business-bay/6.jpg";
+import warehouseGymBizBay7 from "@/assets/warehouse-gym-business-bay/7.jpg";
+import warehouseGymD31 from "@/assets/warehouse-gym-d3/1.jpg";
+import warehouseGymD32 from "@/assets/warehouse-gym-d3/2.jpg";
+import warehouseGymD33 from "@/assets/warehouse-gym-d3/3.jpg";
+import warehouseGymD34 from "@/assets/warehouse-gym-d3/4.jpg";
+import warehouseGymSpringsSouk1 from "@/assets/warehouse-gym-springs-souk/1.jpg";
+import warehouseGymSpringsSouk2 from "@/assets/warehouse-gym-springs-souk/2.jpg";
+import warehouseGymSpringsSouk3 from "@/assets/warehouse-gym-springs-souk/3.jpg";
+import warehouseGymSpringsSouk4 from "@/assets/warehouse-gym-springs-souk/4.jpg";
+import warehouseGymSpringsSouk5 from "@/assets/warehouse-gym-springs-souk/5.jpg";
 
 export interface Project {
   slug: string;
@@ -162,7 +230,7 @@ export const projects: Project[] = [
     scope: "Fit-out, Joinery & MEP Works",
     year: "2022",
     image: warehouseGym1,
-    gallery: [warehouseGym2, warehouseGym3, warehouseGym4, warehouseGym5],
+    gallery: [warehouseGym2, warehouseGym3, warehouseGym4],
     summary:
       "A raw, industrial temple to strength — polished concrete, exposed services and warm timber, tuned for performance.",
     narrative: [
@@ -234,7 +302,7 @@ export const projects: Project[] = [
     scope: "Fit-out & MEP Works",
     year: "2024",
     image: warehouseGymDIFC1,
-    gallery: [warehouseGymDIFC2, warehouseGymDIFC3],
+    gallery: [warehouseGymDIFC2, warehouseGymDIFC3, warehouseGymDIFC4, warehouseGymDIFC5, warehouseGymDIFC6, warehouseGymDIFC7, warehouseGymDIFC8],
     summary: "A high-performance fitness space in the heart of DIFC.",
     narrative: ["Delivered in DIFC, this project extends Warehouse Gym's signature industrial aesthetic into a new financial district location."],
   },
@@ -260,7 +328,7 @@ export const projects: Project[] = [
     scope: "Fit-out & MEP Works",
     year: "2024",
     image: warehouseGymKhawaneej1,
-    gallery: [warehouseGymKhawaneej2, warehouseGymKhawaneej3, warehouseGymKhawaneej4, warehouseGymKhawaneej5, warehouseGymKhawaneej6],
+    gallery: [warehouseGymKhawaneej2, warehouseGymKhawaneej3, warehouseGymKhawaneej4, warehouseGymKhawaneej5],
     summary: "A raw industrial gym concept at Khawaneej Mall.",
     narrative: ["Another Warehouse Gym location delivered with exposed services, polished concrete and precision-engineered training zones."],
   },
@@ -273,7 +341,7 @@ export const projects: Project[] = [
     scope: "Fit-out & MEP Works",
     year: "2024",
     image: warehouseGymYasBay1,
-    gallery: [warehouseGymYasBay2, warehouseGymYasBay3, warehouseGymYasBay4, warehouseGymYasBay5, warehouseGymYasBay6, warehouseGymYasBay7, warehouseGymYasBay8, warehouseGymYasBay9],
+    gallery: [warehouseGymYasBay2, warehouseGymYasBay3, warehouseGymYasBay4, warehouseGymYasBay5, warehouseGymYasBay6, warehouseGymYasBay7, warehouseGymYasBay8, warehouseGymYasBay9, warehouseGymYasBay10, warehouseGymYasBay11, warehouseGymYasBay12, warehouseGymYasBay13],
     summary: "A flagship Warehouse Gym on Abu Dhabi's Yas Bay waterfront.",
     narrative: ["A landmark fitness destination on Yas Bay, combining Warehouse Gym's signature brutalist aesthetic with waterfront views."],
   },
@@ -390,7 +458,7 @@ export const projects: Project[] = [
     scope: "Office Fit-out",
     year: "2024",
     image: equitiesFirst1,
-    gallery: [equitiesFirst2, equitiesFirst3],
+    gallery: [equitiesFirst2, equitiesFirst3, equitiesFirst4, equitiesFirst5, equitiesFirst6, equitiesFirst7, equitiesFirst8, equitiesFirst9],
     summary: "A professional office fit-out for Equities First at DIFC.",
     narrative: ["A refined workspace in Dubai's financial district, designed for productivity and professionalism."],
   },
@@ -416,7 +484,7 @@ export const projects: Project[] = [
     scope: "Fit-out & MEP",
     year: "2024",
     image: flor1,
-    gallery: [flor2, flor3],
+    gallery: [flor2, flor3, flor4, flor5, flor6, flor7, flor8, flor9, flor10, flor11, flor12, flor13, flor14, flor15, flor16, flor17, flor18, flor19, flor20, flor21, flor22, flor23],
     summary: "A vibrant restaurant fit-out at DIFC.",
     narrative: ["A distinctive dining destination in DIFC, blending contemporary design with a warm atmosphere."],
   },
@@ -429,7 +497,7 @@ export const projects: Project[] = [
     scope: "Fit-out & MEP",
     year: "2024",
     image: haldirams1,
-    gallery: [haldirams2, haldirams3],
+    gallery: [haldirams2, haldirams3, haldirams4, haldirams5, haldirams6, haldirams7, haldirams8, haldirams9, haldirams10, haldirams11, haldirams12],
     summary: "A flagship restaurant fit-out for Haldiram's in Al Raffa, Dubai.",
     narrative: ["A spacious Indian dining destination bringing Haldiram's legendary cuisine to a new Dubai location."],
   },
@@ -442,7 +510,7 @@ export const projects: Project[] = [
     scope: "Fit-out & MEP Works",
     year: "2024",
     image: warehouseGymDSP1,
-    gallery: [warehouseGymDSP2, warehouseGymDSP3],
+    gallery: [warehouseGymDSP2, warehouseGymDSP3, warehouseGymDSP4, warehouseGymDSP5, warehouseGymDSP6, warehouseGymDSP7, warehouseGymDSP8, warehouseGymDSP9],
     summary: "A Warehouse Gym facility at Dubai Science Park.",
     narrative: ["A new fitness destination in Dubai Science Park, continuing Warehouse Gym's legacy of raw, industrial design."],
   },
@@ -455,7 +523,7 @@ export const projects: Project[] = [
     scope: "Clinic Fit-out & MEP",
     year: "2024",
     image: londonSkin1,
-    gallery: [londonSkin2, londonSkin3],
+    gallery: [londonSkin2, londonSkin3, londonSkin4, londonSkin5, londonSkin6, londonSkin7, londonSkin8, londonSkin9, londonSkin10],
     summary: "A premium skincare clinic fit-out at DIFC.",
     narrative: ["A serene, clinical environment designed for patient comfort and advanced skincare treatments."],
   },
@@ -572,7 +640,7 @@ export const projects: Project[] = [
     scope: "Fit-out & MEP Works",
     year: "2024",
     image: warehouseGymBizBay1,
-    gallery: [warehouseGymBizBay2, warehouseGymBizBay3, warehouseGymBizBay4, warehouseGymBizBay5],
+    gallery: [warehouseGymBizBay2, warehouseGymBizBay3, warehouseGymBizBay4, warehouseGymBizBay5, warehouseGymBizBay6, warehouseGymBizBay7],
     summary: "A Warehouse Gym facility in Business Bay, Dubai.",
     narrative: ["A high-energy fitness space delivered in Business Bay, continuing the Warehouse Gym legacy."],
   },
@@ -585,9 +653,35 @@ export const projects: Project[] = [
     scope: "Fit-out & MEP Works",
     year: "2024",
     image: warehouseGymD31,
-    gallery: [warehouseGymD32],
+    gallery: [warehouseGymD32, warehouseGymD33, warehouseGymD34],
     summary: "A Warehouse Gym facility at Dubai Design District (D3).",
     narrative: ["A fitness space delivered in Dubai Design District, bringing Warehouse Gym's industrial aesthetic to D3."],
+  },
+  {
+    slug: "jumeira-park-clubhouse",
+    name: "Jumeira Park Clubhouse",
+    sector: "Leisure",
+    location: "Jumeira Park, Dubai",
+    client: "Jumeira Park",
+    scope: "Fit-out & MEP",
+    year: "2024",
+    image: jumeiraClubhouse1,
+    gallery: [jumeiraClubhouse2, jumeiraClubhouse3, jumeiraClubhouse4, jumeiraClubhouse5],
+    summary: "A park clubhouse fit-out in Jumeira, Dubai.",
+    narrative: ["A welcoming community clubhouse space with premium finishes and a seamless indoor-outdoor flow."],
+  },
+  {
+    slug: "warehouse-gym-springs-souk",
+    name: "Warehouse Gym — Springs Souk",
+    sector: "Fitness",
+    location: "Springs Souk, Dubai",
+    client: "The Warehouse Fitness Center LLC",
+    scope: "Fit-out & MEP Works",
+    year: "2026",
+    image: warehouseGymSpringsSouk1,
+    gallery: [warehouseGymSpringsSouk2, warehouseGymSpringsSouk3, warehouseGymSpringsSouk4, warehouseGymSpringsSouk5],
+    summary: "A Warehouse Gym facility at Springs Souk, Dubai.",
+    narrative: ["A new fitness destination at Springs Souk, bringing Warehouse Gym's signature industrial design to the community."],
   },
 ];
 
