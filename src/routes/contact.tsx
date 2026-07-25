@@ -76,9 +76,11 @@ function ContactPage() {
               <div className="overflow-hidden rounded-sm border border-border">
                 <iframe
                   title="Elden studio location"
-                  src="https://www.google.com/maps/embed?q=ELDEN+INTERIOR+DESIGN+LLC+Al+Quoz+Dubai"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3611.9511842160887!2d55.2428202763692!3d25.137341177749523!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f5d64d57cec61%3A0xfc48420d64831482!2sELDEN%20INTERIOR%20DESIGN%20LLC!5e0!3m2!1sen!2sae!4v1784977409068!5m2!1sen!2sae"
                   className="h-72 w-full"
                   loading="lazy"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
                 />
               </div>
             </Reveal>
