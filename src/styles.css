@@ -5,12 +5,12 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
 
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Fraunces", "Cormorant Garamond", ui-serif, Georgia, serif;
@@ -35,55 +35,54 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  --color-elden-green: var(--elden-green);
-  --color-elden-green-soft: var(--elden-green-soft);
-  --color-elden-blue: var(--elden-blue);
-  --color-elden-blue-deep: var(--elden-blue-deep);
+  /* Legacy tokens remapped to the restrained architectural palette.
+     Existing className references keep working — they just render quieter now. */
+  --color-elden-green: var(--accent-bronze);
+  --color-elden-green-soft: var(--stone);
+  --color-elden-blue: var(--foreground);
+  --color-elden-blue-deep: var(--charcoal);
   --color-stone: var(--stone);
   --color-stone-warm: var(--stone-warm);
   --color-marble: var(--marble);
   --color-charcoal: var(--charcoal);
-  --color-beige: var(--beige);
+  --color-beige: var(--stone-warm);
 }
 
 :root {
-  --radius: 0.5rem;
+  --radius: 0px;
 
-  /* Elden brand — RGB(73,155,86) green / RGB(42,51,124) blue */
-  --elden-green: oklch(0.62 0.14 145);
-  --elden-green-soft: oklch(0.9 0.05 145);
-  --elden-blue: oklch(0.32 0.12 275);
-  --elden-blue-deep: oklch(0.22 0.09 275);
-  --stone: oklch(0.94 0.005 90);
-  --stone-warm: oklch(0.9 0.012 80);
-  --marble: oklch(0.97 0.003 90);
-  --charcoal: oklch(0.2 0.008 260);
-  --beige: oklch(0.88 0.02 75);
+  /* Architectural palette — warm off-white, stone, charcoal, one bronze accent. */
+  --marble: oklch(0.975 0.004 80);
+  --stone: oklch(0.93 0.006 75);
+  --stone-warm: oklch(0.9 0.01 70);
+  --charcoal: oklch(0.2 0.006 60);
+  --accent-bronze: oklch(0.55 0.085 55);
 
-  --background: oklch(0.98 0.004 90);
-  --foreground: oklch(0.18 0.01 260);
+  --background: oklch(0.965 0.006 75);
+  --foreground: oklch(0.18 0.006 60);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.18 0.01 260);
+  --card-foreground: oklch(0.18 0.006 60);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.18 0.01 260);
-  --primary: var(--elden-blue);
-  --primary-foreground: oklch(0.98 0.004 90);
+  --popover-foreground: oklch(0.18 0.006 60);
+  --primary: var(--charcoal);
+  --primary-foreground: oklch(0.97 0.006 75);
   --secondary: var(--stone);
-  --secondary-foreground: var(--elden-blue-deep);
-  --muted: oklch(0.94 0.005 90);
-  --muted-foreground: oklch(0.45 0.01 260);
-  --accent: var(--elden-green);
-  --accent-foreground: oklch(0.98 0.004 90);
-  --destructive: oklch(0.6 0.22 25);
-  --destructive-foreground: oklch(0.98 0.004 90);
-  --border: oklch(0.88 0.008 90);
-  --input: oklch(0.9 0.008 90);
-  --ring: var(--elden-green);
+  --secondary-foreground: var(--charcoal);
+  --muted: oklch(0.93 0.006 75);
+  --muted-foreground: oklch(0.42 0.006 60);
+  --accent: var(--accent-bronze);
+  --accent-foreground: oklch(0.97 0.006 75);
+  --destructive: oklch(0.55 0.16 30);
+  --destructive-foreground: oklch(0.97 0.006 75);
+  --border: oklch(0.84 0.008 75);
+  --input: oklch(0.86 0.008 75);
+  --ring: var(--accent-bronze);
 }
 
 @layer base {
   * {
     border-color: var(--color-border);
+    border-radius: 0 !important;
   }
   html {
     scroll-behavior: smooth;
@@ -95,18 +94,20 @@
     color: var(--color-foreground);
     font-family: var(--font-sans);
     font-feature-settings: "ss01", "cv11";
+    font-weight: 350;
   }
   ::selection {
-    background-color: color-mix(in oklab, var(--elden-green) 40%, transparent);
-    color: var(--elden-blue-deep);
+    background-color: var(--accent-bronze);
+    color: var(--marble);
   }
 }
 
 @utility font-display {
   font-family: var(--font-display);
   font-optical-sizing: auto;
-  font-variation-settings: "SOFT" 30, "WONK" 0;
+  font-variation-settings: "SOFT" 20, "WONK" 0;
   letter-spacing: -0.02em;
+  font-weight: 400;
 }
 
 @utility text-balance {
@@ -122,7 +123,7 @@
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    opacity: 0.06;
+    opacity: 0.04;
     mix-blend-mode: overlay;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
   }
@@ -130,26 +131,10 @@
 
 @utility marble-surface {
   background:
-    radial-gradient(1200px 600px at 20% 10%, color-mix(in oklab, var(--elden-blue) 6%, transparent), transparent 60%),
-    radial-gradient(1000px 500px at 80% 90%, color-mix(in oklab, var(--elden-green) 6%, transparent), transparent 60%),
     linear-gradient(180deg, var(--marble), var(--stone));
 }
 
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+@utility rule {
+  height: 1px;
+  background-color: var(--color-border);
 }
-
-@keyframes marquee-right {
-  from { transform: translateX(-50%); }
-  to   { transform: translateX(0); }
-}
-
-/* Hide native cursor when the custom cursor is mounted (desktop pointer only). */
-@media (hover: hover) and (pointer: fine) {
-  html.cursor-none-root,
-  html.cursor-none-root * {
-    cursor: none !important;
-  }
-}
-
