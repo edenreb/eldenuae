@@ -20,6 +20,11 @@ import bikanerwala7 from "@/assets/bikanerwala/7.jpg";
 import bikanerwala8 from "@/assets/bikanerwala/8.jpg";
 import commongrounds1 from "@/assets/common-grounds/1.jpg";
 import commongrounds2 from "@/assets/common-grounds/2.jpg";
+import commongrounds3 from "@/assets/common-grounds/3.jpg";
+import commongrounds4 from "@/assets/common-grounds/4.jpg";
+import commongrounds6 from "@/assets/common-grounds/6.jpg";
+import commongrounds7 from "@/assets/common-grounds/7.jpg";
+import commongrounds8 from "@/assets/common-grounds/8.jpg";
 import flagshipBoutique1 from "@/assets/flagship-boutique/1.jpg";
 import flagshipBoutique2 from "@/assets/flagship-boutique/2.jpg";
 import jumeiraClubhouse1 from "@/assets/jumeira-park-clubhouse/1.jpg";
@@ -284,7 +289,7 @@ export const projects: Project[] = [
     scope: "Fit-out & MEP",
     year: "2023",
     image: commongrounds1,
-    gallery: [commongrounds2],
+    gallery: [commongrounds2, commongrounds3, commongrounds4, commongrounds6, commongrounds7, commongrounds8],
     summary:
       "A double-height private clubhouse framing the pool through a curtain of travertine, walnut and glass.",
     narrative: [
