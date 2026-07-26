@@ -153,7 +153,7 @@ function ProjectDetail() {
                   <div>
                     <p className="text-[10px] uppercase tracking-[0.32em] text-muted-foreground">Delivered by Elden</p>
                     <ul className="mt-5 space-y-3 text-base leading-relaxed">
-                      {(project.scope.split(/[,&·]| and /i).map((s) => s.trim()).filter(Boolean)).map((s) => (
+                      {(project.scope.split(/[,&·]| and /i).map((s: string) => s.trim()).filter(Boolean)).map((s: string) => (
                         <li key={s} className="grid grid-cols-[16px_1fr] gap-3">
                           <span className="mt-2.5 h-px bg-foreground/40" />
                           <span>{s}</span>
