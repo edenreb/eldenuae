@@ -10,7 +10,7 @@ import warehouseGym5 from "@/assets/warehouse-gym-ibn-battuta/5.jpg";
 import foretCafe1 from "@/assets/foret-cafe/1.JPG";
 import foretCafe2 from "@/assets/foret-cafe/2.JPG";
 import foretCafe3 from "@/assets/foret-cafe/3.JPG";
-import bikanerwala1 from "@/assets/bikanerwala/1.JPG";
+import bikanerwala1 from "@/assets/bikanerwala/1.jpg";
 import bikanerwala2 from "@/assets/bikanerwala/2.JPG";
 import bikanerwala3 from "@/assets/bikanerwala/3.JPG";
 import bikanerwala4 from "@/assets/bikanerwala/4.JPG";
