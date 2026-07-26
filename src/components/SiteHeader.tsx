@@ -1,14 +1,13 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
-
 const nav = [
-  { to: "/", label: "Home" },
-  { to: "/projects", label: "Projects" },
-  { to: "/services", label: "Services" },
-  { to: "/about", label: "About" },
+  { to: "/", label: "Index" },
+  { to: "/projects", label: "Work" },
+  { to: "/services", label: "Capabilities" },
+  { to: "/about", label: "Studio" },
   { to: "/blogs", label: "Journal" },
-  { to: "/contact", label: "Contact" },
+  { to: "/contact", label: "Enquire" },
 ] as const;
 
 export function SiteHeader() {
@@ -16,11 +15,10 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const isHome = pathname === "/";
-  // Only the home hero starts with a dark image behind the nav.
-  const useLightText = isHome && !scrolled;
+  const overHero = isHome && !scrolled;
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > (isHome ? window.innerHeight * 3.5 : window.innerHeight * 0.95));
+    const onScroll = () => setScrolled(window.scrollY > window.innerHeight * 0.7);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -28,76 +26,63 @@ export function SiteHeader() {
 
   return (
     <header
-      className={`fixed inset-x-4 md:inset-x-8 top-4 z-50 rounded-2xl transition-colors duration-700 ${
-        useLightText ? "text-primary-foreground" : "text-foreground"
+      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-500 ${
+        overHero
+          ? "text-primary-foreground"
+          : "text-foreground bg-background/85 backdrop-blur-md border-b border-border/70"
       }`}
     >
-      <div
-        className="pointer-events-none absolute inset-0 -z-10 rounded-2xl bg-background/60 backdrop-blur-2xl border border-white/10 shadow-lg shadow-black/5 transition-opacity duration-700"
-        style={{ opacity: isHome && !scrolled ? 0 : 1 }}
-      />
-      <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-4 md:px-10">
-        <Link to="/" className="group flex items-center gap-2">
+      <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-5 md:px-10 md:py-6">
+        <Link to="/" className="flex items-center gap-3">
           <img
             src="/logo.svg"
             alt="Elden"
-            className={`h-7 w-auto md:h-8 transition-all duration-700 ${useLightText ? "brightness-0 invert" : ""}`}
+            className={`h-6 w-auto md:h-7 transition duration-500 ${overHero ? "brightness-0 invert" : ""}`}
           />
-          <span className="hidden sm:flex flex-col leading-none">
+          <span className="hidden md:inline text-[10px] uppercase tracking-[0.35em] opacity-60">
+            Est. 2016 · Dubai
           </span>
         </Link>
 
-
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="hidden items-center gap-8 md:flex">
           {nav.map((item) => (
             <Link
               key={item.to}
               to={item.to}
               activeOptions={{ exact: item.to === "/" }}
-              activeProps={{ className: "!text-elden-green" }}
-              className="rounded-full px-4 py-2 text-sm font-medium opacity-90 transition hover:opacity-100"
+              activeProps={{ className: "!opacity-100 border-current" }}
+              className="border-b border-transparent pb-1 text-[11px] uppercase tracking-[0.28em] opacity-70 transition hover:opacity-100"
             >
               {item.label}
             </Link>
           ))}
         </nav>
 
-        <Link
-          to="/contact"
-          className="hidden rounded-full bg-elden-blue px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-sm transition hover:bg-elden-blue-deep md:inline-flex"
-        >
-          Start a project
-        </Link>
-
         <button
           aria-label="Menu"
           onClick={() => setOpen((v) => !v)}
-          className={`md:hidden inline-flex h-10 w-10 items-center justify-center rounded-full border backdrop-blur transition-all duration-700 ${
-            useLightText
-              ? "border-white/40 bg-white/10"
-              : "border-border/70 bg-background/70"
-          }`}
+          className="md:hidden inline-flex h-9 w-9 items-center justify-center border border-current/40"
         >
           <div className="relative h-3 w-5">
             <span
-              className={`absolute left-0 top-0 h-[1.5px] w-full bg-current transition ${open ? "translate-y-[6px] rotate-45" : ""}`}
+              className={`absolute left-0 top-0 h-[1px] w-full bg-current transition ${open ? "translate-y-[6px] rotate-45" : ""}`}
             />
             <span
-              className={`absolute left-0 bottom-0 h-[1.5px] w-full bg-current transition ${open ? "-translate-y-[6px] -rotate-45" : ""}`}
+              className={`absolute left-0 bottom-0 h-[1px] w-full bg-current transition ${open ? "-translate-y-[6px] -rotate-45" : ""}`}
             />
           </div>
         </button>
       </div>
 
       {open && (
-        <div className="md:hidden border-t border-border/60 bg-background/95 backdrop-blur-xl">
-          <div className="mx-auto flex max-w-[1600px] flex-col gap-1 px-6 py-4">
+        <div className="md:hidden border-t border-border/60 bg-background text-foreground">
+          <div className="mx-auto flex max-w-[1600px] flex-col px-6 py-4">
             {nav.map((item) => (
               <Link
                 key={item.to}
                 to={item.to}
                 onClick={() => setOpen(false)}
-                className="rounded-lg px-3 py-3 text-base font-medium text-foreground/90 hover:bg-muted"
+                className="border-b border-border/40 py-4 text-[11px] uppercase tracking-[0.28em]"
               >
                 {item.label}
               </Link>
