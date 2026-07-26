@@ -153,7 +153,7 @@ function ProjectDetail() {
           </Reveal>
 
           <div className="mt-14 flex flex-wrap gap-6">
-            {project.gallery.map((src, i) => (
+            {project.gallery.map((src: string, i: number) => (
               <div
                 key={i}
                 className={`w-full sm:w-[calc(50%-0.75rem)] ${project.gallery.length % 2 !== 0 && i === project.gallery.length - 1 ? "mx-auto" : ""}`}
