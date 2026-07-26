@@ -13,21 +13,22 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "../components/SiteHeader";
 import { SiteFooter } from "../components/SiteFooter";
+import { CustomCursor } from "../components/CustomCursor";
 
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <p className="text-xs uppercase tracking-[0.3em] text-accent">404</p>
+        <p className="text-xs uppercase tracking-[0.3em] text-elden-green">Error 404</p>
         <h1 className="mt-4 font-display text-6xl text-foreground">Space not found</h1>
         <p className="mt-4 text-sm text-muted-foreground">
           The page you're looking for isn't part of our current portfolio.
         </p>
         <Link
           to="/"
-          className="mt-10 inline-flex items-center gap-3 border border-foreground px-6 py-3 text-[11px] uppercase tracking-[0.3em] transition hover:bg-foreground hover:text-background"
+          className="mt-8 inline-flex items-center justify-center rounded-full bg-elden-blue px-6 py-3 text-sm font-medium text-primary-foreground transition hover:bg-elden-blue-deep"
         >
-          Return to Index
+          Return home
         </Link>
       </div>
     </div>
@@ -48,19 +49,19 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
         <p className="mt-2 text-sm text-muted-foreground">
           Something interrupted the render. Refresh, or head home.
         </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
+        <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => {
               router.invalidate();
               reset();
             }}
-            className="border border-foreground px-5 py-2.5 text-[11px] uppercase tracking-[0.3em] hover:bg-foreground hover:text-background"
+            className="rounded-full bg-elden-blue px-5 py-2.5 text-sm font-medium text-primary-foreground hover:bg-elden-blue-deep"
           >
             Try again
           </button>
           <a
             href="/"
-            className="border border-border px-5 py-2.5 text-[11px] uppercase tracking-[0.3em] hover:bg-muted"
+            className="rounded-full border border-input px-5 py-2.5 text-sm font-medium hover:bg-muted"
           >
             Go home
           </a>
@@ -79,14 +80,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Elden is a Dubai interior fit-out, joinery and MEP studio delivering considered, enduring spaces across hospitality, retail and commercial sectors.",
+          "Elden is a Dubai-based interior fit-out, joinery and MEP company converting places into spaces across hospitality, retail, commercial and leisure.",
       },
       { name: "author", content: "Elden Interior Design LLC" },
-      { name: "theme-color", content: "#1a1a17" },
+      { name: "theme-color", content: "#2a337c" },
       { property: "og:title", content: "Elden — Interior Fit-out, Joinery & MEP in Dubai" },
       {
         property: "og:description",
-        content: "A Dubai studio delivering considered, enduring interiors since 2016.",
+        content:
+          "Turnkey interior fit-out, joinery and MEP across the UAE. Converting places into spaces since 2016.",
       },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Elden Interior Design" },
@@ -99,7 +101,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter:wght@300;350;400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&display=swap",
       },
     ],
   }),
@@ -128,6 +130,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <CustomCursor />
       <SiteHeader />
       <main className="min-h-screen">
         <Outlet />

@@ -62,7 +62,7 @@ export const Route = createFileRoute("/blogs/$slug")({
         <h1 className="mt-4 font-display text-5xl">Article not found</h1>
         <Link
           to="/blogs"
-          className="mt-8 inline-flex border border-foreground px-6 py-3 text-[11px] uppercase tracking-[0.32em] hover:bg-foreground hover:text-background"
+          className="mt-8 inline-flex rounded-full bg-elden-blue px-6 py-3 text-sm text-primary-foreground"
         >
           Back to Journal
         </Link>
@@ -152,28 +152,28 @@ function PostPage() {
             <p className="text-[10px] uppercase tracking-[0.35em] text-elden-green">
               Share
             </p>
-            <div className="mt-6 flex flex-wrap gap-3">
+            <div className="mt-4 flex flex-wrap gap-3">
               <a
                 target="_blank"
                 rel="noreferrer"
                 href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
                   post.title,
                 )}&url=${encodeURIComponent(shareUrl)}`}
-                className="border border-border px-5 py-2.5 text-[11px] uppercase tracking-[0.32em] hover:bg-foreground hover:text-background"
+                className="rounded-full border border-border px-5 py-2.5 text-sm hover:bg-muted"
               >
-                Twitter
+                Twitter / X
               </a>
               <a
                 target="_blank"
                 rel="noreferrer"
                 href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`}
-                className="border border-border px-5 py-2.5 text-[11px] uppercase tracking-[0.32em] hover:bg-foreground hover:text-background"
+                className="rounded-full border border-border px-5 py-2.5 text-sm hover:bg-muted"
               >
                 LinkedIn
               </a>
               <a
                 href={`mailto:?subject=${encodeURIComponent(post.title)}&body=${encodeURIComponent(shareUrl)}`}
-                className="border border-border px-5 py-2.5 text-[11px] uppercase tracking-[0.32em] hover:bg-foreground hover:text-background"
+                className="rounded-full border border-border px-5 py-2.5 text-sm hover:bg-muted"
               >
                 Email
               </a>

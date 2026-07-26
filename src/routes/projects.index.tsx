@@ -6,16 +6,16 @@ import { Reveal } from "@/components/Reveal";
 export const Route = createFileRoute("/projects/")({
   head: () => ({
     meta: [
-      { title: "Work — Elden Interior Studio, Dubai" },
+      { title: "Projects — Elden Interior Design, Dubai" },
       {
         name: "description",
         content:
-          "The complete index of Elden's delivered interior fit-out, joinery and MEP projects across hospitality, retail, commercial and leisure sectors in the UAE.",
+          "Fit-out, joinery and MEP projects delivered by Elden across hospitality, retail, commercial and leisure sectors in the UAE.",
       },
-      { property: "og:title", content: "Work — Elden Interior Studio" },
+      { property: "og:title", content: "The Work — Elden Interior Design" },
       {
         property: "og:description",
-        content: "An index of delivered interior projects across the UAE.",
+        content: "An architectural gallery of interior fit-out projects across the UAE.",
       },
     ],
   }),
@@ -25,20 +25,20 @@ export const Route = createFileRoute("/projects/")({
 function ProjectsIndex() {
   return (
     <div className="bg-background">
-      <section className="relative border-b border-border/60 pt-40 pb-24 md:pt-56 md:pb-32">
+      <section className="relative pt-40 pb-16 md:pt-56 md:pb-24">
         <div className="mx-auto max-w-[1600px] px-6 md:px-10">
           <Reveal>
-            <p className="text-[10px] uppercase tracking-[0.4em] text-accent">Work</p>
+            <p className="text-xs uppercase tracking-[0.35em] text-elden-green">The Work</p>
           </Reveal>
           <Reveal delay={0.1}>
-            <h1 className="mt-10 max-w-[18ch] font-display text-5xl leading-[0.98] text-balance md:text-[7vw] lg:text-[6.5rem]">
-              The complete index of delivered spaces.
+            <h1 className="mt-6 max-w-5xl font-display text-6xl leading-[0.98] text-balance md:text-[8vw] lg:text-[7rem]">
+              A quiet gallery of{" "}
+              <span className="italic text-elden-blue">delivered work.</span>
             </h1>
           </Reveal>
           <Reveal delay={0.2}>
-            <p className="mt-12 max-w-2xl text-base leading-[1.75] text-muted-foreground md:text-lg">
-              Every project in this index was carried by one team, from brief
-              to key. Select a project to enter the case study.
+            <p className="mt-8 max-w-2xl text-base text-muted-foreground md:text-lg">
+              Ten projects, six sectors, one standard. Click any project to enter it.
             </p>
           </Reveal>
         </div>
@@ -46,9 +46,9 @@ function ProjectsIndex() {
 
       <section className="pb-32">
         <div className="mx-auto max-w-[1600px] px-6 md:px-10">
-          <div className="grid gap-x-8 gap-y-20 pt-16 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {projects.map((p, i) => (
-              <Reveal key={p.slug} delay={(i % 3) * 0.05}>
+              <Reveal key={p.slug} delay={(i % 3) * 0.08}>
                 <ProjectCard project={p} index={i} />
               </Reveal>
             ))}
@@ -70,30 +70,36 @@ function ProjectCard({
     <Link
       to="/projects/$slug"
       params={{ slug: project.slug }}
-      className="group block"
+      className="group relative block overflow-hidden rounded-sm bg-charcoal"
     >
       <motion.div
         layoutId={`project-image-${project.slug}`}
-        className="aspect-[4/5] w-full overflow-hidden bg-stone"
+        className="aspect-[4/5] w-full overflow-hidden"
       >
         <img
           src={project.image}
           alt={project.name}
           loading="lazy"
           width={1600}
-          height={2000}
-          className="h-full w-full object-cover transition duration-[1200ms] ease-out group-hover:scale-[1.03]"
+          height={1000}
+          className="h-full w-full object-cover transition duration-[1200ms] ease-out group-hover:scale-[1.06]"
         />
       </motion.div>
-      <div className="mt-6 flex items-center gap-4 text-[10px] uppercase tracking-[0.32em] text-muted-foreground">
-        <span className="tabular-nums">{String(index + 1).padStart(2, "0")}</span>
-        <span className="h-px w-8 bg-border" />
-        <span>{project.sector}</span>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent opacity-90 transition group-hover:opacity-100" />
+      <div className="absolute inset-x-0 bottom-0 p-6 text-primary-foreground">
+        <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.3em] text-white/70">
+          <span className="tabular-nums">{String(index + 1).padStart(2, "0")}</span>
+          <span className="h-px w-6 bg-white/40" />
+          {project.sector}
+        </div>
+        <h2 className="mt-3 font-display text-2xl leading-tight md:text-3xl">{project.name}</h2>
+        <div className="mt-3 flex items-center justify-between text-xs text-white/70">
+          <span>{project.location.split(",")[0]}</span>
+          <span className="inline-flex items-center gap-1 transition group-hover:gap-2">
+            Enter <span aria-hidden>→</span>
+          </span>
+        </div>
       </div>
-      <h2 className="mt-4 font-display text-2xl leading-tight md:text-3xl">{project.name}</h2>
-      <p className="mt-3 text-sm text-muted-foreground">
-        {project.location.split(",")[0]} · {project.year}
-      </p>
     </Link>
   );
 }

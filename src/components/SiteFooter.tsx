@@ -2,29 +2,30 @@ import { Link } from "@tanstack/react-router";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border/40 bg-charcoal text-primary-foreground">
-      <div className="mx-auto max-w-[1600px] px-6 py-24 md:px-10 md:py-32">
-        <div className="grid gap-16 md:grid-cols-[1.6fr_1fr_1fr]">
+    <footer className="relative overflow-hidden bg-elden-blue-deep text-primary-foreground">
+      <div className="pointer-events-none absolute -top-40 left-1/2 h-[520px] w-[820px] -translate-x-1/2 rounded-full bg-elden-green/20 blur-3xl" />
+      <div className="relative mx-auto max-w-[1600px] px-6 py-24 md:px-10">
+        <div className="grid gap-16 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
-            <p className="text-[10px] uppercase tracking-[0.35em] text-primary-foreground/50">
-              Enquiries
+            <p className="text-xs uppercase tracking-[0.3em] text-primary-foreground/60">
+              Let's build something enduring
             </p>
-            <h2 className="mt-6 max-w-2xl font-display text-5xl leading-[1.02] text-balance md:text-7xl">
-              Every enduring space begins with a single line.
+            <h2 className="mt-4 font-display text-5xl leading-[0.95] text-balance md:text-7xl">
+              Converting places into spaces.
             </h2>
             <Link
               to="/contact"
-              className="mt-12 inline-flex items-center gap-4 border-b border-primary-foreground/50 pb-2 text-[11px] uppercase tracking-[0.35em] transition hover:border-primary-foreground"
+              className="mt-10 inline-flex items-center gap-3 rounded-full bg-elden-green px-6 py-3 text-sm font-medium text-primary-foreground transition hover:brightness-110"
             >
-              Begin the enquiry <span aria-hidden>→</span>
+              Start a project <span aria-hidden>→</span>
             </Link>
           </div>
 
-          <div className="text-sm leading-relaxed text-primary-foreground/75">
-            <p className="mb-5 text-[10px] uppercase tracking-[0.35em] text-primary-foreground/45">
+          <div className="text-sm">
+            <p className="mb-4 text-xs uppercase tracking-[0.3em] text-primary-foreground/50">
               Studio
             </p>
-            <p>
+            <p className="leading-relaxed text-primary-foreground/80">
               Elden Interior Design LLC<br />
               Al Quoz Industrial Area 2<br />
               Opposite Planet Eco<br />
@@ -32,34 +33,35 @@ export function SiteFooter() {
             </p>
           </div>
 
-          <div className="text-sm leading-relaxed text-primary-foreground/75">
-            <p className="mb-5 text-[10px] uppercase tracking-[0.35em] text-primary-foreground/45">
+          <div className="text-sm">
+            <p className="mb-4 text-xs uppercase tracking-[0.3em] text-primary-foreground/50">
               Contact
             </p>
-            <p>
+            <p className="leading-relaxed text-primary-foreground/80">
               info@eldenuae.com<br />
               +971 4 227 6206
             </p>
-            <p className="mt-8 mb-3 text-[10px] uppercase tracking-[0.35em] text-primary-foreground/45">
-              Index
+            <p className="mt-6 mb-2 text-xs uppercase tracking-[0.3em] text-primary-foreground/50">
+              Sitemap
             </p>
-            <div className="flex flex-col gap-1.5">
-              <Link to="/projects">Work</Link>
-              <Link to="/services">Capabilities</Link>
-              <Link to="/about">Studio</Link>
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-primary-foreground/80">
+              <Link to="/projects">Projects</Link>
+              <Link to="/services">Services</Link>
+              <Link to="/about">About</Link>
               <Link to="/blogs">Journal</Link>
-              <Link to="/contact">Enquire</Link>
+              <Link to="/contact">Contact</Link>
             </div>
           </div>
         </div>
 
-        <div className="mt-24 flex flex-wrap items-center justify-between gap-4 border-t border-primary-foreground/15 pt-6 text-[10px] uppercase tracking-[0.3em] text-primary-foreground/45">
-          <div className="flex items-center gap-6">
-            <img src="/logo.svg" alt="Elden" className="h-5 w-auto brightness-0 invert opacity-70" />
-            <p>© {new Date().getFullYear()} Elden Interior Design LLC</p>
+        <div className="mt-20 flex flex-wrap items-center justify-between gap-4 border-t border-primary-foreground/15 pt-6 text-xs text-primary-foreground/50">
+          <div className="flex items-center gap-4">
+            <img src="/logo.svg" alt="Elden" className="h-6 w-auto brightness-0 invert opacity-80" />
+            <p>© {new Date().getFullYear()} Elden Interior Design LLC. All rights reserved.</p>
           </div>
-          <p>Interior Fit-out · Joinery · MEP · Dubai</p>
+          <p>Interior Fit-out · Joinery · MEP · Dubai, UAE</p>
         </div>
+
       </div>
     </footer>
   );
