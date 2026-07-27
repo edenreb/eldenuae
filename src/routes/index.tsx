@@ -17,6 +17,11 @@ import client10 from "@/assets/clients/10.png";
 import client11 from "@/assets/clients/11.png";
 import client12 from "@/assets/clients/12.png";
 import client13 from "@/assets/clients/13.png";
+import client14 from "@/assets/clients/14.png";
+import client15 from "@/assets/clients/15.png";
+import client16 from "@/assets/clients/16.png";
+import client17 from "@/assets/clients/17.png";
+import client18 from "@/assets/clients/18.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -314,6 +319,11 @@ const clients = [
   { name: "Sharaf DG", logo: client11 },
   { name: "Kulcha King", logo: client12 },
   { name: "El Greco", logo: client13 },
+  { name: "Haldiram's", logo: client14 },
+  { name: "Equities First", logo: client15 },
+  { name: "Common Grounds", logo: client16 },
+  { name: "Nando's", logo: client17 },
+  { name: "TBK Restaurant", logo: client18 },
 ];
 
 function ClientsMarquee() {

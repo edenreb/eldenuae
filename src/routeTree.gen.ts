@@ -16,6 +16,13 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProjectsIndexRouteImport } from './routes/projects.index'
 import { Route as ProjectsSlugRouteImport } from './routes/projects.$slug'
+import { Route as BlogsThingsILearntRouteImport } from './routes/blogs.things-i-learnt'
+import { Route as BlogsSixMaterialsSixSectorsRouteImport } from './routes/blogs.six-materials-six-sectors'
+import { Route as BlogsSiteSafetyInductionMepRouteImport } from './routes/blogs.site-safety-induction-mep'
+import { Route as BlogsSiteSafetyInductionRouteImport } from './routes/blogs.site-safety-induction'
+import { Route as BlogsSilentHvacHospitalityRouteImport } from './routes/blogs.silent-hvac-hospitality'
+import { Route as BlogsMepInsightsRouteImport } from './routes/blogs.mep-insights'
+import { Route as BlogsBookMatchedMarbleBarRouteImport } from './routes/blogs.book-matched-marble-bar'
 import { Route as BlogsSlugRouteImport } from './routes/blogs.$slug'
 
 const ServicesRoute = ServicesRouteImport.update({
@@ -53,6 +60,46 @@ const ProjectsSlugRoute = ProjectsSlugRouteImport.update({
   path: '/projects/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogsThingsILearntRoute = BlogsThingsILearntRouteImport.update({
+  id: '/things-i-learnt',
+  path: '/things-i-learnt',
+  getParentRoute: () => BlogsRoute,
+} as any)
+const BlogsSixMaterialsSixSectorsRoute =
+  BlogsSixMaterialsSixSectorsRouteImport.update({
+    id: '/six-materials-six-sectors',
+    path: '/six-materials-six-sectors',
+    getParentRoute: () => BlogsRoute,
+  } as any)
+const BlogsSiteSafetyInductionMepRoute =
+  BlogsSiteSafetyInductionMepRouteImport.update({
+    id: '/site-safety-induction-mep',
+    path: '/site-safety-induction-mep',
+    getParentRoute: () => BlogsRoute,
+  } as any)
+const BlogsSiteSafetyInductionRoute =
+  BlogsSiteSafetyInductionRouteImport.update({
+    id: '/site-safety-induction',
+    path: '/site-safety-induction',
+    getParentRoute: () => BlogsRoute,
+  } as any)
+const BlogsSilentHvacHospitalityRoute =
+  BlogsSilentHvacHospitalityRouteImport.update({
+    id: '/silent-hvac-hospitality',
+    path: '/silent-hvac-hospitality',
+    getParentRoute: () => BlogsRoute,
+  } as any)
+const BlogsMepInsightsRoute = BlogsMepInsightsRouteImport.update({
+  id: '/mep-insights',
+  path: '/mep-insights',
+  getParentRoute: () => BlogsRoute,
+} as any)
+const BlogsBookMatchedMarbleBarRoute =
+  BlogsBookMatchedMarbleBarRouteImport.update({
+    id: '/book-matched-marble-bar',
+    path: '/book-matched-marble-bar',
+    getParentRoute: () => BlogsRoute,
+  } as any)
 const BlogsSlugRoute = BlogsSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -66,6 +113,13 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/services': typeof ServicesRoute
   '/blogs/$slug': typeof BlogsSlugRoute
+  '/blogs/book-matched-marble-bar': typeof BlogsBookMatchedMarbleBarRoute
+  '/blogs/mep-insights': typeof BlogsMepInsightsRoute
+  '/blogs/silent-hvac-hospitality': typeof BlogsSilentHvacHospitalityRoute
+  '/blogs/site-safety-induction': typeof BlogsSiteSafetyInductionRoute
+  '/blogs/site-safety-induction-mep': typeof BlogsSiteSafetyInductionMepRoute
+  '/blogs/six-materials-six-sectors': typeof BlogsSixMaterialsSixSectorsRoute
+  '/blogs/things-i-learnt': typeof BlogsThingsILearntRoute
   '/projects/$slug': typeof ProjectsSlugRoute
   '/projects/': typeof ProjectsIndexRoute
 }
@@ -76,6 +130,13 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/services': typeof ServicesRoute
   '/blogs/$slug': typeof BlogsSlugRoute
+  '/blogs/book-matched-marble-bar': typeof BlogsBookMatchedMarbleBarRoute
+  '/blogs/mep-insights': typeof BlogsMepInsightsRoute
+  '/blogs/silent-hvac-hospitality': typeof BlogsSilentHvacHospitalityRoute
+  '/blogs/site-safety-induction': typeof BlogsSiteSafetyInductionRoute
+  '/blogs/site-safety-induction-mep': typeof BlogsSiteSafetyInductionMepRoute
+  '/blogs/six-materials-six-sectors': typeof BlogsSixMaterialsSixSectorsRoute
+  '/blogs/things-i-learnt': typeof BlogsThingsILearntRoute
   '/projects/$slug': typeof ProjectsSlugRoute
   '/projects': typeof ProjectsIndexRoute
 }
@@ -87,6 +148,13 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/services': typeof ServicesRoute
   '/blogs/$slug': typeof BlogsSlugRoute
+  '/blogs/book-matched-marble-bar': typeof BlogsBookMatchedMarbleBarRoute
+  '/blogs/mep-insights': typeof BlogsMepInsightsRoute
+  '/blogs/silent-hvac-hospitality': typeof BlogsSilentHvacHospitalityRoute
+  '/blogs/site-safety-induction': typeof BlogsSiteSafetyInductionRoute
+  '/blogs/site-safety-induction-mep': typeof BlogsSiteSafetyInductionMepRoute
+  '/blogs/six-materials-six-sectors': typeof BlogsSixMaterialsSixSectorsRoute
+  '/blogs/things-i-learnt': typeof BlogsThingsILearntRoute
   '/projects/$slug': typeof ProjectsSlugRoute
   '/projects/': typeof ProjectsIndexRoute
 }
@@ -99,6 +167,13 @@ export interface FileRouteTypes {
     | '/contact'
     | '/services'
     | '/blogs/$slug'
+    | '/blogs/book-matched-marble-bar'
+    | '/blogs/mep-insights'
+    | '/blogs/silent-hvac-hospitality'
+    | '/blogs/site-safety-induction'
+    | '/blogs/site-safety-induction-mep'
+    | '/blogs/six-materials-six-sectors'
+    | '/blogs/things-i-learnt'
     | '/projects/$slug'
     | '/projects/'
   fileRoutesByTo: FileRoutesByTo
@@ -109,6 +184,13 @@ export interface FileRouteTypes {
     | '/contact'
     | '/services'
     | '/blogs/$slug'
+    | '/blogs/book-matched-marble-bar'
+    | '/blogs/mep-insights'
+    | '/blogs/silent-hvac-hospitality'
+    | '/blogs/site-safety-induction'
+    | '/blogs/site-safety-induction-mep'
+    | '/blogs/six-materials-six-sectors'
+    | '/blogs/things-i-learnt'
     | '/projects/$slug'
     | '/projects'
   id:
@@ -119,6 +201,13 @@ export interface FileRouteTypes {
     | '/contact'
     | '/services'
     | '/blogs/$slug'
+    | '/blogs/book-matched-marble-bar'
+    | '/blogs/mep-insights'
+    | '/blogs/silent-hvac-hospitality'
+    | '/blogs/site-safety-induction'
+    | '/blogs/site-safety-induction-mep'
+    | '/blogs/six-materials-six-sectors'
+    | '/blogs/things-i-learnt'
     | '/projects/$slug'
     | '/projects/'
   fileRoutesById: FileRoutesById
@@ -184,6 +273,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blogs/things-i-learnt': {
+      id: '/blogs/things-i-learnt'
+      path: '/things-i-learnt'
+      fullPath: '/blogs/things-i-learnt'
+      preLoaderRoute: typeof BlogsThingsILearntRouteImport
+      parentRoute: typeof BlogsRoute
+    }
+    '/blogs/six-materials-six-sectors': {
+      id: '/blogs/six-materials-six-sectors'
+      path: '/six-materials-six-sectors'
+      fullPath: '/blogs/six-materials-six-sectors'
+      preLoaderRoute: typeof BlogsSixMaterialsSixSectorsRouteImport
+      parentRoute: typeof BlogsRoute
+    }
+    '/blogs/site-safety-induction-mep': {
+      id: '/blogs/site-safety-induction-mep'
+      path: '/site-safety-induction-mep'
+      fullPath: '/blogs/site-safety-induction-mep'
+      preLoaderRoute: typeof BlogsSiteSafetyInductionMepRouteImport
+      parentRoute: typeof BlogsRoute
+    }
+    '/blogs/site-safety-induction': {
+      id: '/blogs/site-safety-induction'
+      path: '/site-safety-induction'
+      fullPath: '/blogs/site-safety-induction'
+      preLoaderRoute: typeof BlogsSiteSafetyInductionRouteImport
+      parentRoute: typeof BlogsRoute
+    }
+    '/blogs/silent-hvac-hospitality': {
+      id: '/blogs/silent-hvac-hospitality'
+      path: '/silent-hvac-hospitality'
+      fullPath: '/blogs/silent-hvac-hospitality'
+      preLoaderRoute: typeof BlogsSilentHvacHospitalityRouteImport
+      parentRoute: typeof BlogsRoute
+    }
+    '/blogs/mep-insights': {
+      id: '/blogs/mep-insights'
+      path: '/mep-insights'
+      fullPath: '/blogs/mep-insights'
+      preLoaderRoute: typeof BlogsMepInsightsRouteImport
+      parentRoute: typeof BlogsRoute
+    }
+    '/blogs/book-matched-marble-bar': {
+      id: '/blogs/book-matched-marble-bar'
+      path: '/book-matched-marble-bar'
+      fullPath: '/blogs/book-matched-marble-bar'
+      preLoaderRoute: typeof BlogsBookMatchedMarbleBarRouteImport
+      parentRoute: typeof BlogsRoute
+    }
     '/blogs/$slug': {
       id: '/blogs/$slug'
       path: '/$slug'
@@ -196,10 +334,24 @@ declare module '@tanstack/react-router' {
 
 interface BlogsRouteChildren {
   BlogsSlugRoute: typeof BlogsSlugRoute
+  BlogsBookMatchedMarbleBarRoute: typeof BlogsBookMatchedMarbleBarRoute
+  BlogsMepInsightsRoute: typeof BlogsMepInsightsRoute
+  BlogsSilentHvacHospitalityRoute: typeof BlogsSilentHvacHospitalityRoute
+  BlogsSiteSafetyInductionRoute: typeof BlogsSiteSafetyInductionRoute
+  BlogsSiteSafetyInductionMepRoute: typeof BlogsSiteSafetyInductionMepRoute
+  BlogsSixMaterialsSixSectorsRoute: typeof BlogsSixMaterialsSixSectorsRoute
+  BlogsThingsILearntRoute: typeof BlogsThingsILearntRoute
 }
 
 const BlogsRouteChildren: BlogsRouteChildren = {
   BlogsSlugRoute: BlogsSlugRoute,
+  BlogsBookMatchedMarbleBarRoute: BlogsBookMatchedMarbleBarRoute,
+  BlogsMepInsightsRoute: BlogsMepInsightsRoute,
+  BlogsSilentHvacHospitalityRoute: BlogsSilentHvacHospitalityRoute,
+  BlogsSiteSafetyInductionRoute: BlogsSiteSafetyInductionRoute,
+  BlogsSiteSafetyInductionMepRoute: BlogsSiteSafetyInductionMepRoute,
+  BlogsSixMaterialsSixSectorsRoute: BlogsSixMaterialsSixSectorsRoute,
+  BlogsThingsILearntRoute: BlogsThingsILearntRoute,
 }
 
 const BlogsRouteWithChildren = BlogsRoute._addFileChildren(BlogsRouteChildren)
