@@ -4,7 +4,7 @@ export function SiteFooter() {
   return (
     <footer className="relative overflow-hidden bg-elden-blue-deep text-primary-foreground">
       <div className="pointer-events-none absolute -top-40 left-1/2 h-[520px] w-[820px] -translate-x-1/2 rounded-full bg-elden-green/20 blur-3xl" />
-      <div className="relative mx-auto max-w-[1600px] px-6 py-24 md:px-10">
+      <div className="relative mx-auto max-w-[1600px] px-6 pt-24 pb-12 md:px-10">
         <div className="grid gap-16 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-primary-foreground/60">
