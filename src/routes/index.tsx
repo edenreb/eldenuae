@@ -73,7 +73,7 @@ function Index() {
           <div className="mt-16 grid gap-10 border-t border-border/60 pt-10 md:grid-cols-3">
             {[
               ["09+", "Years converting places into spaces"],
-              ["100+", "Fit-out projects delivered across the UAE"],
+              ["80+", "Fit-out projects delivered across the UAE"],
               ["6", "Sectors served, from hospitality to cultural"],
             ].map(([k, v], i) => (
               <Reveal key={k} delay={0.1 * i}>
