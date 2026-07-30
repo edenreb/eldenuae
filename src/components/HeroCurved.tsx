@@ -34,7 +34,7 @@ export function HeroCurved() {
         >
           <div
             className="absolute left-1/2 top-0 h-full w-0 animate-[hero-orbit_70s_linear_infinite]"
-            style={{ transformStyle: "preserve-3d" }}
+            style={{ transformStyle: "preserve-3d", transform: `translateZ(-${RADIUS}px)` }}
           >
             {slots.map((p, i) => (
               <Link

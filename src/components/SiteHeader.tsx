@@ -41,7 +41,7 @@ export function SiteHeader() {
           <img
             src="/logo.svg"
             alt="Elden"
-            className={`h-7 w-auto md:h-8 transition-all duration-700 ${useLightText ? "brightness-0 invert" : ""}`}
+            className={`h-7 w-auto md:h-8 transition-all duration-700 ${useLightText ? "brightness-0 invert" : "brightness-0"}`}
           />
           <span className="hidden sm:flex flex-col leading-none">
           </span>
