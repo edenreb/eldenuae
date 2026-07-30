@@ -1,13 +1,56 @@
 import { Link } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
 import { projects } from "@/lib/projects";
 
-const RADIUS = 2000;
+const RADIUS = 1900;
 const CARD_WIDTH = 260;
 const GAP = 26;
-const SLICE = 360 / 40; // 40 slots around the cylinder
+const SLOTS = 40;
+const SLICE = 360 / SLOTS;
+const AUTO_SPEED = 0.6; // degrees per second — very slow
 
 export function HeroCurved() {
-  const slots = [...projects, ...projects].slice(0, 40);
+  const slots = [...projects, ...projects, ...projects].slice(0, SLOTS);
+  const ringRef = useRef<HTMLDivElement>(null);
+  const rotation = useRef(0);
+  const dragging = useRef(false);
+  const moved = useRef(false);
+  const lastX = useRef(0);
+
+  useEffect(() => {
+    let raf = 0;
+    let prev = performance.now();
+    const tick = (now: number) => {
+      const dt = (now - prev) / 1000;
+      prev = now;
+      if (!dragging.current) rotation.current += AUTO_SPEED * dt;
+      if (ringRef.current) {
+        ringRef.current.style.transform = `translateZ(${RADIUS}px) rotateY(${rotation.current}deg)`;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    dragging.current = true;
+    moved.current = false;
+    lastX.current = e.clientX;
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+  };
+
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (!dragging.current) return;
+    const dx = e.clientX - lastX.current;
+    lastX.current = e.clientX;
+    if (Math.abs(dx) > 1) moved.current = true;
+    rotation.current += dx * 0.04;
+  };
+
+  const endDrag = () => {
+    dragging.current = false;
+  };
 
   return (
     <section
@@ -23,29 +66,40 @@ export function HeroCurved() {
         </p>
       </div>
 
-      {/* Curved cylinder of work */}
+      {/* Concave cylinder of work — draggable */}
       <div
-        className="relative mt-14 md:mt-20"
+        className="relative mt-14 cursor-grab select-none active:cursor-grabbing md:mt-20"
         style={{ perspective: "1100px", perspectiveOrigin: "50% 50%" }}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
       >
         <div
           className="relative mx-auto h-[300px] md:h-[360px]"
           style={{ transformStyle: "preserve-3d" }}
         >
           <div
-            className="absolute left-1/2 top-0 h-full w-0 animate-[hero-orbit_70s_linear_infinite]"
-            style={{ transformStyle: "preserve-3d", transform: `translateZ(-${RADIUS}px)` }}
+            ref={ringRef}
+            className="absolute left-1/2 top-0 h-full w-0"
+            style={{
+              transformStyle: "preserve-3d",
+              transform: `translateZ(${RADIUS}px)`,
+            }}
           >
             {slots.map((p, i) => (
               <Link
                 key={`${p.slug}-${i}`}
                 to="/projects/$slug"
                 params={{ slug: p.slug }}
+                onClick={(e) => {
+                  if (moved.current) e.preventDefault();
+                }}
                 className="absolute top-0 block h-full overflow-hidden bg-muted"
                 style={{
                   width: CARD_WIDTH,
                   marginLeft: -(CARD_WIDTH + GAP) / 2,
-                  transform: `rotateY(${i * SLICE}deg) translateZ(${RADIUS}px)`,
+                  transform: `rotateY(${i * SLICE}deg) translateZ(-${RADIUS}px)`,
                 }}
               >
                 <img
