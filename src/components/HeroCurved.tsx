@@ -2,9 +2,9 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 import { projects } from "@/lib/projects";
 
-const RADIUS = 1100;
-const CARD_WIDTH = 260;
-const GAP = 26;
+const RADIUS = 1300;
+const CARD_WIDTH = 320;
+const GAP = 16;
 const SLOTS = 24;
 const SLICE = 360 / SLOTS;
 const AUTO_SPEED = 0.6; // degrees per second — very slow
@@ -76,7 +76,7 @@ export function HeroCurved() {
         onPointerCancel={endDrag}
       >
         <div
-          className="relative mx-auto h-[300px] md:h-[360px]"
+          className="relative mx-auto h-[340px] md:h-[420px]"
           style={{ transformStyle: "preserve-3d" }}
         >
           <div
