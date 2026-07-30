@@ -46,7 +46,6 @@ export function HeroCurved() {
                   width: CARD_WIDTH,
                   marginLeft: -(CARD_WIDTH + GAP) / 2,
                   transform: `rotateY(${i * SLICE}deg) translateZ(${RADIUS}px)`,
-                  backfaceVisibility: "hidden",
                 }}
               >
                 <img
