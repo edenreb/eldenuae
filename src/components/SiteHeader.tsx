@@ -17,7 +17,7 @@ export function SiteHeader() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const isHome = pathname === "/";
   // Only the home hero starts with a dark image behind the nav.
-  const useLightText = isHome && !scrolled;
+  const useLightText = false;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > (isHome ? window.innerHeight * 3.5 : window.innerHeight * 0.95));
@@ -34,14 +34,14 @@ export function SiteHeader() {
     >
       <div
         className="pointer-events-none absolute inset-0 -z-10 rounded-2xl bg-background/60 backdrop-blur-2xl border border-white/10 shadow-lg shadow-black/5 transition-opacity duration-700"
-        style={{ opacity: isHome && !scrolled ? 0 : 1 }}
+        style={{ opacity: 1 }}
       />
       <div className="mx-auto flex max-w-[1600px] items-center justify-between px-6 py-4 md:px-10">
         <Link to="/" className="group flex items-center gap-2">
           <img
             src="/logo.svg"
             alt="Elden"
-            className={`h-7 w-auto md:h-8 transition-all duration-700 ${useLightText ? "brightness-0 invert" : ""}`}
+            className={`h-7 w-auto md:h-8 transition-all duration-700 ${useLightText ? "brightness-0 invert" : "brightness-0"}`}
           />
           <span className="hidden sm:flex flex-col leading-none">
           </span>
