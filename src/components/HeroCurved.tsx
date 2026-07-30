@@ -2,10 +2,10 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 import { projects } from "@/lib/projects";
 
-const RADIUS = 1900;
+const RADIUS = 1100;
 const CARD_WIDTH = 260;
 const GAP = 26;
-const SLOTS = 40;
+const SLOTS = 24;
 const SLICE = 360 / SLOTS;
 const AUTO_SPEED = 0.6; // degrees per second — very slow
 
