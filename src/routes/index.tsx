@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
-import { HeroSchematic } from "@/components/HeroSchematic";
+import { HeroCurved } from "@/components/HeroCurved";
 import { Reveal, ParallaxImage } from "@/components/Reveal";
 import { projects } from "@/lib/projects";
 import client1 from "@/assets/clients/1.png";
@@ -51,7 +51,7 @@ const sectors = ["Hospitality", "Restaurants", "Retail", "Commercial", "Leisure"
 function Index() {
   return (
     <div className="bg-background">
-      <HeroSchematic />
+      <HeroCurved />
 
       {/* Clients we've served — sliding list */}
       <ClientsMarquee />

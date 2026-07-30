@@ -135,6 +135,11 @@
     linear-gradient(180deg, var(--marble), var(--stone));
 }
 
+@keyframes hero-orbit {
+  from { transform: rotateY(0deg); }
+  to   { transform: rotateY(-360deg); }
+}
+
 @keyframes marquee {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
