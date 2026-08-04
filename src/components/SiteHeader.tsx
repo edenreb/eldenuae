@@ -1,5 +1,5 @@
-import { Link, useRouterState } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
+import { useState } from "react";
 
 
 const nav = [
@@ -12,26 +12,10 @@ const nav = [
 ] as const;
 
 export function SiteHeader() {
-  const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const isHome = pathname === "/";
-  // Only the home hero starts with a dark image behind the nav.
-  const useLightText = false;
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > (isHome ? window.innerHeight * 3.5 : window.innerHeight * 0.95));
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [isHome]);
 
   return (
-    <header
-      className={`fixed inset-x-4 md:inset-x-8 top-4 z-50 rounded-2xl transition-colors duration-700 ${
-        useLightText ? "text-primary-foreground" : "text-foreground"
-      }`}
-    >
+    <header className="fixed inset-x-4 md:inset-x-8 top-4 z-50 rounded-2xl text-foreground transition-colors duration-700">
       <div
         className="pointer-events-none absolute inset-0 -z-10 rounded-2xl bg-background/60 backdrop-blur-2xl border border-white/10 shadow-lg shadow-black/5 transition-opacity duration-700"
         style={{ opacity: 1 }}
@@ -72,11 +56,7 @@ export function SiteHeader() {
         <button
           aria-label="Menu"
           onClick={() => setOpen((v) => !v)}
-          className={`md:hidden inline-flex h-10 w-10 items-center justify-center rounded-full border backdrop-blur transition-all duration-700 ${
-            useLightText
-              ? "border-white/40 bg-white/10"
-              : "border-border/70 bg-background/70"
-          }`}
+          className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/70 bg-background/70 backdrop-blur transition-all duration-700"
         >
           <div className="relative h-3 w-5">
             <span

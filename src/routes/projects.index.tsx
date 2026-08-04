@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion } from "motion/react";
 import { projects } from "@/lib/projects";
 import { Reveal } from "@/components/Reveal";
+import { Img } from "@/components/Img";
 
 export const Route = createFileRoute("/projects/")({
   head: () => ({
@@ -72,19 +72,14 @@ function ProjectCard({
       params={{ slug: project.slug }}
       className="group relative block overflow-hidden rounded-sm bg-charcoal"
     >
-      <motion.div
-        layoutId={`project-image-${project.slug}`}
-        className="aspect-[4/5] w-full overflow-hidden"
-      >
-        <img
-          src={project.image}
+      <div className="aspect-[4/5] w-full overflow-hidden">
+        <Img
+          image={project.image}
           alt={project.name}
-          loading="lazy"
-          width={1600}
-          height={1000}
+          sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
           className="h-full w-full object-cover transition duration-[1200ms] ease-out group-hover:scale-[1.06]"
         />
-      </motion.div>
+      </div>
       <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent opacity-90 transition group-hover:opacity-100" />
       <div className="absolute inset-x-0 bottom-0 p-6 text-primary-foreground">
         <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.3em] text-white/70">

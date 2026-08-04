@@ -3,25 +3,9 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { HeroCurved } from "@/components/HeroCurved";
 import { Reveal, ParallaxImage } from "@/components/Reveal";
+import { Img } from "@/components/Img";
 import { projects } from "@/lib/projects";
-import client1 from "@/assets/clients/1.png";
-import client2 from "@/assets/clients/2.png";
-import client3 from "@/assets/clients/3.png";
-import client4 from "@/assets/clients/4.png";
-import client5 from "@/assets/clients/5.png";
-import client6 from "@/assets/clients/6.png";
-import client7 from "@/assets/clients/7.png";
-import client8 from "@/assets/clients/8.png";
-import client9 from "@/assets/clients/9.png";
-import client10 from "@/assets/clients/10.png";
-import client11 from "@/assets/clients/11.png";
-import client12 from "@/assets/clients/12.png";
-import client13 from "@/assets/clients/13.png";
-import client14 from "@/assets/clients/14.png";
-import client15 from "@/assets/clients/15.png";
-import client16 from "@/assets/clients/16.png";
-import client17 from "@/assets/clients/17.png";
-import client18 from "@/assets/clients/18.png";
+import { client1, client2, client3, client4, client5, client6, client7, client8, client9, client10, client11, client12, client13, client14, client15, client16, client17, client18 } from "@/assets/generated/images";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -178,8 +162,9 @@ function FeaturedProject({
         }`}
       >
         <ParallaxImage
-          src={project.image}
+          image={project.image}
           alt={project.name}
+          sizes="(min-width: 768px) 58vw, 100vw"
           className="aspect-[16/10] rounded-sm bg-transparent"
         />
 
@@ -329,7 +314,7 @@ const clients = [
 function ClientsMarquee() {
   const loop = [...clients, ...clients];
   return (
-    <section className="relative overflow-hidden border-y border-border/60 bg-elden-stone/40 py-10 md:py-12">
+    <section className="relative overflow-hidden border-y border-border/60 bg-stone/40 py-10 md:py-12">
       <div className="mx-auto max-w-[1600px] px-6 md:px-10">
         <Reveal>
           <p className="text-xs uppercase tracking-[0.35em] text-elden-blue-deep/70">
@@ -348,12 +333,12 @@ function ClientsMarquee() {
       >
         <div className="flex shrink-0 animate-[marquee_45s_linear_infinite] items-center gap-8 pr-8 md:gap-12 md:pr-12">
           {loop.map((c, i) => (
-            <img
+            <Img
               key={`${c.name}-${i}`}
-              src={c.logo}
+              image={c.logo}
               alt={c.name}
-              width={1536}
-              height={512}
+              sizes="(min-width: 768px) 252px, 144px"
+              intrinsic
               className="h-16 w-auto shrink-0 object-contain opacity-70 grayscale transition duration-500 hover:opacity-100 hover:grayscale-0 md:h-28"
             />
           ))}

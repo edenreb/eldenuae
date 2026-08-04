@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Reveal, ParallaxImage } from "@/components/Reveal";
-import teamImage from "@/assets/hero-frame-4.jpg";
+import { corporateHeadquarters1 as teamImage } from "@/assets/generated/images";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -51,8 +51,9 @@ function AboutPage() {
       <section className="py-16">
         <div className="mx-auto max-w-[1600px] px-6 md:px-10">
           <ParallaxImage
-            src={teamImage}
+            image={teamImage}
             alt="Elden delivered lobby interior"
+            sizes="(min-width: 768px) 60vw, 100vw"
             className="aspect-[21/9] rounded-sm bg-muted"
           />
         </div>

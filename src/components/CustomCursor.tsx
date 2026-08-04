@@ -6,7 +6,6 @@ import { useEffect, useRef, useState } from "react";
  */
 export function CustomCursor() {
   const [enabled, setEnabled] = useState(false);
-  const [hover, setHover] = useState(false);
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
 
@@ -29,6 +28,8 @@ export function CustomCursor() {
     let my = window.innerHeight / 2;
     let rx = mx;
     let ry = my;
+    let hovering = false;
+    let raf = 0;
 
     const onMove = (e: MouseEvent) => {
       mx = e.clientX;
@@ -37,31 +38,37 @@ export function CustomCursor() {
       dot.style.opacity = "1";
       ring.style.opacity = "1";
       const t = e.target as HTMLElement | null;
-      setHover(
-        !!t?.closest(
-          'a, button, [role="button"], input, textarea, select, label, [data-cursor="hover"]',
-        ),
+      const next = !!t?.closest(
+        'a, button, [role="button"], input, textarea, select, label, [data-cursor="hover"]',
       );
+      if (next !== hovering) {
+        hovering = next;
+        ring.classList.toggle("cursor-ring--hover", hovering);
+      }
+      if (!raf) raf = requestAnimationFrame(loop);
     };
     const onLeave = () => {
       dot.style.opacity = "0";
       ring.style.opacity = "0";
     };
 
-    let raf = 0;
     const loop = () => {
       rx += (mx - rx) * 0.18;
       ry += (my - ry) * 0.18;
       ring.style.transform = `translate3d(${rx}px, ${ry}px, 0) translate(-50%, -50%)`;
+      if (Math.abs(mx - rx) < 0.1 && Math.abs(my - ry) < 0.1) {
+        raf = 0;
+        return;
+      }
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
 
-    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mousemove", onMove, { passive: true });
     document.addEventListener("mouseleave", onLeave);
 
     return () => {
-      cancelAnimationFrame(raf);
+      if (raf) cancelAnimationFrame(raf);
       window.removeEventListener("mousemove", onMove);
       document.removeEventListener("mouseleave", onLeave);
       document.documentElement.classList.remove("cursor-none-root");
@@ -81,16 +88,8 @@ export function CustomCursor() {
       <div
         ref={ringRef}
         aria-hidden
-        className="pointer-events-none fixed left-0 top-0 z-[100] rounded-full border-2 border-elden-blue"
-        style={{
-          width: hover ? 60 : 36,
-          height: hover ? 60 : 36,
-          opacity: 0,
-          mixBlendMode: "difference",
-          transition:
-            "width 220ms cubic-bezier(0.22,1,0.36,1), height 220ms cubic-bezier(0.22,1,0.36,1), opacity 200ms ease, background-color 200ms ease, border-color 200ms ease",
-          backgroundColor: hover ? "rgba(255,255,255,0.1)" : "transparent",
-        }}
+        className="cursor-ring pointer-events-none fixed left-0 top-0 z-[100] rounded-full border-2 border-elden-blue"
+        style={{ opacity: 0, mixBlendMode: "difference" }}
       />
     </>
   );

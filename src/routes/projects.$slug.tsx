@@ -25,8 +25,8 @@ export const Route = createFileRoute("/projects/$slug")({
         { name: "description", content: p.summary },
         { property: "og:title", content: `${p.name} — Elden` },
         { property: "og:description", content: p.summary },
-        { property: "og:image", content: p.image },
-        { name: "twitter:image", content: p.image },
+        { property: "og:image", content: p.image.src },
+        { name: "twitter:image", content: p.image.src },
       ],
     };
   },
@@ -60,23 +60,20 @@ function ProjectDetail() {
         transition={{ duration: 0.6 }}
         className="relative h-[92vh] w-full overflow-hidden bg-charcoal"
       >
-        <motion.div
-          layoutId={`project-image-${project.slug}`}
-          className="absolute inset-0"
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-        >
+        <div className="absolute inset-0">
           <motion.img
-            src={project.image}
+            src={project.image.src}
+            srcSet={project.image.srcSet}
+            sizes="100vw"
             alt={project.name}
             fetchPriority="high"
-            width={1600}
-            height={1000}
+            decoding="async"
             className="h-full w-full object-cover"
             initial={{ scale: 1.08 }}
             animate={{ scale: 1 }}
             transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
           />
-        </motion.div>
+        </div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/50" />
 
         <div className="relative z-10 mx-auto flex h-full max-w-[1600px] flex-col justify-between px-6 pt-32 pb-16 text-primary-foreground md:px-10 md:pb-24">
@@ -153,14 +150,15 @@ function ProjectDetail() {
           </Reveal>
 
           <div className="mt-14 flex flex-wrap gap-6">
-            {project.gallery.map((src: string, i: number) => (
+            {project.gallery.map((image, i) => (
               <div
                 key={i}
                 className={`w-full sm:w-[calc(50%-0.75rem)] ${project.gallery.length % 2 !== 0 && i === project.gallery.length - 1 ? "mx-auto" : ""}`}
               >
                 <ParallaxImage
-                  src={src}
+                  image={image}
                   alt={`${project.name} — view ${i + 1}`}
+                  sizes="(min-width: 640px) 50vw, 100vw"
                   className="aspect-[16/10] rounded-sm bg-muted"
                 />
               </div>

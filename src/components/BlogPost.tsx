@@ -25,6 +25,7 @@ export function BlogPost({ post, related }: { post: Post; related: Post[] }) {
         <img
           src={post.cover}
           alt={post.title}
+          decoding="async"
           className="absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-background" />
@@ -129,6 +130,8 @@ export function BlogPost({ post, related }: { post: Post; related: Post[] }) {
                   <img
                     src={r.cover}
                     alt={r.title}
+                    loading="lazy"
+                    decoding="async"
                     className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
                   />
                 </div>

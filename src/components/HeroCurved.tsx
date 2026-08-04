@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { projects } from "@/lib/projects";
+import { Img } from "@/components/Img";
 
 const RADIUS = 1300;
 const CARD_WIDTH = 320;
@@ -10,7 +11,8 @@ const SLICE = 360 / SLOTS;
 const AUTO_SPEED = 0.6; // degrees per second — very slow
 
 export function HeroCurved() {
-  const slots = [...projects, ...projects, ...projects].slice(0, SLOTS);
+  const slots = useMemo(() => projects.slice(0, SLOTS), []);
+  const sectionRef = useRef<HTMLElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
   const rotation = useRef(0);
   const dragging = useRef(false);
@@ -18,8 +20,14 @@ export function HeroCurved() {
   const lastX = useRef(0);
 
   useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
     let raf = 0;
-    let prev = performance.now();
+    let prev = 0;
+    let visible = false;
+
     const tick = (now: number) => {
       const dt = (now - prev) / 1000;
       prev = now;
@@ -29,8 +37,37 @@ export function HeroCurved() {
       }
       raf = requestAnimationFrame(tick);
     };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
+
+    const stop = () => {
+      if (raf) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      }
+    };
+    const start = () => {
+      if (raf || !visible || document.hidden) return;
+      prev = performance.now();
+      raf = requestAnimationFrame(tick);
+    };
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting;
+        if (visible) start();
+        else stop();
+      },
+      { rootMargin: "100px" },
+    );
+    io.observe(section);
+
+    const onVisibilityChange = () => (document.hidden ? stop() : start());
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
+    return () => {
+      stop();
+      io.disconnect();
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    };
   }, []);
 
   const onPointerDown = (e: React.PointerEvent) => {
@@ -54,6 +91,7 @@ export function HeroCurved() {
 
   return (
     <section
+      ref={sectionRef}
       className="relative overflow-hidden bg-background pt-36 pb-20 md:pt-44 md:pb-28"
       aria-label="Elden — bespoke interior fit-out"
     >
@@ -102,11 +140,12 @@ export function HeroCurved() {
                   transform: `rotateY(${i * SLICE}deg) translateZ(-${RADIUS}px)`,
                 }}
               >
-                <img
-                  src={p.image}
+                <Img
+                  image={p.image}
                   alt={p.name}
+                  sizes="320px"
                   className="h-full w-full object-cover"
-                  loading={i < 8 ? "eager" : "lazy"}
+                  loading={i < 3 ? "eager" : "lazy"}
                   draggable={false}
                 />
               </Link>

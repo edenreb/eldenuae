@@ -10,7 +10,7 @@ export const post: Post = {
   readingMinutes: 5,
   author: "Elden Studio",
   cover:
-    "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=1600&q=80&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=1200&q=80&auto=format&fit=crop",
   body: [
     {
       paragraphs: [
