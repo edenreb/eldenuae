@@ -45,7 +45,7 @@ export function HeroCurved() {
     const dx = e.clientX - lastX.current;
     lastX.current = e.clientX;
     if (Math.abs(dx) > 1) moved.current = true;
-    rotation.current += dx * 0.04;
+    rotation.current -= dx * 0.04;
   };
 
   const endDrag = () => {
