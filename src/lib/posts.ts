@@ -1,7 +1,5 @@
-import { post as thingsLearnt } from "@/blogs/things-i-learnt";
 import { post as mepInsights } from "@/blogs/mep-insights";
 import { post as siteSafetyInduction } from "@/blogs/site-safety-induction";
-import { post as siteSafetyInductionMep } from "@/blogs/site-safety-induction-mep";
 import { post as bookMatchedMarbleBar } from "@/blogs/book-matched-marble-bar";
 import { post as silentHvacHospitality } from "@/blogs/silent-hvac-hospitality";
 import { post as sixMaterialsSixSectors } from "@/blogs/six-materials-six-sectors";
@@ -19,10 +17,8 @@ export type Post = {
 };
 
 export const posts: Post[] = [
-  thingsLearnt,
   mepInsights,
   siteSafetyInduction,
-  siteSafetyInductionMep,
   bookMatchedMarbleBar,
   silentHvacHospitality,
   sixMaterialsSixSectors,
