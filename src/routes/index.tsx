@@ -1,9 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion, useScroll, useTransform } from "motion/react";
-import { useRef } from "react";
 import { HeroCurved } from "@/components/HeroCurved";
 import { Reveal, ParallaxImage } from "@/components/Reveal";
 import { Img } from "@/components/Img";
+import { Testimonials } from "@/components/Testimonials";
 import { projects } from "@/lib/projects";
 import { client1, client2, client3, client4, client5, client6, client7, client8, client9, client10, client11, client12, client13, client14, client15, client16, client17, client18 } from "@/assets/generated/images";
 
@@ -20,15 +19,6 @@ export const Route = createFileRoute("/")({
   }),
   component: Index,
 });
-
-const services = [
-  { n: "01", t: "Concept", d: "Brief interrogation, site studies, moodboards, spatial diagrams." },
-  { n: "02", t: "Design", d: "Full design development, BOQ, samples, technical documentation." },
-  { n: "03", t: "Engineering", d: "MEP design, load calculations, BMS strategy, sustainability review." },
-  { n: "04", t: "Joinery", d: "Bespoke millwork produced in our Al Quoz workshop." },
-  { n: "05", t: "Construction", d: "Turnkey fit-out delivered by our own trades, site-managed daily." },
-  { n: "06", t: "Handover", d: "Snagging, commissioning, aftercare and maintenance contracts." },
-];
 
 const sectors = ["Hospitality", "Restaurants", "Retail", "Commercial", "Leisure", "Cultural"];
 
@@ -74,9 +64,8 @@ function Index() {
       {/* Featured projects — editorial */}
       <FeaturedProjects />
 
-
-      {/* Process ribbon */}
-      <ProcessRibbon />
+      {/* Testimonials — staggered card carousel */}
+      <Testimonials />
 
       {/* Sectors — sliding marquee */}
       <SectorsMarquee />
@@ -193,57 +182,6 @@ function FeaturedProject({
         </div>
       </Link>
     </Reveal>
-  );
-}
-
-function ProcessRibbon() {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end end"] });
-  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-66%"]);
-
-  return (
-    <section ref={ref} className="relative h-[300vh] bg-stone" aria-label="Our process">
-      <div className="sticky top-0 flex h-screen items-center overflow-hidden">
-        <div className="mx-auto w-full max-w-[1600px] px-6 md:px-10">
-          <div className="mb-14 flex items-end justify-between">
-            <div>
-              <p className="text-xs uppercase tracking-[0.35em] text-elden-green">The Process</p>
-              <h2 className="mt-4 max-w-2xl font-display text-4xl leading-[1.05] text-balance md:text-6xl">
-                From first line to final key — one team, six stages.
-              </h2>
-            </div>
-            <div className="hidden text-xs uppercase tracking-[0.3em] text-muted-foreground md:block">
-              Scroll →
-            </div>
-          </div>
-        </div>
-
-        <motion.div style={{ x }} className="flex gap-6 pl-6 md:pl-10">
-          {services.map((s) => (
-            <div
-              key={s.n}
-              className="grain-overlay w-[80vw] shrink-0 rounded-sm border border-border/70 bg-card p-8 md:w-[42vw] md:p-12"
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-display text-5xl text-elden-blue md:text-6xl">{s.n}</span>
-                <span className="text-[10px] uppercase tracking-[0.3em] text-elden-green">
-                  Stage
-                </span>
-              </div>
-              <h3 className="mt-10 font-display text-3xl leading-tight md:text-5xl">{s.t}</h3>
-              <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted-foreground md:text-base">
-                {s.d}
-              </p>
-              <div className="mt-12 h-px w-full bg-border" />
-              <div className="mt-4 flex items-center justify-between text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
-                <span>Elden Method</span>
-                <span>· · · ·</span>
-              </div>
-            </div>
-          ))}
-        </motion.div>
-      </div>
-    </section>
   );
 }
 
