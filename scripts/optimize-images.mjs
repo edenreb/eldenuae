@@ -1,8 +1,15 @@
-// One-time script: re-encodes src/assets photos/logos into responsive WebP
-// variants, rewrites the import blocks in the files that reference them, and
-// emits src/assets/generated/images.ts. Run manually: `node scripts/optimize-images.mjs`.
-// Deletes the original source images after a successful re-encode.
-import { readFile, writeFile, unlink, mkdir } from "node:fs/promises";
+// Re-encodes src/assets photos/logos into responsive WebP variants, rewrites
+// the import blocks in the files that reference them, and updates
+// src/assets/generated/images.ts. Run manually: `node scripts/optimize-images.mjs`.
+//
+// Safe to re-run per folder: if src/assets/<folder> is a folder of raw source
+// images (imported via a plain `import X from "@/assets/<folder>/...";` line
+// in one of SOURCE_FILES), this script re-encodes just that folder, replaces
+// its entries in images.ts in place, deletes stale .webp variants left over
+// from a previous run in that folder, and deletes the new raw source images
+// after a successful re-encode. Folders/entries it doesn't touch this run are
+// left untouched in images.ts.
+import { readFile, writeFile, unlink, mkdir, stat } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
@@ -20,6 +27,10 @@ const LOGO_WIDTHS = [320, 563];
 const LOGO_QUALITY = 90;
 
 const IMPORT_RE = /^import\s+(\w+)\s+from\s+"(@\/assets\/[^"]+)";$/gm;
+const GENERATED_IMPORT_RE = /^import\s+(\w+)\s+from\s+"([^"]+)";$/gm;
+const GENERATED_EXPORT_RE =
+  /export const (\w+): ImageSet = \{\n\s*src: (\w+),\n\s*srcSet: `([^`]*)`,\n\s*width: (\d+),\n\s*height: (\d+),\n\};/g;
+const VARIANT_RE = /\$\{(\w+)\}\s+(\d+)w/g;
 
 async function collectImageImports() {
   /** @type {{ varName: string, relImportPath: string, absPath: string, sourceFile: string }[]} */
@@ -39,6 +50,29 @@ async function collectImageImports() {
     }
   }
   return entries;
+}
+
+/** Parses the current generated file into { imports: Map<importId, path>, exports: [{varName, variants, width, height}] }. */
+async function parseExistingGenerated() {
+  if (!existsSync(GENERATED_FILE)) return { imports: new Map(), exports: [] };
+  const content = await readFile(GENERATED_FILE, "utf8");
+
+  const imports = new Map();
+  for (const m of content.matchAll(GENERATED_IMPORT_RE)) {
+    imports.set(m[1], m[2]);
+  }
+
+  const exports = [];
+  for (const m of content.matchAll(GENERATED_EXPORT_RE)) {
+    const [, varName, , srcSetRaw, width, height] = m;
+    const variants = [];
+    for (const vm of srcSetRaw.matchAll(VARIANT_RE)) {
+      variants.push({ importId: vm[1], width: Number(vm[2]) });
+    }
+    exports.push({ varName, variants, width: Number(width), height: Number(height) });
+  }
+
+  return { imports, exports };
 }
 
 function isLogo(absPath) {
@@ -63,8 +97,7 @@ async function encodeVariants(entry) {
   const variants = [];
   let originalBytes = 0;
   try {
-    const stat = await import("node:fs/promises").then((fs) => fs.stat(absPath));
-    originalBytes = stat.size;
+    originalBytes = (await stat(absPath)).size;
   } catch {
     // ignore
   }
@@ -79,8 +112,7 @@ async function encodeVariants(entry) {
     });
     const webpOpts = isLogo(absPath) ? { quality, alphaQuality: 100 } : { quality };
     await pipeline.webp(webpOpts).toFile(outPath);
-    const outStat = await import("node:fs/promises").then((fs) => fs.stat(outPath));
-    newBytes += outStat.size;
+    newBytes += (await stat(outPath)).size;
     variants.push({ width: w, outPath, importId: `${varName}_${w}` });
   }
 
@@ -92,30 +124,116 @@ function toImportSpecifier(absPath) {
   return `@/assets/${rel}`;
 }
 
-function buildGeneratedModule(results) {
+/**
+ * Deletes .webp variant files superseded by this run — scoped to the exact
+ * varName being re-encoded, never to "everything else in the folder", so a
+ * folder holding multiple independent images (e.g. several numbered photos
+ * for one project) can have just one of them swapped without touching its
+ * siblings' files.
+ */
+async function cleanupStaleVariants(existing, results) {
+  for (const r of results) {
+    const oldExport = existing.exports.find((e) => e.varName === r.entry.varName);
+    if (!oldExport) continue; // brand new image, nothing to clean up
+
+    const newBasenames = new Set(r.variants.map((v) => path.basename(v.outPath)));
+    for (const v of oldExport.variants) {
+      const oldImportPath = existing.imports.get(v.importId);
+      if (!oldImportPath) continue;
+      const oldBasename = path.basename(oldImportPath);
+      if (newBasenames.has(oldBasename)) continue; // overwritten in place, fine
+
+      const oldAbsPath = path.join(ASSETS_DIR, oldImportPath.replace(/^@\/assets\//, ""));
+      if (existsSync(oldAbsPath)) {
+        await unlink(oldAbsPath);
+      }
+    }
+  }
+}
+
+function buildGeneratedModule(finalEntries) {
   const lines = [];
   lines.push("// GENERATED by scripts/optimize-images.mjs — do not edit.");
   lines.push("");
-  for (const r of results) {
-    for (const v of r.variants) {
-      lines.push(`import ${v.importId} from "${toImportSpecifier(v.outPath)}";`);
+  for (const e of finalEntries) {
+    for (const v of e.variants) {
+      lines.push(`import ${v.importId} from "${v.path}";`);
     }
   }
   lines.push("");
-  lines.push("export type ImageSet = { src: string; srcSet: string; width: number; height: number };");
+  lines.push(
+    "export type ImageSet = { src: string; srcSet: string; width: number; height: number };",
+  );
   lines.push("");
-  for (const r of results) {
-    const srcSet = r.variants.map((v) => `\${${v.importId}} ${v.width}w`).join(", ");
-    const largest = r.variants[r.variants.length - 1];
-    lines.push(`export const ${r.entry.varName}: ImageSet = {`);
+  for (const e of finalEntries) {
+    const srcSet = e.variants.map((v) => `\${${v.importId}} ${v.width}w`).join(", ");
+    const largest = e.variants[e.variants.length - 1];
+    lines.push(`export const ${e.varName}: ImageSet = {`);
     lines.push(`  src: ${largest.importId},`);
     lines.push(`  srcSet: \`${srcSet}\`,`);
-    lines.push(`  width: ${r.srcWidth},`);
-    lines.push(`  height: ${r.srcHeight},`);
+    lines.push(`  width: ${e.width},`);
+    lines.push(`  height: ${e.height},`);
     lines.push(`};`);
   }
   lines.push("");
   return lines.join("\n");
+}
+
+/**
+ * Merges this run's results into the previously-generated entries. Matches
+ * on varName — the identity of a single image slot — so replacing one image
+ * in a folder never disturbs sibling images that happen to share the folder.
+ * A varName that already existed is replaced in place (keeping its original
+ * position in the file); a brand-new varName is appended at the end.
+ */
+function mergeEntries(existing, results) {
+  const touchedVarNames = new Set(results.map((r) => r.entry.varName));
+  const newByVarName = new Map(
+    results.map((r) => [
+      r.entry.varName,
+      {
+        varName: r.entry.varName,
+        variants: r.variants.map((v) => ({
+          importId: v.importId,
+          width: v.width,
+          path: toImportSpecifier(v.outPath),
+        })),
+        width: r.srcWidth,
+        height: r.srcHeight,
+      },
+    ]),
+  );
+
+  const finalEntries = [];
+  const insertedVarNames = new Set();
+
+  for (const exp of existing.exports) {
+    if (touchedVarNames.has(exp.varName)) {
+      finalEntries.push(newByVarName.get(exp.varName));
+      insertedVarNames.add(exp.varName);
+      continue;
+    }
+    finalEntries.push({
+      varName: exp.varName,
+      variants: exp.variants.map((v) => ({
+        importId: v.importId,
+        width: v.width,
+        path: existing.imports.get(v.importId),
+      })),
+      width: exp.width,
+      height: exp.height,
+    });
+  }
+
+  // Brand-new varNames (no prior entry) are appended, in this run's order.
+  for (const r of results) {
+    if (!insertedVarNames.has(r.entry.varName)) {
+      finalEntries.push(newByVarName.get(r.entry.varName));
+      insertedVarNames.add(r.entry.varName);
+    }
+  }
+
+  return finalEntries;
 }
 
 async function rewriteSourceFile(sourceFile, varNames) {
@@ -124,22 +242,48 @@ async function rewriteSourceFile(sourceFile, varNames) {
   const lines = content.split("\n");
   const varSet = new Set(varNames);
 
-  const newImport = `import { ${varNames.join(", ")} } from "@/assets/generated/images";`;
+  const genImportRe = /^import\s*\{\s*([^}]*)\s*\}\s*from\s*"@\/assets\/generated\/images";$/;
+  let existingImportLineIndex = -1;
+  let existingNames = [];
+  lines.forEach((line, i) => {
+    const m = line.match(genImportRe);
+    if (m) {
+      existingImportLineIndex = i;
+      existingNames = m[1]
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+    }
+  });
 
-  let inserted = false;
+  const mergedNames = [...existingNames.filter((n) => !varSet.has(n)), ...varNames];
+  const mergedImportLine = `import { ${mergedNames.join(", ")} } from "@/assets/generated/images";`;
+
   const outLines = [];
-  for (const line of lines) {
+  let insertedHere = existingImportLineIndex !== -1;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (i === existingImportLineIndex) {
+      outLines.push(mergedImportLine);
+      continue;
+    }
     const m = line.match(/^import\s+(\w+)\s+from\s+"@\/assets\/[^"]+";$/);
     if (m && varSet.has(m[1])) {
-      if (!inserted) {
-        outLines.push(newImport);
-        inserted = true;
+      if (!insertedHere) {
+        outLines.push(mergedImportLine);
+        insertedHere = true;
       }
-      continue; // drop this line
+      continue; // drop the raw import line
     }
     outLines.push(line);
   }
-  await writeFile(abs, outLines.join("\n"), "utf8");
+
+  // Dropping raw import lines can leave two blank lines butted together
+  // (one that sandwiched the dropped block on each side) — collapse runs of
+  // blank lines back down to one.
+  const collapsed = outLines.filter((line, i) => line.trim() !== "" || outLines[i - 1]?.trim() !== "");
+
+  await writeFile(abs, collapsed.join("\n"), "utf8");
 }
 
 async function main() {
@@ -149,6 +293,8 @@ async function main() {
   if (limit) entries = entries.slice(0, limit);
 
   await mkdir(GENERATED_DIR, { recursive: true });
+
+  const existing = await parseExistingGenerated();
 
   const results = [];
   let totalOriginal = 0;
@@ -166,14 +312,23 @@ async function main() {
   }
   console.log("");
 
-  // Delete originals only after all encodes succeeded.
+  if (results.length === 0) {
+    console.log("Nothing to encode — no raw @/assets imports found. Generated file left as-is.");
+    return;
+  }
+
+  // Clean up .webp variants this run's re-encoded images superseded.
+  await cleanupStaleVariants(existing, results);
+
+  // Delete the new raw source images only after all encodes succeeded.
   for (const entry of entries) {
     if (existsSync(entry.absPath)) {
       await unlink(entry.absPath);
     }
   }
 
-  const moduleSrc = buildGeneratedModule(results);
+  const finalEntries = mergeEntries(existing, results);
+  const moduleSrc = buildGeneratedModule(finalEntries);
   await writeFile(GENERATED_FILE, moduleSrc, "utf8");
 
   // Group var names by source file for the rewrite step.
