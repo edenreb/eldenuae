@@ -1,17 +1,17 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef } from "react";
-import { projects } from "@/lib/projects";
+import { getProjectBySlug } from "@/lib/projects";
+import { heroProjectSlugs } from "@/lib/hero-projects";
 import { Img } from "@/components/Img";
 
 const RADIUS = 1300;
 const CARD_WIDTH = 320;
 const GAP = 16;
-const SLOTS = 24;
-const SLICE = 360 / SLOTS;
 const AUTO_SPEED = 0.6; // degrees per second — very slow
 
 export function HeroCurved() {
-  const slots = useMemo(() => projects.slice(0, SLOTS), []);
+  const slots = useMemo(() => heroProjectSlugs.map(getProjectBySlug).filter((p) => p != null), []);
+  const slice = 360 / slots.length;
   const sectionRef = useRef<HTMLElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
   const rotation = useRef(0);
@@ -137,7 +137,7 @@ export function HeroCurved() {
                 style={{
                   width: CARD_WIDTH,
                   marginLeft: -(CARD_WIDTH + GAP) / 2,
-                  transform: `rotateY(${i * SLICE}deg) translateZ(-${RADIUS}px)`,
+                  transform: `rotateY(${i * slice}deg) translateZ(-${RADIUS}px)`,
                 }}
               >
                 <Img
