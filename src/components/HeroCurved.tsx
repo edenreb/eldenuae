@@ -1,17 +1,16 @@
 import { Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef } from "react";
-import { getProjectBySlug } from "@/lib/projects";
-import { heroProjectSlugs } from "@/lib/hero-projects";
+import { useEffect, useRef } from "react";
+import { heroImages } from "@/lib/hero-images";
 import { Img } from "@/components/Img";
 
 const RADIUS = 1300;
-const CARD_WIDTH = 320;
-const GAP = 16;
-const AUTO_SPEED = 0.6; // degrees per second — very slow
+const PERSPECTIVE = 2800; // must stay well above RADIUS or edge cards blow up past the container
+const CARD_WIDTH = 400;
+const GAP = 6;
+const AUTO_SPEED = 3; // degrees per second — slow drift
 
 export function HeroCurved() {
-  const slots = useMemo(() => heroProjectSlugs.map(getProjectBySlug).filter((p) => p != null), []);
-  const slice = 360 / slots.length;
+  const slice = 360 / heroImages.length;
   const sectionRef = useRef<HTMLElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
   const rotation = useRef(0);
@@ -107,14 +106,14 @@ export function HeroCurved() {
       {/* Concave cylinder of work — draggable */}
       <div
         className="relative mt-14 cursor-grab select-none active:cursor-grabbing md:mt-20"
-        style={{ perspective: "1100px", perspectiveOrigin: "50% 50%" }}
+        style={{ perspective: `${PERSPECTIVE}px`, perspectiveOrigin: "50% 50%" }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
       >
         <div
-          className="relative mx-auto h-[340px] md:h-[420px]"
+          className="relative mx-auto h-[460px] md:h-[600px]"
           style={{ transformStyle: "preserve-3d" }}
         >
           <div
@@ -125,37 +124,41 @@ export function HeroCurved() {
               transform: `translateZ(${RADIUS}px)`,
             }}
           >
-            {slots.map((p, i) => (
-              <Link
-                key={`${p.slug}-${i}`}
-                to="/projects/$slug"
-                params={{ slug: p.slug }}
-                onClick={(e) => {
-                  if (moved.current) e.preventDefault();
-                }}
+            {heroImages.map((h, i) => (
+              <div
+                key={`hero-photo-${i}`}
                 className="absolute top-0 block h-full overflow-hidden bg-muted"
                 style={{
                   width: CARD_WIDTH,
                   marginLeft: -(CARD_WIDTH + GAP) / 2,
                   transform: `rotateY(${i * slice}deg) translateZ(-${RADIUS}px)`,
+                  backfaceVisibility: "hidden",
+                  WebkitBackfaceVisibility: "hidden",
                 }}
               >
+                {/*
+                  Every card is loaded eagerly on purpose. `loading="lazy"` cannot
+                  work here: the cards are rotated inside a preserve-3d container,
+                  and the browser's lazy-load intersection heuristic never resolves
+                  them as visible, so a lazy card only fetches once the ring has
+                  turned it to the front — minutes away at AUTO_SPEED, which
+                  reads as images popping in blank. The ring auto-rotates through
+                  all of them anyway, so they are all needed. fetchPriority keeps
+                  the initially-facing cards ahead of the rest in the queue.
+                */}
                 <Img
-                  image={p.image}
-                  alt={p.name}
-                  sizes="320px"
+                  image={h.image}
+                  alt={h.alt}
+                  sizes="400px"
                   className="h-full w-full object-cover"
-                  loading={i < 3 ? "eager" : "lazy"}
+                  loading="eager"
+                  fetchPriority={i < 3 ? "high" : "low"}
                   draggable={false}
                 />
-              </Link>
+              </div>
             ))}
           </div>
         </div>
-
-        {/* edge fades so the cylinder dissolves instead of clipping */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-[12vw] bg-gradient-to-r from-background to-transparent" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-[12vw] bg-gradient-to-l from-background to-transparent" />
       </div>
 
       <div className="mx-auto mt-16 max-w-[720px] px-6 text-center md:mt-20">
