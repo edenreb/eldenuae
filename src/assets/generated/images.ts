@@ -585,6 +585,10 @@ import zaraMarina5_320 from "@/assets/zara-marina-mall/5-320.webp";
 import zaraMarina5_640 from "@/assets/zara-marina-mall/5-640.webp";
 import zaraMarina5_1280 from "@/assets/zara-marina-mall/5-1280.webp";
 import zaraMarina5_1920 from "@/assets/zara-marina-mall/5-1920.webp";
+import kevinTeixeira_320 from "@/assets/testimonials/kevin-teixeira-320.webp";
+import kevinTeixeira_640 from "@/assets/testimonials/kevin-teixeira-640.webp";
+import pankajAgarwal_320 from "@/assets/testimonials/pankaj-agarwal-320.webp";
+import pankajAgarwal_640 from "@/assets/testimonials/pankaj-agarwal-640.webp";
 
 export type ImageSet = { src: string; srcSet: string; width: number; height: number };
 
@@ -1757,4 +1761,16 @@ export const zaraMarina5: ImageSet = {
   srcSet: `${zaraMarina5_320} 320w, ${zaraMarina5_640} 640w, ${zaraMarina5_1280} 1280w, ${zaraMarina5_1920} 1920w`,
   width: 1280,
   height: 960,
+};
+export const kevinTeixeira: ImageSet = {
+  src: kevinTeixeira_640,
+  srcSet: `${kevinTeixeira_320} 320w, ${kevinTeixeira_640} 640w`,
+  width: 1200,
+  height: 1109,
+};
+export const pankajAgarwal: ImageSet = {
+  src: pankajAgarwal_640,
+  srcSet: `${pankajAgarwal_320} 320w, ${pankajAgarwal_640} 640w`,
+  width: 800,
+  height: 800,
 };

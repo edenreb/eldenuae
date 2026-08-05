@@ -19,7 +19,12 @@ const ASSETS_DIR = path.join(ROOT, "src/assets");
 const GENERATED_DIR = path.join(ASSETS_DIR, "generated");
 const GENERATED_FILE = path.join(GENERATED_DIR, "images.ts");
 
-const SOURCE_FILES = ["src/lib/projects.ts", "src/routes/index.tsx", "src/routes/about.tsx"];
+const SOURCE_FILES = [
+  "src/lib/projects.ts",
+  "src/lib/testimonials.ts",
+  "src/routes/index.tsx",
+  "src/routes/about.tsx",
+];
 
 const PHOTO_WIDTHS = [320, 640, 1280, 1920];
 const PHOTO_QUALITY = 78;
