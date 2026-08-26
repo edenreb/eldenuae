@@ -1,0 +1,50 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getCollection } from "astro:content";
+import { Picture } from "astro:assets";
+
+const posts = (await getCollection("journal")).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const formatter = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric" });
+---
+
+<Base
+  title="Journal"
+  description="Notes on turnkey fitout in the UAE — process, approvals, materials, and what we've learned across 81+ projects."
+>
+  <section class="px-[24px] pt-[48px] md:px-[32px] md:pt-[72px]">
+    <div class="mx-auto max-w-[1440px]">
+      <h1 class="text-display text-cream">Journal.</h1>
+      <p class="mt-[16px] max-w-[60ch] text-body text-cream">
+        Notes on turnkey fitout — process, approvals, materials, and what nine years of projects
+        has taught us.
+      </p>
+    </div>
+  </section>
+
+  <section class="px-[24px] py-[48px] md:px-[32px] md:py-[72px]">
+    <div class="mx-auto grid max-w-[1440px] grid-cols-1 gap-x-[32px] gap-y-[48px] sm:grid-cols-2 lg:grid-cols-3">
+      {posts.map((post, i) => (
+        <a href={`/journal/${post.id}`} class="group block cursor-pointer">
+          <div class="aspect-[3/2] overflow-hidden">
+            <Picture
+              src={post.data.cover}
+              alt={`Cover image for the article “${post.data.title}”`}
+              formats={["avif", "webp"]}
+              widths={[400, 700]}
+              sizes="(min-width: 1024px) 30vw, (min-width: 640px) 50vw, 100vw"
+              loading={i < 3 ? "eager" : "lazy"}
+              class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+          </div>
+          <p class="mt-[12px] text-caption text-muted">
+            {formatter.format(post.data.date)}
+          </p>
+          <h2 class="mt-[4px] text-subheading text-cream group-hover:underline">
+            {post.data.title}
+          </h2>
+          <p class="mt-[8px] text-body text-cream">{post.data.excerpt}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+</Base>

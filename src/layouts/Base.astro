@@ -1,0 +1,318 @@
+---
+import { ClientRouter } from "astro:transitions";
+import { Font } from "astro:assets";
+import Footer from "../components/Footer.astro";
+import Preloader from "../components/Preloader.astro";
+import Cursor from "../components/Cursor.astro";
+import Logo from "../components/Logo.astro";
+import "../styles/global.css";
+
+const links = [
+  { href: "/projects", label: "Projects" },
+  { href: "/about", label: "About" },
+  { href: "/journal", label: "Journal" },
+  { href: "/contact", label: "Contact" },
+];
+
+// Astro.url.pathname carries a trailing slash for every static route except
+// the root ("/about/", not "/about") — this project's own `links` hrefs
+// don't. Normalizing once here is what makes every plain `path === href`
+// comparison below actually work; isActive's own `path.startsWith(href+"/")`
+// fallback was quietly covering for this same mismatch already.
+const path = Astro.url.pathname.replace(/(.)\/$/, "$1");
+const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
+// Stricter than isActive on purpose: isActive's prefix match is right for
+// "which nav item looks current" (a journal post should still highlight
+// "Journal"), but wrong here — clicking "Journal" while reading a post IS a
+// real navigation and should still transition. This only matches the exact
+// page a link would otherwise pointlessly re-navigate to.
+const isSamePage = (href: string) => path === href;
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const pageTitle = title === "Elden" ? title : `${title} — Elden`;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="canonical" href={canonicalURL} />
+    <meta name="generator" content={Astro.generator} />
+
+    <link rel="preload" href="/fonts/switzer/Switzer-600.woff2" as="font" type="font/woff2" crossorigin />
+    <Font cssVariable="--font-display-serif" preload />
+
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    {/* One social card for every page rather than a per-page render — the
+        site has no per-project imagery pipeline for this and one good
+        static card beats N inconsistent ones. This is the actual home of
+        the "brand colors" ask: the wordmark stays cream (Logo.astro is
+        explicit that it never takes brand color — DESIGN.md's mark spec is
+        pure typography), but the card carries a green rule under it and a
+        cream chip with navy text in the corner — the same two accent rules
+        used site-wide (green on ink, navy on cream), just legible at social
+        -card size instead of squeezed into a 16px favicon where neither
+        color would actually read. */}
+    <meta property="og:image" content={new URL("/og-image.png", Astro.site)} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={new URL("/og-image.png", Astro.site)} />
+
+    {/* fallback="swap": the default ("animate") only kicks in for browsers
+        without native document.startViewTransition, and it works by
+        mutating the LIVE DOM with CSS keyframes rather than freezing a
+        snapshot the way native transitions do. HeroGallery's GSAP ticker
+        never stops — its idle autoplay engages the instant nobody is
+        actively scrolling, exactly the situation during a transition — so
+        while that fallback crossfade played, the ticker kept live-writing
+        transform/opacity to the visible planes underneath it: a stray frame
+        flashing mid-transition. "swap" replaces the DOM instantly instead,
+        with no animated window for that to leak into. No effect on browsers
+        with native support (Chrome, and Safari from 18.2) — this prop is
+        only consulted on the fallback path. */}
+    <ClientRouter fallback="swap" />
+
+    {/* Decides the preloader BEFORE first paint, and must stay inline and
+        un-deferred to do it. Preloader.astro's own module script runs on
+        `astro:page-load`, which is after the first frame has already been
+        painted — so the page flashed into view for a beat and only then got
+        covered by the curtain. Nothing renders between this script and the
+        curtain now.
+
+        It also owns the scroll lock (`data-preloading`, styled in
+        global.css). Previously the wheel drove the page freely behind the
+        curtain, so the intro played to nobody and the curtain lifted on
+        wherever you'd scrolled to.
+
+        No-JS never gets the attribute, so it never sees a stuck cream
+        screen and never gets a locked page — the same contract the `hidden`
+        attribute used to provide, minus the flash. */}
+    <script is:inline>
+      try {
+        if (
+          !matchMedia("(prefers-reduced-motion: reduce)").matches &&
+          !document.hidden &&
+          !sessionStorage.getItem("elden:preloaded")
+        ) {
+          document.documentElement.dataset.preloading = "1";
+        }
+      } catch (e) {
+        /* sessionStorage throws outright in some privacy modes — treat that
+           as "don't play the intro" rather than taking the page down. */
+      }
+    </script>
+  </head>
+  <body>
+    <Preloader />
+    <Cursor />
+
+    <a
+      href="#main-content"
+      class="fixed left-[24px] top-[12px] -translate-y-24 bg-ink px-[16px] py-[8px] text-body text-cream transition-transform focus:translate-y-0"
+      style="z-index: var(--z-skiplink)"
+    >
+      Skip to main content
+    </a>
+
+    <!-- Logo/wordmark — back in normal document flow, NOT sticky. It scrolls
+         away with the page; only the nav (below, its own fixed element) stays
+         pinned to the viewport. These used to be one sticky header together;
+         split apart on explicit request that only the links stick. -->
+    <header class="relative z-[var(--z-nav)] flex w-full items-start px-[24px] pt-[24px] pb-[24px] md:px-[32px]">
+      <a
+        href="/"
+        class="flex h-[40px] cursor-pointer items-center"
+        data-astro-reload={isSamePage("/") ? true : undefined}
+      >
+        <Logo class="h-[32px] w-auto text-cream" />
+        <span class="sr-only">Elden — home</span>
+      </a>
+    </header>
+
+    <nav
+      aria-label="Primary"
+      class="fixed right-[24px] top-[24px] z-[var(--z-nav)] hidden sm:block md:right-[32px]"
+    >
+      <!-- The sliding pill (GSAP, ported from a SlideTabs reference) is
+           gone — replaced with a per-link underline wipe instead (a
+           ::before bar, scaleX + transform-origin on hover, no JS at
+           all). Pure CSS means the whole class of bugs the pill went
+           through this session (a GSAP overwrite footgun that froze
+           cursor tracking, a layout-thrashing hover handler, a
+           mix-blend-difference legibility trap) simply isn't reachable
+           here — there's no position to track, nothing to tween, no
+           hover-state JS to get wrong. -->
+      <ul
+        id="nav-list"
+        class="relative flex h-[40px] items-center gap-[4px] border border-[var(--color-line)] bg-[rgb(20_20_18_/_0.5)] px-[8px] backdrop-blur-[20px]"
+        style="border-radius: 999px;"
+      >
+        {links.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              aria-current={isActive(link.href) ? "page" : undefined}
+              data-astro-reload={isSamePage(link.href) ? true : undefined}
+              class:list={[
+                "relative block cursor-pointer px-[12px] py-[8px] text-body text-cream",
+                // was before:bg-current (i.e. cream, inherited from the link
+                // text) — now an explicit brand-green fill instead. Ink-side
+                // accent: this bar sits on the dark glass nav pill.
+                "before:pointer-events-none before:absolute before:bottom-[6px] before:inset-x-[12px] before:h-[1px] before:bg-[var(--color-brand-green)] before:content-['']",
+                "before:scale-x-0 before:transition-transform before:duration-300 before:ease-out",
+                isActive(link.href)
+                  ? "before:origin-left before:scale-x-100"
+                  : "before:origin-right hover:before:origin-left hover:before:scale-x-100",
+              ]}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <!-- Mobile nav: the desktop nav above is `hidden` below `sm` with
+         nothing standing in for it — mobile had no way to navigate the
+         site at all except the wordmark-to-home link. A bottom-center
+         mini bar instead of a hamburger/overflow panel: only 4 links,
+         all of which fit comfortably in one row, so a full slide-out menu
+         would be one tap of indirection for no benefit. `bottom` combines
+         a base offset with `env(safe-area-inset-bottom)` so it clears the
+         home-indicator gesture area on notched iOS devices rather than
+         sitting flush against it. -->
+    <nav
+      aria-label="Primary"
+      class="fixed left-1/2 z-[var(--z-nav)] -translate-x-1/2 sm:hidden"
+      style="bottom: calc(16px + env(safe-area-inset-bottom));"
+    >
+      <ul
+        class="relative flex h-[40px] items-center gap-[2px] border border-[var(--color-line)] bg-[rgb(20_20_18_/_0.85)] px-[6px] backdrop-blur-[20px]"
+        style="border-radius: 999px;"
+      >
+        {links.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              aria-current={isActive(link.href) ? "page" : undefined}
+              data-astro-reload={isSamePage(link.href) ? true : undefined}
+              class:list={[
+                "relative block cursor-pointer px-[10px] py-[8px] text-caption",
+                // Was text-cream for the active tab — brand green marks
+                // "you are here" instead, same ink-side accent as the
+                // desktop underline above.
+                isActive(link.href) ? "text-[var(--color-brand-green)]" : "text-muted",
+              ]}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <main id="main-content" tabindex="-1">
+      <slot />
+    </main>
+
+    <Footer />
+
+    <script>
+      import "../scripts/motion";
+      import { getLenis } from "../scripts/motion"; // side-effect import above registers astro:page-load listeners
+
+      // Marks the whole in-flight window of a navigation, start to finish —
+      // not just the moment of the DOM swap. `fallback="swap"` on
+      // ClientRouter (see the comment on that tag) removes the one CONFIRMED
+      // source of live-DOM motion during a transition; this flag is the
+      // defensive second layer, for the possibility that a browser's own
+      // native View Transition snapshot isolation isn't perfect (untestable
+      // from here — no Safari access in this environment). HeroGallery's
+      // ticker checks this and holds its last-written frame instead of
+      // drifting while it's set, so the hero is provably static for the
+      // entire window regardless of which transition mechanism is actually
+      // running under it.
+      document.addEventListener("astro:before-preparation", () => {
+        document.documentElement.dataset.transitioning = "1";
+      });
+      document.addEventListener("astro:after-swap", () => {
+        delete document.documentElement.dataset.transitioning;
+      });
+
+      // Force scroll-to-top on every route change, explicitly, rather than
+      // trusting the ClientRouter's own default. astro:after-swap is
+      // Astro's own recommended event for this — it fires right after the
+      // new page's DOM replaces the old one, before the browser paints, so
+      // there's no visible jump. Deep-linking to a real in-page anchor
+      // (e.g. a future #section link) is the one case this would fight —
+      // there are none on this site today, but if that changes, this needs
+      // to check location.hash first.
+      //
+      // window.scrollTo(0, 0) alone isn't enough: Lenis (motion.ts) stays
+      // alive across navigations and drives the actual scroll position
+      // itself every frame from its own internal target/animated-scroll
+      // state, which still holds the OLD page's scroll position right
+      // after a swap. Its very next tick calls its own window.scrollTo
+      // back toward that stale value, undoing a plain reset — visible
+      // site-wide, most obviously on long pages (the journal) where the
+      // snap-back distance is largest. Routing the reset through Lenis's
+      // own scrollTo (immediate: true, no easing) keeps its internal state
+      // in sync instead of fighting it. Still falls back to a plain
+      // scrollTo when Lenis isn't running at all (reduced motion).
+      //
+      // Safari-only follow-up: Lenis's immediate scrollTo bottoms out in
+      // `wrapper.scrollTo({ top: 0, behavior: "instant" })` — the
+      // options-dict form. Lenis's own internal target/animated-scroll
+      // state is updated synchronously either way, so it won't fight this,
+      // but Chromium and WebKit disagree on what the options-dict form
+      // itself does: Chromium commits the native scroll position the
+      // instant the call returns, WebKit schedules it for the next
+      // rendering step instead. Anything that reads scroll position
+      // synchronously right after this handler runs — HeroGallery's
+      // first-frame paint on arrival is the concrete case that surfaced
+      // it — read the OLD position for one frame in Safari, never in
+      // Chrome. `scrollTo(x, y)`, the plain two-argument legacy form,
+      // doesn't have that gap in either engine, so it runs unconditionally
+      // as a synchronous belt-and-suspenders on top of Lenis's own call
+      // rather than being the sole reset only when Lenis is absent.
+      document.addEventListener("astro:after-swap", () => {
+        const lenis = getLenis();
+        if (lenis) lenis.scrollTo(0, { immediate: true });
+        window.scrollTo(0, 0);
+      });
+
+      // Move focus to main content on route change for screen reader
+      // users, but not on the first load of a session (that would steal
+      // focus from the URL bar / deep link on arrival). document.referrer
+      // isn't a usable signal for this — it reflects the page that linked
+      // here from OUTSIDE the site and never updates across the
+      // ClientRouter's own client-side transitions, so that check was
+      // silently false for every in-app navigation. A plain flag, set
+      // after the first load, distinguishes them correctly instead.
+      let hasLoaded = false;
+      document.addEventListener("astro:page-load", () => {
+        if (hasLoaded) {
+          const main = document.getElementById("main-content");
+          // preventScroll: true — the browser's default focus-into-view
+          // behavior would otherwise re-scroll the page on top of the
+          // astro:after-swap reset above. Focus itself is what screen
+          // readers need; the scroll side-effect was never the intent.
+          main?.focus({ preventScroll: true });
+        }
+        hasLoaded = true;
+      });
+    </script>
+  </body>
+</html>

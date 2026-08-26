@@ -1,0 +1,136 @@
+---
+// "Our Philosophy" — measured on the reference: a fixed-width image column
+// pinned to the left gutter, statement filling the rest of the row to the
+// right. The whole row pins while the (taller) image stack drifts upward
+// inside its own clipped column, so the images cycle through while the
+// statement holds in place.
+//
+// The row pins via ScrollTrigger (pin: true) now, not native CSS
+// `position: sticky` as before. Sticky's un-stick point is implicit — set
+// by how much taller its containing block is than itself — so keeping it
+// in sync with the image parallax meant computing a matching container
+// height separately and hoping the two numbers never drifted apart. They
+// still did (that's the bug report this replaced). Pinning and scrubbing
+// off the *same* ScrollTrigger (same trigger, same end) makes them the
+// same number by construction — nothing to keep in sync because there's
+// only one value. The tradeoff: without JS (or under reduced motion, where
+// the script below returns early) the row is just a normal static 100vh
+// block in flow, not stuck — a fine fallback, and consistent with how
+// every other scroll effect in this codebase degrades (see motion.ts).
+import { Picture } from "astro:assets";
+import img1 from "../assets/anantara-penthouse/4.jpg";
+import img2 from "../assets/tbk-galleria/1.jpg";
+import img3 from "../assets/beiruti/6.jpg";
+import img4 from "../assets/whgym-difc/3.jpg";
+import img5 from "../assets/equities-first/1.jpg";
+import img6 from "../assets/holiday-inn/1.jpg";
+import img7 from "../assets/holiday-inn/2.jpg";
+import img8 from "../assets/holiday-inn/3.jpg";
+import Eyebrow from "./Eyebrow.astro";
+
+// To customize: swap these imports for other files in src/assets/, and
+// add or remove entries here — the section's height and scroll distance
+// (below) are both computed from this array's actual rendered height at
+// runtime, not hardcoded, so any number of images works without retuning
+// anything else.
+const images = [img1, img2, img3, img4, img5, img6, img7, img8];
+
+// PLACEHOLDER COPY: replace with Elden's own words before launch.
+const TEXT =
+  "Every fitout begins with listening — to how the space will actually be used, the trade patterns of a working kitchen, the flow of a gym floor at peak hour. We believe a good fitout doesn't just look right on opening day; it works right for years after.";
+---
+
+<!-- No outer 200vh wrapper anymore — ScrollTrigger's pinSpacing (default
+     true) inserts exactly however much extra scroll room the pin needs,
+     computed by the script below, so there's no separate height to keep
+     in sync with anything. Collapses to normal flow below md, matching
+     the reference's own breakpoint behaviour. -->
+<section id="philosophy" class="px-[24px] py-[48px] md:px-[32px] md:py-0">
+  <div
+    id="philosophy-row"
+    class="mx-auto flex max-w-[1440px] flex-col gap-[32px] md:h-screen md:flex-row md:items-center md:gap-[96px] md:py-[72px]"
+  >
+    <!-- Hidden below md entirely, not just un-pinned: without the pin (see
+         script below, which bails out under md) this was a static column,
+         so mobile rendered the full 8-image stack inline, one after
+         another, at natural height — a huge, pointless scroll of duplicate
+         photography nobody asked to page through. Skipped outright on
+         mobile per explicit request, rather than shown as a dead stack. -->
+    <div class="hidden flex-col gap-[16px] overflow-hidden md:flex md:h-full md:w-[291px] md:shrink-0">
+      <div id="philosophy-stack" class="flex flex-col gap-[16px]">
+        {images.map((img, i) => (
+          <div class="aspect-[3/4] w-full shrink-0 overflow-hidden">
+            <Picture
+              src={img}
+              alt=""
+              formats={["avif", "webp"]}
+              widths={[400, 700]}
+              sizes="280px"
+              loading={i === 0 ? "eager" : "lazy"}
+              class="h-full w-full object-cover"
+              data-reveal-media
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Fills the remaining row width, not clamped narrow — measured on
+         the reference: image column pinned to the left gutter, text runs
+         the rest of the way to the right edge (~989px wide at 1440px
+         viewport), not a centered/right-aligned narrow column. -->
+    <div class="flex flex-col gap-[24px] md:flex-1">
+      <div class="rule" data-reveal-rule></div>
+      <Eyebrow>Our Philosophy</Eyebrow>
+      <p class="text-heading leading-[1.2] text-cream" data-reveal-words>
+        {TEXT}
+      </p>
+    </div>
+  </div>
+</section>
+
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { whenVisible } from "../scripts/motion";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initPhilosophyStack() {
+    const row = document.getElementById("philosophy-row");
+    const stack = document.getElementById("philosophy-stack");
+    if (!row || !stack) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!window.matchMedia("(min-width: 768px)").matches) return; // pin is md+ only
+
+    whenVisible(() => {
+      // Travel exactly the stack's own overflow (its full height minus the
+      // clipped viewport it sits in), so the last image lands flush at the
+      // bottom of the column right as the pin releases — never over- or
+      // under-shoots regardless of image count.
+      const travel = stack.scrollHeight - stack.parentElement!.clientHeight;
+      if (travel <= 0) return;
+
+      // One ScrollTrigger does both jobs: pins the row (pin: true,
+      // pinSpacing left at its default true, so it inserts exactly
+      // `travel` px of extra scroll room itself — no manual section
+      // height to compute or keep in sync with anything) and scrubs the
+      // stack's y over that same `end`. Same trigger, same end, so the
+      // pin duration and the parallax distance are one value, not two
+      // that have to agree.
+      gsap.to(stack, {
+        y: -travel,
+        ease: "none",
+        scrollTrigger: {
+          trigger: row,
+          start: "top top",
+          end: () => `+=${travel}`,
+          scrub: true,
+          pin: row,
+        },
+      });
+    });
+  }
+
+  document.addEventListener("astro:page-load", initPhilosophyStack);
+</script>

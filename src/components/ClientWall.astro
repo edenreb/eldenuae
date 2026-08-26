@@ -1,0 +1,65 @@
+---
+import { Image } from "astro:assets";
+import Eyebrow from "./Eyebrow.astro";
+
+// 18 client logos in a single scrolling row — the reference runs one row,
+// not two. The array is rendered twice so translateX(-50%) loops seamlessly.
+const logos = Array.from({ length: 18 }, (_, i) => i + 1);
+
+const images = import.meta.glob<{ default: ImageMetadata }>("../assets/clients/*.png", { eager: true });
+const getLogo = (n: number) => images[`../assets/clients/${n}.png`]?.default;
+---
+
+<section class="overflow-hidden px-[24px] py-[48px] md:px-[32px] md:py-[72px]">
+  <div class="mx-auto max-w-[1440px]">
+    <div class="flex max-w-[439px] flex-col gap-[24px]">
+      <Eyebrow>Selected Clients</Eyebrow>
+      <h2 class="text-heading text-cream" data-reveal-words>Trusted by.</h2>
+    </div>
+  </div>
+
+  <div class="mt-[32px]">
+    <div class="marquee-row overflow-hidden">
+      <div class="marquee-track flex w-max items-center gap-[24px]">
+        {[...logos, ...logos].map((n) => {
+          const logo = getLogo(n);
+          return (
+            <div class="flex h-[136px] w-[280px] shrink-0 items-center justify-center">
+              <img
+                src={logo?.src}
+                width={logo?.width}
+                height={logo?.height}
+                alt=""
+                class="h-[92px] w-auto object-contain saturate-0"
+                loading="lazy"
+              />
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </div>
+  <p class="sr-only">
+    Selected clients we've delivered turnkey fitouts for, including gym, restaurant, retail, office, and
+    hospitality brands across the UAE.
+  </p>
+</section>
+
+<style>
+  .marquee-track {
+    animation: marquee 60s linear infinite;
+  }
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+      animation-play-state: paused;
+    }
+  }
+</style>

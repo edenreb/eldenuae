@@ -1,0 +1,130 @@
+---
+// Sticky stage index against scrolling stages. Deliberately not a second
+// horizontal pin — SelectedWork already owns that gesture, and two pinned
+// scrubs in a row read as a tic rather than a system.
+import { Picture } from "astro:assets";
+import designImg from "../assets/meinhardt-office/3.jpg";
+import approvalsImg from "../assets/whgym-difc/2.jpg";
+import buildImg from "../assets/beiruti/5.jpg";
+import handoverImg from "../assets/anantara-penthouse/1.jpg";
+
+const stages = [
+  {
+    n: "01",
+    title: "Design",
+    copy: "Concept, layout, and material selection developed against the client's brand and budget from day one.",
+    img: designImg,
+    alt: "Design stage — a completed workplace interior showing joinery and lighting detail",
+  },
+  {
+    n: "02",
+    title: "Approvals",
+    copy: "Landlord, Civil Defence, DEWA, and municipality submissions run in parallel, not in sequence.",
+    img: approvalsImg,
+    alt: "Approvals stage — a fitted-out gym floor in a DIFC tower",
+  },
+  {
+    n: "03",
+    title: "Build",
+    copy: "MEP, joinery, and finishes delivered by the same team that drew the space — no handoff, no gaps.",
+    img: buildImg,
+    alt: "Build stage — bar joinery and back-of-house detail in a completed restaurant",
+  },
+  {
+    n: "04",
+    title: "Handover",
+    copy: "Snagging, authority sign-off, and FF&E install closed out against one schedule, one contract.",
+    img: handoverImg,
+    alt: "Handover stage — a finished penthouse living space ready for occupation",
+  },
+];
+---
+
+<section id="process" class="px-[24px] py-[48px] md:px-[32px] md:py-[72px]">
+  <div class="mx-auto max-w-[1440px]">
+    <h2 class="text-heading text-cream" data-reveal-words>
+      Design to handover.
+    </h2>
+
+    <div class="mt-[48px] grid grid-cols-1 gap-[32px] md:mt-[72px] md:grid-cols-[280px_1fr] md:gap-[72px]">
+      <!-- Sticky index. Hidden from assistive tech: it duplicates the stage
+           headings that follow, and reading it twice adds nothing. -->
+      <ol
+        id="process-index"
+        aria-hidden="true"
+        class="hidden self-start md:block md:sticky"
+        style="top: calc(var(--nav-h) + 48px)"
+      >
+        {
+          stages.map((stage) => (
+            <li data-index={stage.n} class="flex flex-col gap-[12px] pt-[12px]">
+              <div class="rule" data-reveal-rule></div>
+              <div
+                class="flex items-baseline gap-[12px] text-cream transition-colors duration-500"
+                data-process-item
+              >
+                <span class="tabular-nums text-caption">{stage.n}</span>
+                <span class="text-subheading">{stage.title}</span>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+
+      <div class="flex flex-col gap-[48px] md:gap-[72px]">
+        {
+          stages.map((stage) => (
+            <article data-stage={stage.n}>
+              <div class="w-full overflow-hidden">
+                <Picture
+                  src={stage.img}
+                  alt={stage.alt}
+                  formats={["avif", "webp"]}
+                  widths={[600, 1000, 1400]}
+                  sizes="(min-width: 768px) 60vw, 100vw"
+                  loading="lazy"
+                  class="h-full w-full object-cover"
+                  data-settle
+                />
+              </div>
+              <div class="mt-[16px] flex items-baseline gap-[12px]">
+                <span class="tabular-nums text-caption text-muted">{stage.n}</span>
+                <h3 class="text-subheading text-cream">{stage.title}</h3>
+              </div>
+              <p class="mt-[12px] max-w-[46ch] text-body text-muted">{stage.copy}</p>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function initProcessIndex() {
+    const index = document.getElementById("process-index");
+    const stages = document.querySelectorAll<HTMLElement>("[data-stage]");
+    if (!index || !stages.length) return;
+
+    const items = index.querySelectorAll<HTMLElement>("[data-process-item]");
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const active = (entry.target as HTMLElement).dataset.stage;
+          items.forEach((item) => {
+            const isActive = item.closest("[data-index]")?.getAttribute("data-index") === active;
+            item.classList.toggle("text-cream", isActive);
+            item.classList.toggle("text-muted", !isActive);
+          });
+        });
+      },
+      { rootMargin: "-45% 0px -45% 0px" },
+    );
+
+    stages.forEach((stage) => observer.observe(stage));
+  }
+
+  document.addEventListener("astro:page-load", initProcessIndex);
+</script>

@@ -1,0 +1,85 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getCollection, render } from "astro:content";
+import { Picture } from "astro:assets";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("journal");
+  return posts.map((post) => ({
+    params: { id: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { data } = post;
+const { Content } = await render(post);
+
+const formatter = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric" });
+---
+
+<Base title={data.title} description={data.excerpt}>
+  <article>
+    <section class="px-[24px] pt-[48px] md:px-[32px] md:pt-[72px]">
+      <div class="mx-auto max-w-[800px]">
+        <a href="/journal" class="cursor-pointer text-body text-cream hover:underline">&larr; Journal</a>
+        <p class="mt-[24px] text-caption text-muted">
+          {formatter.format(data.date)} &middot; {data.author}
+        </p>
+        <h1 class="mt-[12px] max-w-[20ch] text-display text-cream">{data.title}</h1>
+        {data.tags.length > 0 && (
+          <div class="mt-[16px] flex flex-wrap gap-[8px]">
+            {data.tags.map((tag: string) => (
+              <span class="bg-surface px-[8px] py-[4px] text-caption text-muted">
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+
+    <section class="mt-[32px] aspect-[16/9] w-full overflow-hidden md:mt-[48px]">
+      <Picture
+        src={data.cover}
+        alt={`Cover image for the article “${data.title}”`}
+        formats={["avif", "webp"]}
+        widths={[800, 1400, 2000]}
+        sizes="100vw"
+        loading="eager"
+        fetchpriority="high"
+        class="h-full w-full object-cover"
+      />
+    </section>
+
+    <section class="px-[24px] py-[48px] md:px-[32px] md:py-[72px]">
+      <div class="prose-body mx-auto max-w-[640px] text-body text-cream">
+        <Content />
+      </div>
+    </section>
+  </article>
+</Base>
+
+<style>
+  /* :global() is required here — <Content /> is a separate MDX module, so
+     its rendered h2/p/ul/li don't carry this component's Astro scope hash. */
+  .prose-body :global(p) {
+    margin-top: 17px;
+  }
+  .prose-body :global(p:first-child) {
+    margin-top: 0;
+  }
+  .prose-body :global(h2) {
+    margin-top: 34px;
+    font-size: var(--text-subheading);
+    line-height: 1.1;
+  }
+  .prose-body :global(ul) {
+    margin-top: 13px;
+    list-style: disc;
+    padding-left: 20px;
+  }
+  .prose-body :global(li) {
+    margin-top: 8px;
+  }
+</style>

@@ -1,0 +1,404 @@
+@import "tailwindcss";
+
+/* Switzer — the actual typeface (not a substitute). Confirmed by reading
+   arqen.framer.media's own @font-face rules and rich-text presets directly:
+   every h1/h2/h3/p on the site sets --framer-font-family to "Switzer", at
+   weight 600. Files pulled from the site's own third-party-assets/fontshare
+   CDN response, not redistributed from Fontshare's package — same license
+   terms (Switzer is free/OFL via Fontshare) either way. */
+@font-face {
+  font-family: "Switzer";
+  src: url("/fonts/switzer/Switzer-500.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Switzer";
+  src: url("/fonts/switzer/Switzer-500i.woff2") format("woff2");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Switzer";
+  src: url("/fonts/switzer/Switzer-600.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Switzer";
+  src: url("/fonts/switzer/Switzer-600i.woff2") format("woff2");
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Switzer";
+  src: url("/fonts/switzer/Switzer-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Switzer";
+  src: url("/fonts/switzer/Switzer-700i.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Switzer";
+  src: url("/fonts/switzer/Switzer-900.woff2") format("woff2");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Switzer";
+  src: url("/fonts/switzer/Switzer-900i.woff2") format("woff2");
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@theme {
+  /* Colors — strictly two, per DESIGN.md, now run inverted (dark canvas,
+     light ink) to match the ARQEN reference exactly. Values measured live
+     via getComputedStyle() on arqen.framer.media, not estimated. The token
+     NAMES still describe the literal colours (cream is still cream-coloured,
+     ink is still ink-coloured) — every call site was swapped to use the
+     other token where the role flipped, so `bg-cream` now means "the warm
+     off-white surface" wherever that surface is used, same as before. */
+  --color-cream: #f0ece6;
+  --color-ink: #0c0c0a;
+  /* Semi-transparent panel colour for the floating nav, footer card, and
+     project caption cards — measured as rgba(20,20,18,0.75). Blur radius
+     varies per surface (5px on project cards, 10px on nav/footer) so it
+     isn't baked into the token — set per component. */
+  --color-glass: rgb(20 20 18 / 0.75);
+  /* Secondary text — labels, captions, legal, meta. Measured directly off
+     the reference (rgb(138,133,125)). 5.35:1 on --color-ink, clears WCAG AA
+     for normal text — this is the fix for the "everything is full-strength
+     cream" contrast problem; never darken it further. */
+  --color-muted: #8a857d;
+  /* Divider colour. The reference has ZERO CSS borders — every hairline is
+     a 2px <div> at 10% white. Use the `.rule` utility below instead of
+     `border-*-cream`, which no longer exists anywhere in this codebase. */
+  --color-line: rgb(255 255 255 / 0.1);
+  /* Opaque sibling of --color-glass, for surfaces that shouldn't show
+     through to imagery (form fields). */
+  --color-surface: #141412;
+
+  /* Brand accents — NOT part of the "strictly two" base palette above, and
+     never a resting/base color: no backgrounds, no body text, no borders.
+     DESIGN.md is explicit that this site's chromatic content comes only
+     from project photography; these two exist for a small, deliberate set
+     of INTERACTIVE-ONLY accents (hover, focus, active) plus the one-time
+     preloader signature and the favicon/social card, which sit outside the
+     page canvas entirely.
+
+     The two are not interchangeable — measured via WCAG relative
+     luminance, not assumed:
+       --color-brand-green on --color-ink   -> 5.7:1  (clears 4.5:1 text)
+       --color-brand-navy  on --color-ink   -> 1.7:1  (fails even 3:1 UI)
+       --color-brand-navy  on --color-cream -> 9.6:1  (excellent)
+     Navy is close enough in darkness to ink that it reads as nearly
+     invisible there. So: green is the accent on the dark canvas, navy is
+     the accent on cream surfaces (buttons, hover-state pills) — never the
+     reverse, or the "accent" is one nobody can actually see. */
+  --color-brand-green: rgb(73 155 86);
+  --color-brand-navy: rgb(42 51 124);
+
+  /* Typography — Switzer, confirmed as arqen.framer.media's real body/heading
+     face (see @font-face comment above). Site body copy renders at weight
+     600, not 400 — Switzer has no 400 cut, so default text weight below is
+     bumped to match instead of falling back to a lighter weight. */
+  --font-sans: "Switzer", "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* Type scale — measured live off arqen.framer.media's rendered CSS
+     (16px root; the reference's own presets, not estimated). Its scale
+     tops out at 80px, nowhere near the 201px this scale used to reach —
+     that gap was the main driver of the "too high contrast" / "doesn't
+     read as minimal" complaint. */
+  --text-caption: 0.8rem; /* 12.8px */
+  --text-caption--line-height: 1.4;
+  --text-caption--letter-spacing: -0.02em;
+  --text-caption--font-weight: 600;
+
+  --text-body: 1rem; /* 16px — does not scale down; the reference never shrinks it */
+  --text-body--line-height: 1.5;
+  --text-body--letter-spacing: -0.02em;
+
+  --text-button: clamp(0.85rem, 1.3vw, 1rem); /* 13.6–16px */
+  --text-button--line-height: 1;
+  --text-button--letter-spacing: -0.02em;
+  --text-button--font-weight: 600;
+
+  --text-subheading: clamp(0.96rem, 3vw, 1.5rem); /* 15.36–24px */
+  --text-subheading--line-height: 1.4;
+  --text-subheading--letter-spacing: -0.04em;
+
+  --text-heading: clamp(1.6rem, 6vw, 2.5rem); /* 25.6–40px */
+  --text-heading--line-height: 1.2;
+  --text-heading--letter-spacing: -0.04em;
+
+  --text-display: clamp(3.2rem, 8vw, 5rem); /* 51.2–80px — hero h1 only */
+  --text-display--line-height: 1;
+  --text-display--letter-spacing: -0.04em;
+
+  /* Spacing — the reference's rhythm is a uniform 72px section padding and
+     32px gutter (24px below 810px) everywhere; this replaces the previous
+     irregular 17/25/50/84/101px values. */
+  --space-section: 72px;
+  --gutter: 32px;
+
+  /* The reference's own breakpoint is 810px, 42px past Tailwind's default
+     `md` (768px). Not worth a second breakpoint name and a sitewide
+     find/replace for a 42px difference nothing will visibly catch —
+     staying on `md` everywhere below. */
+}
+
+/* Explicit stacking order — every fixed layer on the site is named here so
+   nothing reaches for an arbitrary z-index like 9999. */
+:root {
+  /* Footprint of the floating chrome row (24px top offset + 40px logo/pill
+     height). Nothing reserves this as layout space — the logo and nav both
+     float over the page — but sticky elements in the top-left corner still
+     offset by it so they don't sit flush under the wordmark. */
+  --nav-h: 64px;
+
+  /* Flow height of Base.astro's <header> — pt-[24px] + the 40px logo anchor
+     + pb-[24px]. Unlike --nav-h above, this one IS real layout space: the
+     header sits in normal flow, so everything after it starts 88px down the
+     page. Full-viewport sections that need to sit flush with the top of the
+     window (the hero) cancel it with a negative margin. Keep in step with
+     the header's own padding. */
+  --header-h: 88px;
+
+  --z-nav: 60;
+  --z-skiplink: 70;
+  --z-cursor: 80;
+  --z-preloader: 100;
+}
+
+@layer base {
+  /* DESIGN.md: "Don't apply border-radius to any element; the system is
+     strictly orthogonal." Utilities in the cascade layer below still win if
+     one is ever genuinely needed, but nothing in this codebase should use
+     one. */
+  * {
+    border-radius: 0;
+  }
+
+  html {
+    background: var(--color-ink);
+    color-scheme: dark;
+    /* Safety net for fixed/absolute elements near viewport edges (bottom
+       mobile nav, skip link, etc.) on narrow screens — clips any accidental
+       horizontal overflow rather than letting it introduce a page-wide
+       sideways scrollbar. Vertical scroll is untouched; Lenis (motion.ts)
+       only ever drives the y axis.
+
+       `clip`, NOT `hidden`. They look identical here, but `overflow-x:
+       hidden` makes the element a scroll container on BOTH axes (the spec
+       forces the other axis from `visible` to `auto`), and a scroll
+       container ancestor is what `position: sticky` sticks to. With
+       `hidden` on <html>, every sticky descendant on the site silently
+       resolves against a container that is exactly as tall as the content
+       and so never sticks at all — which is what happened to the hero.
+       `clip` clips without establishing a scroll container, so sticky keeps
+       resolving against the viewport. */
+    overflow-x: clip;
+
+    /* No visible scrollbar anywhere on the site. Scrolling itself is
+       untouched — this only hides the indicator, so the wheel, trackpad,
+       keyboard, and the sticky hero all behave exactly as before. Firefox
+       and the WebKit/Blink pseudo-element need saying separately; there is
+       still no single property that covers both. */
+    scrollbar-width: none;
+  }
+
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none;
+  }
+
+  body {
+    background: var(--color-ink);
+    color: var(--color-cream);
+    font-family: var(--font-sans);
+    /* Switzer ships no 400 cut; 500 is the most common body-copy weight
+       measured across the reference's text presets. */
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased;
+    /* Same reasoning as <html> above — `clip` doesn't break sticky. */
+    overflow-x: clip;
+  }
+
+  /* Scroll lock while the preloader curtain is up. Without this the wheel
+     still drives the page behind the curtain, so the intro animations play
+     to an audience that has already scrolled past them, and the curtain
+     lifts on the middle of the site. Set by the inline head script in
+     Base.astro before first paint and cleared when the curtain finishes. */
+  html[data-preloading],
+  html[data-preloading] body {
+    overflow: hidden;
+  }
+
+  /* Belt-and-suspenders alongside Cursor.astro's own `(pointer: fine)`
+     check: that check is correct and already keeps the custom cursor off
+     touch devices, but it only runs once its script executes. This makes
+     the guarantee a CSS one too, so there's no window where a slow script
+     load could leave the cursor div visible on a coarse-pointer device. */
+  @media (pointer: coarse) {
+    #cursor {
+      display: none !important;
+    }
+  }
+
+  /* Heading weight/tracking measured on the reference: 600 uniform across
+     h1–h3 (Switzer's real 600 cut, confirmed via the site's own
+     --framer-font-weight) and -0.04em tracking uniform at every size.
+     Utility classes on individual headings still win where one sets its
+     own weight or tracking. */
+  /* Kill orphaned words too: balance headline line-lengths, avoid
+     single-word last lines in body copy. */
+  h1,
+  h2,
+  h3 {
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    /* Softened from a full-strength cream/ink invert — still clearly
+       visible as a highlight, just not another hard-contrast block. */
+    background: rgb(240 236 230 / 0.25);
+    color: var(--color-cream);
+  }
+
+  /* The one truly site-wide brand touchpoint: every focusable element on
+     every page rings in the brand green instead of plain cream. Ink-side
+     accent (green, not navy — see the token comment) since a focus ring
+     sits against the page's ink canvas almost everywhere, including when
+     it's offset around a cream-surfaced button. */
+  :focus-visible {
+    outline: 2px solid var(--color-brand-green);
+    outline-offset: 2px;
+  }
+
+  /* #main-content is focused programmatically on every route change (see
+     Base.astro) purely so screen readers announce the new page — it's a
+     tabindex="-1" landmark, not something a sighted keyboard user tabs to.
+     Chrome's :focus-visible heuristic can still paint a ring around it
+     regardless: a 2px outline around a FULL-WIDTH element renders as a
+     thin bright horizontal line sitting right at the header/content
+     boundary, persisting until focus moves elsewhere — i.e. exactly the
+     "line under the navbar that goes away on click" reported repeatedly.
+     The programmatic focus itself is still correct and still needed for
+     a11y; only the visual ring on this one non-interactive landmark is
+     suppressed. */
+  #main-content:focus-visible {
+    outline: none;
+  }
+
+  /* Page transitions: a horizontal wipe — the incoming page slides in from
+     the right and covers the outgoing one, which stays put underneath
+     (revealed progressively) rather than animating itself. Was a vertical
+     curtain-up sharing the preloader's own gesture; swapped to horizontal
+     on request, same underlying mechanism.
+
+     transform, not clip-path — this fires on EVERY route change (any
+     `::view-transition-new(root)` swap), and an animated `clip-path` here
+     is the same class of bug the preloader's own exit animation had: a
+     stray seam at the clip boundary that a browser repaint (e.g. any
+     click) clears, which is exactly the "there for a bit, then a click
+     makes it go away" pattern reported after navigating — this fires far
+     more often than the once-per-session preloader, so it's the more
+     likely source of that report. */
+  @keyframes wipe-in {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  ::view-transition-new(root) {
+    animation: wipe-in 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  ::view-transition-old(root) {
+    animation: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+
+    ::view-transition-new(root),
+    ::view-transition-old(root) {
+      animation: none !important;
+    }
+  }
+}
+
+@layer utilities {
+  /* Set by Cursor.astro once its custom cursor actually activates. `* {}`
+     is required, not just the html rule — dozens of elements set their own
+     `cursor: pointer` via the `cursor-pointer` utility, which would
+     otherwise win over an inherited `cursor: none` on <html>. */
+  html.custom-cursor-active,
+  html.custom-cursor-active * {
+    cursor: none !important;
+  }
+
+  /* Tabular numerals for all stat displays */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Word-mask wrappers built at runtime by scripts/motion.ts. Plain CSS
+     rather than Tailwind utilities: these elements don't exist in any source
+     file, so the class scanner would never emit utilities for them. */
+  .word-mask {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+    /* Room for descenders (g, y, p, q, j) below the baseline. Without this
+       the mask box clips tight to the line and cuts them off — only visible
+       once real copy with descenders replaced the placeholder text used
+       while building the reveal. */
+    padding-bottom: 0.2em;
+    margin-bottom: -0.2em;
+  }
+
+  .word-inner {
+    display: inline-block;
+    will-change: transform;
+  }
+
+  /* Divider — replaces every `border-t/border border-cream` hairline.
+     The reference has no CSS borders at all; every rule on the page is a
+     2px div at 10% white. This is that div, as a utility. */
+  .rule {
+    height: 2px;
+    width: 100%;
+    background: var(--color-line);
+    border: none;
+  }
+}

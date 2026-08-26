@@ -1,0 +1,105 @@
+---
+import Logo from "./Logo.astro";
+import Button from "./Button.astro";
+import SocialLinks from "./SocialLinks.astro";
+
+const year = new Date().getFullYear();
+
+// Footer renders on every page, so any of its internal links can end up
+// pointing at the page you're already on (e.g. "Contact" from /contact
+// itself). See Base.astro's isSamePage for why this is a strict match
+// rather than the broader prefix match nav highlighting uses elsewhere, and
+// for why the trailing slash is stripped first (Astro.url.pathname carries
+// one on every static route except the root; this file's hrefs don't).
+const path = Astro.url.pathname.replace(/(.)\/$/, "$1");
+const isSamePage = (href: string) => path === href;
+
+const columns = [
+  {
+    heading: "Sitemap",
+    links: [
+      { href: "/projects", label: "Projects" },
+      { href: "/journal", label: "Journal" },
+      { href: "/about", label: "About" },
+    ],
+  },
+  {
+    heading: "Contact",
+    links: [
+      { href: "/contact", label: "Get in touch" },
+      { href: "mailto:info@eldenuae.com", label: "info@eldenuae.com" },
+      { href: "tel:+97142276206", label: "+971 4 227 6206" },
+    ],
+  },
+  {
+    heading: "Legal",
+    links: [
+      { href: "/privacy", label: "Privacy policy" },
+      { href: "/terms", label: "Terms of use" },
+    ],
+  },
+];
+---
+
+<!-- Inset glass card, not a full-bleed block — measured on the reference:
+     Footer Wrapper pads 72/32/20, the card itself is the familiar
+     rgba(20,20,18,0.75) glass at blur(10px), padding 32px, gap 48px. Its
+     largest type is 24px, not a 50px display-scale sign-off. The reference
+     ships no logo and no link columns at all; Elden's sitemap/contact/legal
+     columns are kept (real navigation + SEO value) but restyled into the
+     card rather than dropped. -->
+<!-- pb-[108px] below sm: the fixed bottom mobile nav (Base.astro) sits
+     over whatever's at the bottom of the page. That was fixed on <main>,
+     but this <footer> is <main>'s sibling, not its child — reserving space
+     there didn't reach here, and the copyright row still rendered
+     underneath the nav bar until this was added directly. 108 = the
+     20px this already had plus the same 88px reserve used elsewhere. -->
+<footer class="flex justify-center px-[24px] pb-[108px] pt-[72px] text-cream sm:pb-[20px] md:px-[32px]">
+  <div class="w-full max-w-[1440px] bg-glass p-[24px] backdrop-blur-[10px] md:p-[32px]">
+    <div class="flex flex-col gap-[24px]">
+      <p class="max-w-[818px] text-subheading text-cream" data-reveal-words style="text-wrap: balance">
+        Let&rsquo;s build it.
+      </p>
+      <Button href="/contact" label="Get in touch" class="self-start" reload={isSamePage("/contact")} />
+    </div>
+
+    <div class="mt-[48px] flex flex-col gap-[16px] md:gap-[20px]">
+      <div class="rule" data-reveal-rule></div>
+      <div class="flex flex-col gap-[24px] md:flex-row md:items-start md:justify-between">
+        <div>
+          <Logo class="h-6 w-auto text-cream" />
+          <p class="mt-[12px] max-w-[36ch] text-body text-muted">
+            Turnkey fitout for the UAE&rsquo;s fitness, F&amp;B, retail, workplace and hospitality brands.
+          </p>
+          <SocialLinks class="mt-[16px]" />
+        </div>
+
+        <div class="flex flex-wrap gap-[32px] md:gap-[48px]">
+          {columns.map((col) => (
+            <div>
+              <p class="text-body text-cream">{col.heading}</p>
+              <ul class="mt-[12px] flex flex-col gap-[8px]">
+                {col.links.map((link) => (
+                  <li>
+                    <a
+                      href={link.href}
+                      data-astro-reload={isSamePage(link.href) ? true : undefined}
+                      class="cursor-pointer text-body text-muted hover:text-cream hover:underline"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div class="flex flex-col-reverse gap-[8px] text-caption text-muted md:flex-row md:items-center md:justify-between">
+        <p>&copy; {year} Elden Interiors LLC. All rights reserved.</p>
+        <p>Dubai, United Arab Emirates</p>
+      </div>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,63 @@
+---
+const stats = [
+  { value: 85, suffix: "+", label: "Projects delivered" },
+  { value: 10, suffix: "+", label: "Years expertise in the UAE" },
+  { value: 140, suffix: "+", label: "Elden engineers working on your project" },
+];
+---
+
+<section class="px-[24px] py-[64px] md:px-[32px] md:py-[96px]">
+  <div class="mx-auto grid max-w-[1440px] grid-cols-1 gap-[48px] sm:grid-cols-3 sm:gap-[24px]">
+    {stats.map((stat) => (
+      <div class="text-center sm:text-left">
+        <p class="tabular-nums text-display leading-none text-cream" data-count={stat.value} data-suffix={stat.suffix}>
+          0{stat.suffix}
+        </p>
+        <p class="mt-[12px] text-body text-muted">{stat.label}</p>
+      </div>
+    ))}
+  </div>
+</section>
+
+<script>
+  function initStatCounters() {
+    const nodes = document.querySelectorAll<HTMLElement>("[data-count]");
+    if (!nodes.length) return;
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const animate = (el: HTMLElement) => {
+      const target = Number(el.dataset.count);
+      const suffix = el.dataset.suffix ?? "";
+      if (reduce) {
+        el.textContent = `${target}${suffix}`;
+        return;
+      }
+      const duration = 1200;
+      const start = performance.now();
+      const tick = (now: number) => {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = `${Math.round(target * eased)}${suffix}`;
+        if (progress < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            animate(entry.target as HTMLElement);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.6 },
+    );
+
+    nodes.forEach((node) => observer.observe(node));
+  }
+
+  document.addEventListener("astro:page-load", initStatCounters);
+</script>

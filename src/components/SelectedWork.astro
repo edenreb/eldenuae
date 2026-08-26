@@ -1,0 +1,216 @@
+---
+// Two entirely different mechanics for the same six projects, split by
+// pointer capability rather than viewport width — a touch scroll gesture
+// and a mouse hover are different inputs, not just different screen sizes,
+// and "hover to expand" has no equivalent on a device that can't hover.
+//
+//   pointer: fine   → accordion image strip, hover/focus expands a panel
+//                      (this component's CSS-only mechanic, no JS)
+//   pointer: coarse/none → the original full-viewport stacked-card scroll
+//                      (GSAP ScrollTrigger pin, one card covers the last)
+//
+// Both markups render always; `pointer-fine:`/`pointer-coarse:` (Tailwind's
+// native `@media (pointer: ...)` variants) pick which one is visible. Same
+// boundary Cursor.astro already draws for its own hover-only cursor
+// (`matchMedia("(pointer: fine)")`) — reused here rather than introducing a
+// second way to ask the same question.
+import { getCollection } from "astro:content";
+import { Picture } from "astro:assets";
+
+const projects = (await getCollection("projects"))
+  .filter((p) => p.data.featured || p.data.tier === "hero")
+  .sort((a, b) => b.data.year - a.data.year)
+  .slice(0, 6);
+---
+
+<section class="px-[24px] py-[48px] md:px-[32px] md:py-[72px]">
+  <div class="mx-auto max-w-[1440px]">
+    <h2 class="text-heading text-cream" data-reveal-words>Selected Projects</h2>
+  </div>
+</section>
+
+<!-- Hover accordion — pointer: fine only. Each panel is a flex item at a
+     fixed collapsed width, expanding to fill the row on hover/focus while
+     its siblings yield space back (default flex-shrink, NOT shrink-0 — that
+     was tried and broke it: with siblings unable to compress, the hovered
+     panel's width:100% has nowhere to take space from and the row blows out
+     past the viewport instead of redistributing within it). Pure CSS, no
+     script.
+
+     Sized by flex-grow on a basis-0 row, NOT by transitioning width — width
+     was tried first and read as choppy. The reason: with an explicit
+     collapsed width, only the HOVERED panel had a width value actually
+     changing between states (140px -> 100%); its five siblings only ever
+     got their rendered width recomputed as a layout side-effect each frame,
+     never an eased value of their own. One box smoothly easing while five
+     others snap-recalculate around it every frame is exactly what read as
+     stutter. With basis-0 + flex-grow instead, EVERY panel's width is
+     `its own grow value / sum of all grow values` of the row — six
+     numbers on the same easing curve, so the whole row redistributes in
+     coordinated lockstep rather than one box dragging the rest along.
+     `overflow-x-auto` on the row is now a pure backstop, not load-bearing:
+     grow always sums to exactly the container's width, so it can't overflow
+     the way a fixed-basis row could on a narrow pointer-fine window. -->
+<div class="hidden pointer-fine:block">
+  <div class="px-[24px] pb-[48px] md:px-[32px] md:pb-[72px]">
+    <div class="mx-auto max-w-[1440px]">
+      <div class="flex h-[320px] w-full gap-[8px] overflow-x-auto sm:h-[420px] md:h-[520px]">
+        {
+          projects.map((project, i) => (
+            <a
+              href={`/projects/${project.id}`}
+              data-cursor="open"
+              class="group relative h-full grow basis-0 overflow-hidden rounded-lg transition-[flex-grow] duration-500 ease-[cubic-bezier(0.44,0,0.56,1)] hover:grow-[6] focus-visible:grow-[6]"
+            >
+              {/* sizes was tuned for the old fixed 140/224px collapsed width;
+                  stale now that panels are fluid flex-grow shares. This
+                  wrapper only ever renders under pointer:fine, so there's no
+                  real narrow-viewport case to branch on — just size for the
+                  worst case, a hovered panel claiming ~55% of the row. */}
+              <Picture
+                src={project.data.cover}
+                alt={`${project.data.title} — ${project.data.sector.toLowerCase()} fitout by Elden`}
+                formats={["avif", "webp"]}
+                widths={[400, 700, 1100, 1600]}
+                sizes="55vw"
+                loading={i < 2 ? "eager" : "lazy"}
+                class="h-full w-full object-cover object-center"
+                data-reveal-media
+              />
+
+              <div
+                aria-hidden="true"
+                class="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-[rgb(12_12_10_/_0.85)] to-transparent p-[16px] pt-[48px] opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
+              >
+                <div class="flex items-center justify-between gap-[8px]">
+                  <h3 class="truncate text-body text-cream">{project.data.title}</h3>
+                  {/* text-ink -> brand navy: this icon only ever renders
+                      inside the hover-revealed caption above, so it's
+                      already an interaction-only accent, not a resting
+                      state — cream-side (bg-cream), navy is the accessible
+                      choice there. */}
+                  <span class="flex h-[28px] w-[28px] shrink-0 items-center justify-center bg-cream text-[var(--color-brand-navy)] transition-transform duration-300 group-hover:translate-x-[3px] group-hover:-translate-y-[3px]">
+                    &#8599;
+                  </span>
+                </div>
+                <p class="mt-[4px] truncate text-caption text-muted">
+                  {project.data.year} · {project.data.location}
+                </p>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Card-over-card stack — pointer: coarse/none (touch, or no pointer at
+     all). One 100dvh panel per project; each pins at the top of the
+     viewport for one screen's worth of scroll while the next one scrolls up
+     over it, covering it. This is the mechanic the whole section originally
+     shipped with, unchanged, just now scoped to devices that can't hover. -->
+<div class="pointer-fine:hidden">
+  {
+    projects.map((project) => (
+      <section data-sw-card class="relative h-[100dvh] w-full overflow-hidden bg-ink">
+        <Picture
+          src={project.data.cover}
+          alt={`${project.data.title} — ${project.data.sector.toLowerCase()} fitout by Elden`}
+          formats={["avif", "webp"]}
+          widths={[800, 1400, 2000, 2600]}
+          sizes="100vw"
+          loading="lazy"
+          class="h-full w-full object-cover"
+          data-settle
+        />
+
+        <a
+          href={`/projects/${project.id}`}
+          data-cursor="open"
+          data-rise="31"
+          class="group absolute left-[32px] top-[32px] block w-[363px] max-w-[calc(100%-64px)] bg-glass p-[16px] backdrop-blur-[5px]"
+        >
+          <div class="flex items-center justify-between gap-[12px]">
+            <h3 class="text-subheading text-cream">{project.data.title}</h3>
+            <span
+              aria-hidden="true"
+              class="flex h-[32px] w-[32px] shrink-0 items-center justify-center bg-cream text-[var(--color-brand-navy)] transition-transform duration-300 group-hover:translate-x-[3px] group-hover:-translate-y-[3px]"
+            >
+              &#8599;
+            </span>
+          </div>
+          <dl class="mt-[12px] flex flex-col gap-[4px]">
+            <div class="flex items-baseline justify-between gap-[12px]">
+              <dt class="text-body text-muted">Year:</dt>
+              <dd class="text-body text-cream">{project.data.year}</dd>
+            </div>
+            <div class="flex items-baseline justify-between gap-[12px]">
+              <dt class="shrink-0 text-body text-muted">Location:</dt>
+              <dd class="text-right text-body text-cream">{project.data.location}</dd>
+            </div>
+          </dl>
+        </a>
+      </section>
+    ))
+  }
+</div>
+
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { whenVisible } from "../scripts/motion";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initSelectedWorkStack() {
+    // Pointer-capability bail, same boundary the CSS above draws: the
+    // stacked cards are display:none under pointer:fine, and pinning
+    // display:none elements is either a silent no-op or actively buggy
+    // depending on the browser — either way, there's nothing to pin on a
+    // device that's showing the accordion instead. Checked once at init,
+    // same as Cursor.astro's own (pointer: fine) check and the
+    // reduced-motion check below — neither of those re-evaluates on resize
+    // either, so a device switching pointer types mid-session (a tablet
+    // gaining a mouse) is a pre-existing, accepted gap on this site, not a
+    // new one.
+    if (window.matchMedia("(pointer: fine)").matches) return;
+
+    const cards = document.querySelectorAll<HTMLElement>("[data-sw-card]");
+    if (!cards.length) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    whenVisible(() => {
+      cards.forEach((card, i) => {
+        // Later cards paint over earlier ones while both are pinned
+        // mid-transition.
+        gsap.set(card, { zIndex: i + 1 });
+
+        // The last card doesn't get pinned: pinning holds a card in place
+        // for exactly one viewport-height of scroll so the *next* card can
+        // scroll up and cover it — that's the whole point of the effect.
+        // The last card has no next card to be covered by, so pinning it
+        // just freezes it on screen for a full extra scroll's worth of
+        // nothing happening before it finally releases — the "sticks to
+        // the screen too long" bug. It scrolls away normally instead, same
+        // as any other section.
+        if (i === cards.length - 1) return;
+
+        ScrollTrigger.create({
+          trigger: card,
+          start: "top top",
+          pin: true,
+          // No pin-spacing AND no explicit end: the textbook combination.
+          // Each card is already 100dvh in normal flow, so its own box is
+          // exactly the scroll distance the pin needs — adding a spacer or
+          // an explicit "+=" end double-counts that distance and throws off
+          // where later sections (Philosophy) think they start relative to
+          // what the user has visually scrolled through.
+          pinSpacing: false,
+        });
+      });
+    });
+  }
+
+  document.addEventListener("astro:page-load", initSelectedWorkStack);
+</script>

@@ -1,0 +1,20 @@
+---
+// About teaser — display-scale paragraph + CTA, matching the reference's
+// own "For over a decade..." section. PLACEHOLDER COPY: replace with
+// Elden's real founding story before launch.
+import Button from "./Button.astro";
+
+const TEXT =
+  "Elden was founded nine years ago on a simple frustration: watching good design get diluted by someone else's build crew. Today we're a single turnkey practice — one team taking a project from first sketch to opening day, across fitness, F&B, retail, workplace, and hospitality throughout the UAE.";
+---
+
+<section class="px-[24px] py-[48px] md:px-[32px] md:py-[72px]">
+  <div class="mx-auto max-w-[1440px]">
+    <p class="max-w-[30ch] text-heading text-cream" data-scroll-words>
+      {TEXT}
+    </p>
+    <div class="mt-[32px]">
+      <Button href="/about" label="View More About Us" />
+    </div>
+  </div>
+</section>

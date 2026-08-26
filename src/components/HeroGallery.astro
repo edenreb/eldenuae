@@ -1,0 +1,470 @@
+---
+// Sticky-scroll depth gallery: 30 project photographs sweep past the viewer
+// as you scroll the hero, with the Elden line held still in the middle.
+//
+// The reference for this effect was a react-three-fiber component (Canvas +
+// shader planes). It is not used here: this site ships no framework runtime,
+// and three + fiber + drei is ~600KB gzipped for what CSS `perspective` and
+// the GSAP ticker already on the page do natively. Same tunnel, no WebGL, no
+// context loss on mobile Safari, and the markup degrades to a photo grid
+// with JS off.
+//
+// Two motions share one scalar, `travel`:
+//   scroll  — progress through the sticky track, 0 -> 1 maps to exactly one
+//             pass over all 30 photos. No repeats while the user is driving.
+//   drift   — an offset that only accumulates once scrolling has been idle
+//             for a beat, and which wraps modulo the track. That wrap is
+//             what makes the idle state an endless loop while the scrolled
+//             state stays finite.
+import { Image } from "astro:assets";
+import Button from "./Button.astro";
+import Logo from "./Logo.astro";
+
+// Two frames from each project rather than one — 30 planes wants more than
+// the 24 projects can give, and a second frame of the same fitout reads as
+// range within a job, not as padding.
+const modules = import.meta.glob<{ default: ImageMetadata }>(
+  [
+    "../assets/*/[12].jpg",
+    "!../assets/{clients,testimonials,hero-parallax}/**",
+  ],
+  { eager: true },
+);
+
+// Glob order is alphabetical by path, so a raw Object.values puts each
+// project's two frames back to back. Split on the filename and concatenate
+// so the first pass through the tunnel is 24 different projects before any
+// repeats a location.
+const entries = Object.entries(modules);
+const pool = [
+  ...entries.filter(([p]) => p.endsWith("1.jpg")),
+  ...entries.filter(([p]) => p.endsWith("2.jpg")),
+].map(([, m]) => m.default);
+
+const COUNT = 30;
+
+// Seeded PRNG. The scatter has to be identical in the SSR'd HTML and in the
+// browser or the planes would jump on hydration — Math.random() can't do
+// that, and a golden-angle spiral (what the reference used) is regular
+// enough to read as a pattern once you're looking at 30 of them.
+function mulberry32(seed: number) {
+  return () => {
+    seed |= 0;
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const rand = mulberry32(0x1d3e);
+
+// Polar scatter with a hole punched in the middle. The headline occupies a
+// wide, short band across the centre, so the exclusion zone is an ellipse
+// (20vw x 26vh) rather than a circle — rejection-sample until a point clears
+// it. Radii reach 58vw / 48vh, which puts the outermost planes past the
+// viewport edge; that's intended, they should crop off the sides rather than
+// all crowd the middle.
+const planes = Array.from({ length: COUNT }, (_, i) => {
+  let x = 0;
+  let y = 0;
+  do {
+    const angle = rand() * Math.PI * 2;
+    const r = 0.38 + rand() * 0.62;
+    x = Math.cos(angle) * r * 58;
+    y = Math.sin(angle) * r * 48;
+  } while (Math.abs(x) < 20 && Math.abs(y) < 26);
+
+  return {
+    x: +x.toFixed(2),
+    y: +y.toFixed(2),
+    // 0.55x–1.5x off the base width. Uniform sizing is the single biggest
+    // tell that a depth field is faked on a fixed set of planes.
+    scale: +(0.55 + rand() * 0.95).toFixed(3),
+    image: pool[i % pool.length],
+  };
+});
+---
+
+<!-- The track is the scroll distance; the sticky child is what you actually
+     see. 500vh over 30 photos is ~6 photos per screen of scrolling. Shorten
+     the track to speed the flythrough up, lengthen it to slow it down —
+     nothing in the script assumes a particular height, it reads the track's
+     own rect each frame. -->
+<section id="hero" class="relative h-[500vh] w-full" aria-label="Elden — selected fitout work">
+  <div class="sticky top-0 h-[100svh] w-full overflow-hidden bg-ink">
+    <div id="hero-stage" class="absolute inset-0" aria-hidden="true">
+      {
+        planes.map((p, i) => (
+          <div
+            class="hero-plane"
+            style={`--px:${p.x}vw; --py:${p.y}vh; --scale:${p.scale}; aspect-ratio:${p.image.width} / ${p.image.height};`}
+          >
+            <div class="hero-plane-inner">
+              <Image
+                src={p.image}
+                alt=""
+                width={760}
+                widths={[420, 760]}
+                sizes="(max-width: 768px) 60vw, 34vw"
+                loading={i < 6 ? "eager" : "lazy"}
+                class="h-full w-full object-cover"
+              />
+            </div>
+          </div>
+        ))
+      }
+    </div>
+
+    <!-- Base.astro's shared header sits in normal document flow and scrolls
+         out after 88px — fine for every other page, but here it made the
+         wordmark vanish almost immediately while the hero still had 500vh
+         left to run. This row lives inside the sticky child instead, so it
+         is pinned for free the whole time the hero is (nothing extra to
+         wire up — that's exactly what the sticky child already guarantees
+         everything inside it). The shared header is hidden for the
+         duration below so this isn't a second "Elden — home" link stacked
+         on the first. Classes mirror the header's own row exactly
+         (px-[24px] pt-[24px] md:px-[32px], same 40px link box) for pixel
+         parity at the handoff. -->
+    <div
+      class="pointer-events-none absolute inset-x-0 top-0 z-10 flex w-full items-start px-[24px] pt-[24px] md:px-[32px]"
+    >
+      {/* Unconditional, not path-checked: this component only ever renders
+          on "/", so clicking it is always a same-page click — it should
+          reload, not replay the transition it's already sitting inside. */}
+      <a
+        href="/"
+        class="pointer-events-auto flex h-[40px] cursor-pointer items-center"
+        data-astro-reload
+      >
+        <Logo class="h-[32px] w-auto text-cream" />
+        <span class="sr-only">Elden — home</span>
+      </a>
+    </div>
+
+    <!-- Was mix-blend-exclusion: no scrim, inverts against whatever's
+         underneath. Dropped it — exclusion only reads clean against very
+         dark or very light patches, and most of a photograph is neither, so
+         the line went muddy over exactly the mid-tone areas that dominate
+         these images. A scrim behind the text gives a contrast floor that
+         doesn't depend on what's passing under it; see #hero-scrim below. -->
+    <div id="hero-scrim" class="pointer-events-none absolute inset-0 flex items-center justify-center px-[24px]">
+      <h1 id="hero-quote" class="max-w-[18ch] text-center text-cream">
+        Turning places into spaces.
+      </h1>
+    </div>
+
+    <div
+      class="absolute inset-x-0 bottom-0 flex flex-col gap-[16px] px-[24px] pb-[32px] md:flex-row md:items-end md:justify-between md:px-[32px]"
+    >
+      <p class="max-w-[46ch] text-body text-muted">
+        Interior design to handover. 81 projects across the UAE&rsquo;s fitness, F&amp;B, retail,
+        workplace and hospitality brands.
+      </p>
+      <Button href="/projects" label="View our work" class="shrink-0" />
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Base.astro's shared header is redundant everywhere this hero is present
+     — the logo row above stands in for it, pinned for the hero's full
+     duration instead of just its first 88px — so hide it rather than show
+     both. This also removes the header's own flow height, so <main> starts
+     genuinely flush at the top of the page with no margin math needed to
+     cancel it out (an earlier version had exactly that cancellation here;
+     it's gone because there's nothing left to cancel). :has() reaches up
+     from the header's <body> ancestor into this component's subtree, so the
+     rule only fires on the page that actually renders #hero. */
+  :global(body:has(#hero) header) {
+    display: none;
+  }
+
+  /* Radial dark pool the text sits in. Wide enough to clear the full
+     max-width of the quote on every breakpoint, feathered rather than a
+     hard-edged panel so it doesn't read as a "card" floating over the
+     photos. This is the contrast floor: even the brightest frame passing
+     behind is darkened enough under here for cream text to hold. */
+  #hero-scrim {
+    background: radial-gradient(
+      ellipse min(640px, 90vw) min(320px, 45vh) at center,
+      rgb(12 12 10 / 0.55),
+      transparent 75%
+    );
+  }
+
+  #hero-quote {
+    font-family: var(--font-display-serif), Georgia, serif;
+    font-style: italic;
+    font-weight: 500;
+    /* Playfair's own proportions carry the size — this runs a little larger
+       than the sans --text-display token because a serif at the same optical
+       weight reads smaller. */
+    font-size: clamp(2.4rem, 7vw, 5.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    /* Second, tighter contrast guarantee on the glyphs themselves — holds
+       the edge crisp right at the scrim's feathered boundary, where the
+       radial gradient alone is weakest. */
+    text-shadow: 0 2px 24px rgb(0 0 0 / 0.45);
+  }
+
+  #hero-stage {
+    perspective: 900px;
+    transform-style: preserve-3d;
+  }
+
+  .hero-plane {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: calc(clamp(200px, 26vw, 520px) * var(--scale));
+    /* Hidden until the ticker writes real values. With JS off this stays
+       hidden and the static fallback below is what renders. */
+    visibility: hidden;
+    will-change: transform, opacity, filter;
+  }
+
+  .hero-plane-inner {
+    height: 100%;
+    width: 100%;
+  }
+
+  /* Hover ripple. The plane's own transform is rewritten every frame by the
+     ticker, so the wobble lives on this inner element where it can't be
+     clobbered. Skew + rotateY on its own perspective is the cheap read of
+     the reference's vertex-shader flag wave: the sheet luffs rather than
+     just scaling up. */
+  @keyframes hero-ripple {
+    0%,
+    100% {
+      transform: perspective(700px) rotateY(0deg) skewY(0deg) scale(1);
+    }
+    25% {
+      transform: perspective(700px) rotateY(7deg) skewY(1.1deg) scale(1.02);
+    }
+    50% {
+      transform: perspective(700px) rotateY(0deg) skewY(0deg) scale(1.035);
+    }
+    75% {
+      transform: perspective(700px) rotateY(-7deg) skewY(-1.1deg) scale(1.02);
+    }
+  }
+
+  .hero-plane:hover .hero-plane-inner {
+    animation: hero-ripple 1.7s ease-in-out infinite;
+  }
+
+  /* No JS / reduced motion: the flythrough can't run, so lay the same
+     photographs out as a static wall behind the line rather than nothing. */
+  @media (prefers-reduced-motion: reduce) {
+    #hero {
+      height: auto;
+    }
+    #hero-stage {
+      perspective: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 8px;
+      padding: 8px;
+      overflow: hidden;
+    }
+    .hero-plane {
+      position: static;
+      visibility: visible;
+      width: auto;
+      opacity: 0.35;
+      filter: none;
+    }
+    .hero-plane:hover .hero-plane-inner {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  import gsap from "gsap";
+
+  const SPACING = 420; // px of depth between consecutive photos
+  // How far PAST the camera plane a photo travels before it's done. Without
+  // this the near end is translateZ:0, so photos peak at their natural size
+  // and fade — they never sweep by. 500 against the stage's 900px
+  // perspective scales the last stretch to ~2.2x and carries it off-screen.
+  const NEAR = 500;
+  const FAR = 3400; // beyond this a photo is past the far wall and skipped
+  const FADE_FAR = 1000; // depth over which it materialises out of the haze
+  const FADE_NEAR = 450; // depth over which it dissolves on the way past
+  const MAX_BLUR = 2.5; // px. Deliberately low — the depth already reads,
+  // and heavier blur just made the photos illegible.
+  // px/s of autoplay. It runs on any frame the user isn't actively
+  // scrolling — including before they've scrolled at all — so the tunnel is
+  // already moving on arrival and picks straight back up the moment a
+  // scroll gesture ends. No idle delay.
+  const DRIFT = 260;
+
+  function initHeroGallery() {
+    const section = document.getElementById("hero");
+    const stage = document.getElementById("hero-stage");
+    if (!section || !stage) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    // Guards against double-init on the SAME DOM instance — see the
+    // unconditional call at the bottom of this script for why that can
+    // happen. Keyed to the element, not a module-level flag: every fresh
+    // navigation into this page swaps in a brand-new #hero with no marker,
+    // so init still runs exactly once per real arrival, every time.
+    if (section.dataset.heroInit) return;
+    section.dataset.heroInit = "1";
+
+    const planes = [...stage.querySelectorAll<HTMLElement>(".hero-plane")];
+    if (!planes.length) return;
+
+    // Start the front of the queue a screen's depth away rather than in the
+    // viewer's face on first paint.
+    const LEAD = 1400;
+    // One full scroll of the track = one pass over every photo, so the last
+    // plane clears the camera exactly as the section unpins. The lead-in and
+    // the near overshoot are part of that distance: size the span on the
+    // photo stack alone and the wrap folds the tail of the queue back around
+    // to the near side, so the last few planes start out already past the
+    // camera instead of far away.
+    const SPAN = planes.length * SPACING + LEAD + NEAR;
+
+    let drift = 0;
+    let lastScroll = -1;
+
+    const draw = () => {
+      const dt = gsap.ticker.deltaRatio(60) / 60; // seconds since last frame
+      const rect = section.getBoundingClientRect();
+
+      // Progress through the track: 0 as the top hits the viewport top, 1 as
+      // the bottom of the track reaches the bottom of the sticky child.
+      const scrolled = gsap.utils.clamp(
+        0,
+        1,
+        -rect.top / (rect.height - window.innerHeight),
+      );
+
+      if (Math.abs(scrolled - lastScroll) > 0.0001) {
+        // The user is driving this frame; their input owns the motion.
+        lastScroll = scrolled;
+      } else {
+        // Nobody's driving — keep the tunnel moving on its own. `drift` is
+        // never reset, so picking scrolling back up resumes from wherever
+        // it drifted to instead of snapping.
+        drift += DRIFT * dt;
+      }
+
+      const travel = scrolled * SPAN + drift;
+
+      for (let i = 0; i < planes.length; i++) {
+        const el = planes[i];
+        // Wrapped into [-NEAR, SPAN - NEAR): a photo that has swept past the
+        // camera reappears at the far wall. Under pure scrolling `travel`
+        // never exceeds SPAN so the wrap is inert and nothing repeats; it
+        // only engages once drift has pushed past the end.
+        const depth =
+          (((i * SPACING - travel + LEAD + NEAR) % SPAN) + SPAN) % SPAN - NEAR;
+
+        if (depth > FAR || depth < -NEAR) {
+          // Fully offstage. `visibility` rather than opacity:0 so the
+          // compositor drops the layer — with 30 planes and only ~8 in
+          // frame, that's most of them.
+          el.style.visibility = "hidden";
+          continue;
+        }
+
+        let opacity = 1;
+        if (depth > FAR - FADE_FAR) opacity = (FAR - depth) / FADE_FAR;
+        else if (depth < FADE_NEAR) opacity = (depth + NEAR) / (FADE_NEAR + NEAR);
+        opacity = opacity < 0 ? 0 : opacity > 1 ? 1 : opacity;
+
+        const blur = (1 - opacity) * MAX_BLUR;
+
+        el.style.visibility = "visible";
+        el.style.transform =
+          `translate3d(calc(-50% + var(--px)), calc(-50% + var(--py)), ${-depth}px)`;
+        el.style.opacity = String(opacity);
+        el.style.filter = blur > 0.05 ? `blur(${blur.toFixed(2)}px)` : "none";
+        // Don't let a ghost in the haze eat the pointer — only a photo
+        // that's actually readable should answer the hover ripple.
+        el.style.pointerEvents = opacity > 0.6 ? "auto" : "none";
+      }
+    };
+
+    // Paint the real first frame synchronously, right now, instead of
+    // waiting for the ticker's next rAF tick.
+    //
+    // `.hero-plane` starts life CSS-hidden (visibility:hidden) so a no-JS
+    // visit never shows a stage full of stacked, unpositioned photos. That's
+    // fine on a cold load — the gap between "hidden" and "positioned" is one
+    // invisible frame. It stopped being fine once page transitions arrived:
+    // Astro's ClientRouter snapshots the incoming page for its crossfade
+    // essentially as soon as the swap lands, which is before the ticker's
+    // first tick. The snapshot was catching the CSS-hidden state — an empty
+    // tunnel with just the quote floating on black — and THAT is what
+    // crossfaded in, with the real, populated tunnel popping in a beat
+    // later on top of it. Every arrival at this page looked like it briefly
+    // loaded a different, broken version of itself.
+    //
+    // `lastScroll` starts at the sentinel -1, so this call always takes the
+    // "scrolled" branch below rather than the drift branch — it can't
+    // mistake the time elapsed since some earlier page's last tick for an
+    // idle gap and jump `drift` forward.
+    draw();
+
+    // Ongoing, ticker-driven writes hold their last frame for the duration
+    // of any in-flight page transition (Base.astro sets/clears
+    // `<html data-transitioning>` across the whole before-preparation →
+    // after-swap window). `fallback="swap"` on ClientRouter already removes
+    // the one CONFIRMED source of visible motion during a transition — its
+    // JS/CSS fallback animates the live DOM, and this ticker's idle drift
+    // was writing straight through that animation. This is the defensive
+    // second layer, in case a browser's own native View Transition snapshot
+    // isolation isn't perfect: even if something is still watching the live
+    // DOM during the crossfade, there's nothing left for it to see moving.
+    // The one-time `draw()` call above is deliberately NOT gated by this —
+    // it's a correctness fix (paint the right frame at all), not an
+    // animation, and must always run.
+    const tick = () => {
+      if (document.documentElement.dataset.transitioning) return;
+      draw();
+    };
+    gsap.ticker.add(tick);
+
+    // Astro's view transitions swap the DOM out from under us; a ticker left
+    // running would keep writing to detached nodes forever.
+    document.addEventListener("astro:before-swap", () => gsap.ticker.remove(tick), {
+      once: true,
+    });
+  }
+
+  // Two entry points, one guarded function — this is what "shows a
+  // different frame each time" actually was.
+  //
+  // This script compiles to an external `<script type="module" src="...">`.
+  // Module scripts execute asynchronously even when a swap inserts them
+  // fresh into the DOM — the browser has to fetch/parse/run them, which
+  // never happens in the same synchronous tick as the swap itself. Astro
+  // dispatches `astro:page-load` synchronously right after that same swap.
+  // The very first time a session ever lands on this page via client-side
+  // navigation (arriving from anywhere else — the common case for a real
+  // visitor, not just a hard reload of "/"), this module hadn't executed
+  // yet when that event fired, so `document.addEventListener` below missed
+  // it entirely: nothing ever called initHeroGallery, and the tunnel sat
+  // there permanently blank (CSS's `visibility: hidden` default) for that
+  // whole page view. Every navigation AFTER that one worked fine, because
+  // by then the module was already loaded and the listener was already
+  // registered before the event fired — hence "sometimes blank, sometimes
+  // right," which is what a flaky per-visit "different frame" looks like
+  // from a click on link after link.
+  //
+  // Calling it directly, once, covers exactly the case the listener can
+  // miss: whichever page-load — hard load or that first race — is already
+  // underway by the time this module finally runs. The listener covers
+  // every navigation after that, same as before. The dataset guard above
+  // stops the overlap between the two (a normal hard load fires both) from
+  // ever double-initialising the same #hero.
+  initHeroGallery();
+  document.addEventListener("astro:page-load", initHeroGallery);
+</script>

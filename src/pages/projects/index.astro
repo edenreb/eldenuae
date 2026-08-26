@@ -1,0 +1,183 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getCollection } from "astro:content";
+import { Picture } from "astro:assets";
+
+const projects = (await getCollection("projects")).sort((a, b) => b.data.year - a.data.year);
+
+const sectors = ["All", ...new Set(projects.map((p) => p.data.sector))];
+---
+
+<Base
+  title="Projects"
+  description="81+ turnkey fitout projects across the UAE — fitness, F&B, retail, workplace, hospitality, and wellness."
+>
+  <section class="px-[24px] pt-[48px] md:px-[32px] md:pt-[72px]">
+    <div class="mx-auto max-w-[1440px]">
+      <h1 class="text-display text-cream">Selected work.</h1>
+      <!-- One sentence, not a stat line — matches the reference's own lead-in:
+           a single considered line at a real size, not a data caption
+           squeezed under the headline at body size. -->
+      <p class="mt-[24px] max-w-[46ch] text-heading text-cream">
+        A record of spaces built to work as hard as the businesses inside them.
+      </p>
+
+      <div class="mt-[48px] flex flex-wrap gap-[16px]" role="group" aria-label="Filter by sector">
+        {sectors.map((sector) => (
+          <button
+            type="button"
+            data-sector={sector}
+            class:list={[
+              "sector-filter cursor-pointer text-caption underline-offset-4 hover:text-cream",
+              sector === "All" ? "underline text-cream" : "text-muted hover:underline",
+            ]}
+            aria-pressed={sector === "All" ? "true" : "false"}
+          >
+            {sector}
+          </button>
+        ))}
+      </div>
+      <p id="filter-status" class="sr-only" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <!-- A real grid, fixed-aspect cards — not the previous natural-height
+       masonry. The reference's own card needs a fixed box: the hover
+       animation shrinks the photo to reveal a frame of the card's own
+       background, which only reads against a box that isn't already
+       exactly the image's shape. Gaps widened (12px → 32/48px) — the
+       masonry's tight gutter was the single biggest "crowded" complaint
+       against the reference's own generous grid. -->
+  <section class="px-[24px] py-[48px] md:px-[32px] md:py-[72px]">
+    <div class="mx-auto grid max-w-[1440px] grid-cols-1 gap-x-[32px] gap-y-[48px] sm:grid-cols-2 lg:gap-x-[48px] lg:gap-y-[64px]">
+      {projects.map((project) => (
+        <a
+          href={`/projects/${project.id}`}
+          data-cursor="open"
+          data-sector={project.data.sector}
+          class="project-card group block cursor-pointer"
+        >
+          {/* No data-rise here: with 24 cards in a dense grid, GSAP's
+              synchronous hidden-state-on-load can be caught mid-transition
+              by a scanner or fast crawler before any card's ScrollTrigger
+              has fired — confirmed via a real color-contrast failure on
+              this exact page. The 3-panel SelectedWork grid keeps its
+              entrance slide; this grid keeps only the CSS-only hover
+              reveal below, which carries no such risk. */}
+          <div class="aspect-[3/2] overflow-hidden bg-ink">
+            <Picture
+              src={project.data.cover}
+              alt={`${project.data.title} — ${project.data.sector.toLowerCase()} fitout by Elden`}
+              formats={["avif", "webp"]}
+              widths={[500, 800, 1100]}
+              sizes="(min-width: 640px) 50vw, 100vw"
+              loading="lazy"
+              class="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[0.94]"
+            />
+          </div>
+
+          <!-- Three columns, matching the reference: title stays put, the
+               category and year each crossfade into "Open" / an arrow on
+               hover — the same information slot, not a fourth thing added
+               on top of it. -->
+          <div class="mt-[16px] grid grid-cols-[1fr_auto_auto] items-baseline gap-[24px]">
+            <span class="truncate text-body text-cream group-hover:underline">{project.data.title}</span>
+
+            <span class="relative block h-[1.5em] w-[80px]">
+              <span class="absolute inset-y-0 right-0 whitespace-nowrap text-caption text-muted transition-opacity duration-300 group-hover:opacity-0">
+                {project.data.sector}
+              </span>
+              <span class="absolute inset-y-0 right-0 whitespace-nowrap text-caption text-cream opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                Open
+              </span>
+            </span>
+
+            <span class="relative block h-[1.5em] w-[36px]">
+              <span class="absolute inset-y-0 right-0 whitespace-nowrap text-caption text-muted transition-opacity duration-300 group-hover:opacity-0">
+                {project.data.year}
+              </span>
+              <span class="absolute inset-y-0 right-0 text-cream opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                &#8599;
+              </span>
+            </span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+</Base>
+
+<script>
+  import gsap from "gsap";
+
+  function initFilters() {
+    const buttons = document.querySelectorAll<HTMLButtonElement>(".sector-filter");
+    const cards = document.querySelectorAll<HTMLAnchorElement>(".project-card");
+    const status = document.getElementById("filter-status");
+    if (!buttons.length) return;
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // Cancellable: a second click before the first filter's animation
+    // finishes kills it and starts clean, rather than queuing or fighting
+    // over `display`.
+    let current: gsap.core.Timeline | null = null;
+
+    const applyFilter = (sector: string) => {
+      const btn = Array.from(buttons).find((b) => b.dataset.sector === sector) ?? buttons[0];
+      buttons.forEach((b) => {
+        const active = b === btn;
+        b.setAttribute("aria-pressed", String(active));
+        b.classList.toggle("underline", active);
+        b.classList.toggle("text-cream", active);
+        b.classList.toggle("text-muted", !active);
+      });
+
+      const showing: HTMLAnchorElement[] = [];
+      const hiding: HTMLAnchorElement[] = [];
+      cards.forEach((card) => {
+        const match = sector === "All" || card.dataset.sector === sector;
+        const wasHidden = card.style.display === "none";
+        if (match && wasHidden) showing.push(card);
+        else if (!match && !wasHidden) hiding.push(card);
+      });
+
+      if (status) {
+        const visible = sector === "All" ? cards.length : [...cards].filter((c) => c.dataset.sector === sector).length;
+        status.textContent = `Showing ${visible} project${visible === 1 ? "" : "s"}.`;
+      }
+
+      if (reduce || (!showing.length && !hiding.length)) {
+        cards.forEach((card) => {
+          card.style.display = sector === "All" || card.dataset.sector === sector ? "" : "none";
+        });
+        return;
+      }
+
+      current?.kill();
+      const tl = gsap.timeline({ onComplete: () => (current = null) });
+      current = tl;
+
+      if (hiding.length) {
+        tl.to(hiding, { opacity: 0, scale: 0.96, duration: 0.25, ease: "power2.in", stagger: 0.015 });
+      }
+      tl.set(hiding, { display: "none" });
+      tl.set(showing, { display: "", opacity: 0, scale: 0.96 });
+      if (showing.length) {
+        tl.to(showing, { opacity: 1, scale: 1, duration: 0.3, ease: "power2.out", stagger: 0.02 });
+      }
+    };
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => applyFilter(btn.dataset.sector ?? "All"));
+    });
+
+    // Deep-link support, e.g. /projects?sector=Fitness
+    const requested = new URLSearchParams(location.search).get("sector");
+    if (requested && Array.from(buttons).some((b) => b.dataset.sector === requested)) {
+      applyFilter(requested);
+    }
+  }
+
+  document.addEventListener("astro:page-load", initFilters);
+</script>
