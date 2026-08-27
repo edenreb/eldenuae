@@ -1,0 +1,114 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getCollection, render } from "astro:content";
+import { Picture } from "astro:assets";
+
+export async function getStaticPaths() {
+  const projects = await getCollection("projects");
+  return projects.map((project) => ({
+    params: { id: project.id },
+    props: { project, allProjects: projects },
+  }));
+}
+
+const { project, allProjects } = Astro.props;
+const { data } = project;
+const { Content } = await render(project);
+
+const currentIndex = allProjects.findIndex((p) => p.id === project.id);
+const nextProject = allProjects[(currentIndex + 1) % allProjects.length];
+
+const restOfGallery = data.gallery.slice(1);
+---
+
+<Base
+  title={data.title}
+  description={data.summary}
+>
+  <section class="relative">
+    <div class="aspect-[16/9] w-full overflow-hidden md:aspect-[21/9]">
+      <Picture
+        src={data.cover}
+        alt={`${data.title} — ${data.sector.toLowerCase()} fitout by Elden`}
+        formats={["avif", "webp"]}
+        widths={[800, 1400, 2000]}
+        sizes="100vw"
+        loading="eager"
+        fetchpriority="high"
+        class="h-full w-full object-cover"
+      />
+    </div>
+  </section>
+
+  <section class="px-[24px] py-[32px] md:px-[32px] md:py-[48px]">
+    <div class="mx-auto grid max-w-[1440px] grid-cols-1 gap-[32px] md:grid-cols-[1fr_320px] md:gap-[48px]">
+      <div>
+        <p class="text-caption text-muted">{data.sector}</p>
+        <h1 class="mt-[8px] text-display text-cream">{data.title}</h1>
+        <div class="prose-body mt-[24px] max-w-[640px] text-body text-cream">
+          <Content />
+        </div>
+      </div>
+
+      <dl class="grid grid-cols-2 gap-x-[16px] gap-y-[16px] text-body md:grid-cols-1">
+        <div class="col-span-2 rule mb-[8px] md:hidden" data-reveal-rule></div>
+        <div>
+          <dt class="text-caption text-muted">Client</dt>
+          <dd class="mt-[4px] text-cream">{data.client}</dd>
+        </div>
+        <div>
+          <dt class="text-caption text-muted">Year</dt>
+          <dd class="mt-[4px] text-cream">{data.year}</dd>
+        </div>
+        <div>
+          <dt class="text-caption text-muted">Location</dt>
+          <dd class="mt-[4px] text-cream">{data.location}</dd>
+        </div>
+        <div>
+          <dt class="text-caption text-muted">Scope</dt>
+          <dd class="mt-[4px] text-cream">{data.scope.join(", ")}</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  {restOfGallery.length > 0 && (
+    <section class="px-[24px] pb-[48px] md:px-[32px] md:pb-[72px]">
+      <div class="mx-auto grid max-w-[1440px] grid-cols-1 gap-x-[32px] gap-y-[48px] sm:grid-cols-2">
+        {restOfGallery.map((img) => (
+          <Picture
+            src={img}
+            alt={`${data.title} — interior detail`}
+            formats={["avif", "webp"]}
+            widths={[500, 900]}
+            sizes="(min-width: 640px) 50vw, 100vw"
+            loading="lazy"
+            class="aspect-[4/3] h-full w-full object-cover"
+          />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="px-[24px] py-[48px] md:px-[32px] md:py-[72px]">
+    <div class="mx-auto mb-[48px] max-w-[1440px] rule" data-reveal-rule></div>
+    <a href={`/projects/${nextProject.id}`} class="group mx-auto flex max-w-[1440px] items-center justify-between gap-[16px] cursor-pointer">
+      <div>
+        <p class="text-caption text-muted">Next project</p>
+        <p class="mt-[8px] text-subheading text-cream group-hover:underline">{nextProject.data.title}</p>
+      </div>
+      <span class="text-subheading text-cream transition-transform group-hover:translate-x-[8px]">&rarr;</span>
+    </a>
+  </section>
+</Base>
+
+<style>
+  /* :global() is required — <Content /> is a separate markdown module, so
+     its rendered <p> tags don't carry this component's Astro scope hash. */
+  .prose-body :global(p) {
+    margin-top: 13px;
+  }
+  .prose-body :global(p:first-child) {
+    margin-top: 0;
+  }
+</style>

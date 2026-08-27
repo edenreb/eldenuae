@@ -1,0 +1,188 @@
+---
+// Cursor that morphs into a labelled pill over project links. The native
+// cursor is hidden only once this successfully activates (fine-pointer,
+// no reduced motion) — toggled via a class on <html> rather than a bare
+// CSS media query, so if the script errors or JS is off, the native
+// pointer is never left invisible with nothing standing in for it.
+//
+// mix-blend-mode is back on the dot, and this time it's staying: the
+// freeze that looked like it might be caused by blend-mode (it survived
+// three blend-mode-focused fixes — pure-white fill, dropping
+// will-change, moving x/y off a transformed wrapper — and even surviving
+// blend-mode's total removal) turned out to be unrelated entirely: an
+// `overwrite: true` on the mode-change tweens below was silently killing
+// the x/y quickTo tweens the first time either target's tween fired,
+// since `true` overwrites every tween on a target, not just conflicting
+// properties (fixed to `overwrite: "auto"`). None of the blend-mode
+// changes were ever the actual fix, which means none of them were ever
+// required either.
+// - #cursor-dot: the default/hover circle. mix-blend-mode: difference so
+//   it auto-inverts against both photography and flat ink. Fixed 40px
+//   box, only ever animates `scale` (transform, no layout) — tweening
+//   `width`/`height` on a blend-mode element is a real, separate Chrome
+//   compositing hazard (this file's git history has that bug); keeping
+//   the box constant and only scaling it avoids it regardless of the
+//   freeze investigation above. Fill is pure #fff, not --color-cream:
+//   difference math is 255-minus-the-background-channel, so a near-white
+//   source only ever produces another near-white result — true white is
+//   what actually negates the photo/ink behind it. No will-change on
+//   this element, and its x/y transform lives on the element itself
+//   rather than a wrapper — both are real, separate bugs this file has
+//   already hit (Chrome layer-promotion-vs-blend and stacking-context
+//   confinement, respectively), unrelated to the freeze, and still avoided here.
+// - #cursor-pill: the "Open ↗" state. Fixed 92x36 box, only scale+opacity,
+//   plain `bg-cream`, no blend mode — it's already a solid label.
+const label = "Open";
+---
+
+<div id="cursor" aria-hidden="true" class="hidden">
+  <div
+    id="cursor-dot"
+    class="pointer-events-none fixed left-0 top-0"
+    style="width: 40px; height: 40px; border-radius: 999px; background: #fff; mix-blend-mode: difference; z-index: var(--z-cursor);"
+  >
+  </div>
+  <div
+    id="cursor-pill"
+    class="pointer-events-none fixed left-0 top-0 flex items-center justify-center overflow-hidden bg-cream opacity-0"
+    style="width: 92px; height: 36px; border: 1px solid var(--color-ink); z-index: var(--z-cursor);"
+  >
+    <span id="cursor-label" class="whitespace-nowrap px-[14px] text-caption text-ink">{label} &#8599;</span>
+  </div>
+</div>
+
+<script>
+  import gsap from "gsap";
+
+  // Torn down on every route change and rebuilt fresh — without this, each
+  // `astro:page-load` added another set of window/document listeners on top
+  // of the last (the elements they close over get detached, not garbage
+  // collected, since the listeners still hold a reference).
+  let cleanup: (() => void) | null = null;
+
+  function initCursor() {
+    cleanup?.();
+    cleanup = null;
+
+    const cursor = document.getElementById("cursor");
+    const dot = document.getElementById("cursor-dot");
+    const pill = document.getElementById("cursor-pill");
+    if (!cursor || !dot || !pill) return;
+
+    const fine = window.matchMedia("(pointer: fine)").matches;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!fine || reduce) return;
+
+    cursor.classList.remove("hidden");
+    document.documentElement.classList.add("custom-cursor-active");
+
+    // xPercent/yPercent center each shape on the pointer; scale starts at
+    // the dot's resting size. Set once via gsap.set (not inline CSS) so
+    // GSAP owns the transform from the start — mixing GSAP-driven x/y/scale
+    // with a hand-written inline `transform` causes GSAP to clobber it on
+    // the first tween, snapping the shape off-center.
+    gsap.set([dot, pill], { xPercent: -50, yPercent: -50 });
+    gsap.set(dot, { scale: 0.3 });
+    gsap.set(pill, { scale: 0.3 });
+
+    const dotXTo = gsap.quickTo(dot, "x", { duration: 0.5, ease: "power3" });
+    const dotYTo = gsap.quickTo(dot, "y", { duration: 0.5, ease: "power3" });
+    const pillXTo = gsap.quickTo(pill, "x", { duration: 0.5, ease: "power3" });
+    const pillYTo = gsap.quickTo(pill, "y", { duration: 0.5, ease: "power3" });
+
+    // Positioned immediately, before any real pointermove — otherwise the
+    // shapes sit at the raw (0,0) origin and visibly jump to the pointer
+    // on first movement instead of already being there.
+    const moveTo = (x: number, y: number) => {
+      dotXTo(x);
+      dotYTo(y);
+      pillXTo(x);
+      pillYTo(y);
+    };
+    moveTo(window.innerWidth / 2, window.innerHeight / 2);
+
+    const OPEN = "[data-cursor='open']";
+    const GENERIC = "a, button, summary, input, textarea, select, [role='button']";
+
+    type Mode = "none" | "generic" | "open";
+    let mode: Mode = "none";
+
+    const setMode = (next: Mode) => {
+      if (next === mode) return;
+      // overwrite: "auto", not `true`. `true` is GSAP's "kill every other
+      // tween on this target" mode, not "overwrite conflicting properties"
+      // — and dot/pill are also the targets of the quickTo x/y tracking
+      // tweens below. The very first hover over anything interactive
+      // called this with `overwrite: true` and silently killed those x/y
+      // tweens as a side effect, permanently, since quickTo's functions
+      // are created once in initCursor and never rebuilt — which is the
+      // actual freeze this session chased through three wrong theories
+      // (blend-mode, nav width, elementFromPoint) before finding it here.
+      // "auto" only overwrites tweens on the same property (scale/opacity
+      // here), leaving x/y alone.
+      if (next === "open") {
+        gsap.to(dot, { scale: 0, opacity: 0, duration: 0.2, ease: "power2.out", overwrite: "auto" });
+        gsap.to(pill, { scale: 1, opacity: 1, duration: 0.3, ease: "power2.out", overwrite: "auto" });
+      } else {
+        gsap.to(pill, { scale: 0.3, opacity: 0, duration: 0.15, ease: "power2.out", overwrite: "auto" });
+        gsap.to(dot, {
+          scale: next === "generic" ? 1 : 0.3,
+          opacity: 1,
+          duration: 0.3,
+          ease: "power2.out",
+          overwrite: "auto",
+        });
+      }
+      mode = next;
+    };
+
+    // Hover state is derived fresh from the actual pointer position on
+    // every move, rather than paired pointerover/pointerout listeners.
+    // Over/out fires once per child element boundary crossed inside a card
+    // (image, then caption, then...) — on a fast enough hover-in-then-out,
+    // those events can arrive interleaved with the pill's own delayed
+    // label tween, or the final "out" can simply be the one the browser
+    // drops under load, leaving the pill "stuck" open with nothing left to
+    // pair it back to a pointerout. Since the pointer position is already
+    // sampled every frame for cursor tracking, asking "what's actually
+    // under the cursor right now" via elementFromPoint can't desync the
+    // way an event-pairing count can.
+    // e.target, not elementFromPoint(e.clientX, e.clientY): this listener
+    // is on window, so the browser has already hit-tested the pointer
+    // position to dispatch the event — e.target IS that answer, for free.
+    // elementFromPoint re-does the same hit-test by forcing a synchronous
+    // layout, and this handler runs on EVERY pointermove, sitewide — that
+    // was the real freeze bug (found after nav-specific and blend-mode
+    // theories both turned out wrong): moving the mouse anywhere fired
+    // this forced layout continuously, pegging the main thread hardest
+    // over regions with active CSS/GSAP transitions already in flight
+    // (the nav pill, a hovering project card image) since a forced layout
+    // during a running transition is the most expensive case. Fixing the
+    // nav's own duplicate copy of this same mistake (see Base.astro)
+    // wasn't enough on its own because this one — global, not nav-scoped
+    // — was still running the whole time.
+    const onMove = (e: PointerEvent) => {
+      moveTo(e.clientX, e.clientY);
+
+      const hovered = e.target as Element | null;
+      if (hovered?.closest(OPEN)) setMode("open");
+      else if (hovered?.closest(GENERIC)) setMode("generic");
+      else setMode("none");
+    };
+    window.addEventListener("pointermove", onMove);
+
+    // The mouse leaving the browser chrome entirely doesn't fire
+    // pointermove — reset explicitly, or exiting fast over a card leaves
+    // the pill stuck open with no further move event to correct it.
+    const onLeave = () => setMode("none");
+    document.addEventListener("pointerleave", onLeave);
+
+    cleanup = () => {
+      window.removeEventListener("pointermove", onMove);
+      document.removeEventListener("pointerleave", onLeave);
+    };
+  }
+
+  document.addEventListener("astro:page-load", initCursor);
+  document.addEventListener("astro:before-swap", () => cleanup?.());
+</script>

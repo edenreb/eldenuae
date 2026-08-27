@@ -1,0 +1,67 @@
+---
+// Photo + name + quote is now the exact combination an earlier version of
+// this section was pulled for: a fabricated quote attributed to a named
+// individual beside a real supplied photograph read as genuine testimony.
+// Adding photos back per explicit request doesn't undo that lesson — it
+// raises the stakes on it. Before this ships, every one of these three
+// needs to be a real, sourced quote this client actually said, not
+// placeholder copy wearing a real name and face.
+import { Image } from "astro:assets";
+import pankaj from "../assets/testimonials/pankaj-agarwal.jpg";
+import kevin from "../assets/testimonials/kevin-teixeira.jpg";
+import amit from "../assets/testimonials/amit-choubey.jpg";
+
+const quotes = [
+  {
+    body: "The professionalism with which the work was Elden engineers is worth mentioning often.",
+    name: "Pankaj Agarwal",
+    role: "Managing Director, Bikanervala Chain of Restaurants",
+    photo: pankaj,
+  },
+  {
+    body: "Elden's attentional to detail is what keeps them above the rest.",
+    name: "Kevin Teixeira",
+    role: "Managing Director, Warehouse Gym",
+    photo: kevin,
+  },
+  {
+    body: "The design drawings and specifications were followed with precision. Would love to collaborate again in the future.",
+    name: "Amit Choubey",
+    role: "Head of Projects, SRG Properties LLC",
+    photo: amit,
+  },
+];
+---
+
+<section class="px-[24px] py-[48px] md:px-[32px] md:py-[72px]">
+  <div class="mx-auto max-w-[1440px]">
+    <h2 class="text-heading text-cream" data-reveal-words>
+      What clients say.
+    </h2>
+
+    <div class="mt-[48px] grid grid-cols-1 gap-[32px] md:mt-[72px] md:grid-cols-3 md:gap-[48px]">
+      {
+        quotes.map((q) => (
+          <blockquote class="flex flex-col gap-[16px]">
+            <div class="rule" data-reveal-rule></div>
+            <p class="text-subheading text-cream">&ldquo;{q.body}&rdquo;</p>
+            <footer class="flex items-center gap-[12px] text-caption">
+              <Image
+                src={q.photo}
+                alt=""
+                width={40}
+                height={40}
+                class="h-[40px] w-[40px] shrink-0 object-cover"
+                style="border-radius: 999px;"
+              />
+              <div>
+                <p class="text-cream">{q.name}</p>
+                <p class="text-muted">{q.role}</p>
+              </div>
+            </footer>
+          </blockquote>
+        ))
+      }
+    </div>
+  </div>
+</section>

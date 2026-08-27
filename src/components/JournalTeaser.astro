@@ -1,0 +1,80 @@
+---
+// Asymmetric editorial split — one lead post at large scale beside two
+// stacked secondaries. Deliberately not three equal columns.
+import { getCollection } from "astro:content";
+import { Picture } from "astro:assets";
+
+const posts = (await getCollection("journal"))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+const [lead, ...rest] = posts;
+const formatter = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric" });
+---
+
+<section class="px-[24px] py-[48px] md:px-[32px] md:py-[72px]">
+  <div class="mx-auto max-w-[1440px]">
+    <div class="flex items-baseline justify-between gap-[16px]">
+      <h2 class="text-heading text-cream" data-reveal-words>
+        From the journal.
+      </h2>
+      <a
+        href="/journal"
+        class="cursor-pointer whitespace-nowrap text-body text-cream underline-offset-4 hover:underline"
+      >
+        Read more &rarr;
+      </a>
+    </div>
+
+    <div class="mt-[32px] grid grid-cols-1 gap-[32px] md:mt-[48px] md:grid-cols-[1.35fr_1fr] md:gap-[48px]">
+      <a href={`/journal/${lead.id}`} class="group block cursor-pointer" data-reveal>
+        <div class="aspect-[4/3] overflow-hidden">
+          <Picture
+            src={lead.data.cover}
+            alt={`Cover image for the article “${lead.data.title}”`}
+            formats={["avif", "webp"]}
+            widths={[600, 1000, 1400]}
+            sizes="(min-width: 768px) 55vw, 100vw"
+            loading="lazy"
+            class="h-full w-full object-cover"
+          />
+        </div>
+        <p class="mt-[16px] text-caption text-muted">
+          {formatter.format(lead.data.date)}
+        </p>
+        <h3 class="mt-[8px] max-w-[24ch] text-subheading text-cream group-hover:underline">
+          {lead.data.title}
+        </h3>
+        <p class="mt-[12px] max-w-[52ch] text-body text-muted">{lead.data.excerpt}</p>
+      </a>
+
+      <div class="flex flex-col gap-[32px] md:gap-[48px]">
+        {
+          rest.map((post) => (
+            <a href={`/journal/${post.id}`} class="group grid grid-cols-[100px_1fr] gap-[16px] cursor-pointer">
+              <div class="aspect-square overflow-hidden">
+                <Picture
+                  src={post.data.cover}
+                  alt={`Cover image for the article “${post.data.title}”`}
+                  formats={["avif", "webp"]}
+                  widths={[200, 400]}
+                  sizes="100px"
+                  loading="lazy"
+                  class="h-full w-full object-cover"
+                />
+              </div>
+              <div>
+                <p class="text-caption text-muted">
+                  {formatter.format(post.data.date)}
+                </p>
+                <h3 class="mt-[4px] text-subheading text-cream group-hover:underline">
+                  {post.data.title}
+                </h3>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>

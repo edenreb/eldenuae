@@ -1,0 +1,173 @@
+---
+import Base from "../layouts/Base.astro";
+import SocialLinks from "../components/SocialLinks.astro";
+
+const sectors = ["Fitness", "F&B", "Retail", "Workplace", "Hospitality", "Wellness", "Other"];
+
+// Field chrome, measured on the reference's own /contact route: the input is
+// fully transparent with no border and no padding, 40px tall, and the only
+// affordance is a hairline beneath it. The wrapping <label> owns that
+// hairline so it can brighten on focus-within.
+const FIELD = "h-full w-full bg-transparent text-body font-semibold text-cream placeholder:text-muted";
+const WRAP = "flex h-[40px] items-center border-b-2 border-line transition-colors focus-within:border-cream";
+
+const details = [
+  { label: "General inquiries", value: "info@eldenuae.com", href: "mailto:info@eldenuae.com" },
+  { label: "Phone", value: "+971 4 227 6206", href: "tel:+97142276206" },
+  { label: "Studio", value: "Dubai, United Arab Emirates" },
+];
+---
+
+<Base
+  title="Contact"
+  description="Start a turnkey fitout project with Elden. Get in touch with our Dubai studio."
+>
+  <!-- Two-row layout, matching the reference: headline and lead-in above,
+       details and form below. -->
+  <section class="px-[24px] pt-[120px] md:px-[32px] md:pt-[180px]">
+    <div class="mx-auto max-w-[1440px]">
+      <div class="flex flex-col gap-[24px] md:flex-row md:items-start md:justify-between">
+        <h1 class="max-w-[1200px] text-display text-cream">Let&rsquo;s build it.</h1>
+        <p class="max-w-[36ch] text-body text-cream md:text-right">
+          Every fitout starts with a conversation. Tell us about the space and we&rsquo;ll come back
+          with next steps within one working day.
+        </p>
+      </div>
+
+      <div class="mt-[72px] grid grid-cols-1 gap-[48px] pb-[72px] lg:grid-cols-2 lg:gap-[96px]">
+        <div class="flex flex-col gap-[32px]">
+          {details.map((d) => (
+            <div class="flex flex-col gap-[8px]">
+              <p class="text-body text-cream">{d.label}</p>
+              {d.href ? (
+                <a href={d.href} class="cursor-pointer text-body text-muted hover:text-cream hover:underline">
+                  {d.value}
+                </a>
+              ) : (
+                <p class="text-body text-muted">{d.value}</p>
+              )}
+            </div>
+          ))}
+
+          <div class="flex flex-col gap-[8px]">
+            <p class="text-body text-cream">Follow along</p>
+            <SocialLinks />
+          </div>
+        </div>
+
+        <div>
+          <div
+            id="contact-form-error-summary"
+            hidden
+            role="alert"
+            class="mb-[24px] bg-surface px-[16px] py-[12px] text-body text-cream"
+          >
+            <p class="font-semibold">Please fix the following before submitting:</p>
+          </div>
+
+          <div id="contact-form-success" hidden class="bg-surface px-[16px] py-[24px]">
+            <p class="text-subheading text-cream">Thanks — that&rsquo;s in.</p>
+            <p class="mt-[8px] text-body text-cream">We&rsquo;ll be in touch within one working day.</p>
+          </div>
+
+          <form id="contact-form" class="flex flex-col gap-[20px]" novalidate>
+            <div>
+              {/* The visible affordance is the placeholder, as on the
+                  reference. The label stays in the DOM (screen-reader only)
+                  so the field keeps a real accessible name rather than
+                  relying on the placeholder alone. */}
+              <label class={WRAP}>
+                <span class="sr-only">Name (required)</span>
+                <input
+                  id="contact-name"
+                  name="name"
+                  type="text"
+                  required
+                  autocomplete="name"
+                  placeholder="Name"
+                  data-label="Name"
+                  aria-describedby="contact-name-error"
+                  class={FIELD}
+                />
+              </label>
+              <p id="contact-name-error" class="mt-[8px] text-caption text-cream" role="alert"></p>
+            </div>
+
+            <div>
+              <label class={WRAP}>
+                <span class="sr-only">Email (required)</span>
+                <input
+                  id="contact-email"
+                  name="email"
+                  type="email"
+                  required
+                  autocomplete="email"
+                  placeholder="Email"
+                  data-label="Email"
+                  aria-describedby="contact-email-error"
+                  class={FIELD}
+                />
+              </label>
+              <p id="contact-email-error" class="mt-[8px] text-caption text-cream" role="alert"></p>
+            </div>
+
+            <label class={WRAP}>
+              <span class="sr-only">Phone</span>
+              <input
+                id="contact-phone"
+                name="phone"
+                type="tel"
+                autocomplete="tel"
+                placeholder="Phone"
+                class={FIELD}
+              />
+            </label>
+
+            <label class={WRAP}>
+              <span class="sr-only">Project sector</span>
+              <select id="contact-sector" name="sector" class={FIELD}>
+                {sectors.map((s) => <option value={s}>{s}</option>)}
+              </select>
+            </label>
+
+            <div>
+              <label class="flex flex-col border-b-2 border-line transition-colors focus-within:border-cream">
+                <span class="sr-only">Tell us about the space (required)</span>
+                <textarea
+                  id="contact-message"
+                  name="message"
+                  required
+                  rows={4}
+                  placeholder="Tell us about the space"
+                  data-label="Message"
+                  aria-describedby="contact-message-error"
+                  class="w-full resize-none bg-transparent py-[8px] text-body font-semibold text-cream placeholder:text-muted"
+                ></textarea>
+              </label>
+              <p id="contact-message-error" class="mt-[8px] text-caption text-cream" role="alert"></p>
+            </div>
+
+            {/* group so the dot picks up the same hover as the label text —
+                bg-cream surface, so brand navy on hover, matching every
+                other cream CTA site-wide. */}
+            <button
+              type="submit"
+              class="group mt-[12px] flex cursor-pointer items-center gap-[10px] self-end bg-cream px-[16px] py-[8px] text-button text-ink transition-[color,opacity] hover:text-[var(--color-brand-navy)] hover:opacity-90"
+            >
+              Send message
+              <span
+                aria-hidden="true"
+                class="h-[4px] w-[4px] shrink-0 bg-ink transition-colors group-hover:bg-[var(--color-brand-navy)]"
+              ></span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { initFormValidation } from "../scripts/form";
+  document.addEventListener("astro:page-load", () => initFormValidation("contact-form"));
+</script>

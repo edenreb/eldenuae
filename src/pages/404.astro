@@ -1,0 +1,43 @@
+---
+import Base from "../layouts/Base.astro";
+import Eyebrow from "../components/Eyebrow.astro";
+---
+
+<Base title="Page not found" description="That page doesn't exist. Find your way back to Elden's work, journal, or studio.">
+  <section class="px-[24px] pt-[72px] pb-[72px] md:px-[32px] md:pt-[96px] md:pb-[96px]">
+    <div class="mx-auto max-w-[1440px]">
+      <Eyebrow>Error 404</Eyebrow>
+      <h1 class="mt-[16px] max-w-[14ch] text-display text-cream">
+        This one isn&rsquo;t built yet.
+      </h1>
+      <p class="mt-[24px] max-w-[46ch] text-body text-cream">
+        The page you asked for doesn&rsquo;t exist &mdash; it may have moved, or the link may be wrong.
+      </p>
+
+      {/* hover:text-ink -> hover:text-brand-navy site-wide on this
+          bg-glass-to-bg-cream hover pattern: cream-surfaced on hover, so
+          navy is the accessible accent, not ink — same rule Button.astro
+          and SelectedWork's arrow icons use. */}
+      <nav aria-label="Recovery links" class="mt-[48px] flex flex-wrap gap-[12px]">
+        <a
+          href="/"
+          class="cursor-pointer bg-glass px-[16px] py-[8px] text-body text-cream backdrop-blur-[10px] transition-colors hover:bg-cream hover:text-[var(--color-brand-navy)]"
+        >
+          Back to home
+        </a>
+        <a
+          href="/projects"
+          class="cursor-pointer bg-glass px-[16px] py-[8px] text-body text-cream backdrop-blur-[10px] transition-colors hover:bg-cream hover:text-[var(--color-brand-navy)]"
+        >
+          See our work
+        </a>
+        <a
+          href="/contact"
+          class="cursor-pointer bg-glass px-[16px] py-[8px] text-body text-cream backdrop-blur-[10px] transition-colors hover:bg-cream hover:text-[var(--color-brand-navy)]"
+        >
+          Get in touch
+        </a>
+      </nav>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,149 @@
+---
+// Session-scoped entry sequence: wordmark + a tabular counter running to
+// 100, then a cream curtain wipes upward. (An earlier version stopped the
+// count at 81 — Elden's project count — but that reads as a stalled/broken
+// loader rather than a deliberate number; a preloader counter is expected
+// to reach 100.)
+//
+// It does not touch the hero. When the curtain clears it dispatches
+// `elden:intro`; the hero owns its own reveal and listens for that. When the
+// preloader is skipped the event fires immediately, so the hero behaves the
+// same either way.
+//
+// Whether it plays at all is decided by the inline head script in
+// Base.astro, before first paint — see the comment there. This component
+// only reads the resulting `data-preloading` flag; it never re-decides, or
+// the two could disagree.
+//
+// Accessibility contract:
+//   - display:none unless <html data-preloading> is set, so no-JS and
+//     reduced-motion users never see a stuck cream screen
+//   - contains nothing focusable, so it cannot trap the keyboard
+//   - aria-hidden: decoration over content that is already in the DOM
+import Logo from "./Logo.astro";
+---
+
+<div
+  id="preloader"
+  aria-hidden="true"
+  class="fixed inset-0 flex items-center justify-center bg-ink"
+  style="z-index: var(--z-preloader)"
+>
+  <div class="flex w-full max-w-[1440px] items-end justify-between px-[24px] md:px-[32px]">
+    <Logo class="h-[28px] w-auto text-cream md:h-[40px]" />
+    <p id="preloader-count" class="tabular-nums text-heading leading-none text-cream">00</p>
+  </div>
+</div>
+
+<style>
+  /* Painted from the very first frame when the head script says the intro
+     is playing, and never rendered at all otherwise. This is what replaced
+     the `hidden` attribute: `hidden` could only be cleared from JS running
+     after paint, which is exactly the flash we were trying to avoid. */
+  #preloader {
+    display: none;
+  }
+  :global(html[data-preloading]) #preloader {
+    display: flex;
+  }
+</style>
+
+<script>
+  import gsap from "gsap";
+
+  const SEEN_KEY = "elden:preloaded";
+
+  function initPreloader() {
+    const el = document.getElementById("preloader");
+    if (!el) return;
+
+    // A flag as well as an event: the hero may subscribe after this fires
+    // (it waits for tab visibility), so it needs to be able to ask "did the
+    // intro already happen?" rather than relying on catching the event live.
+    const announce = () => {
+      document.documentElement.dataset.introReady = "1";
+      document.dispatchEvent(new CustomEvent("elden:intro"));
+    };
+    // Releases the scroll lock. Idempotent — the wipe and the watchdog can
+    // both reach it.
+    const unlock = () => delete document.documentElement.dataset.preloading;
+
+    // Whether to play was already settled before first paint by the inline
+    // head script in Base.astro (once per session, never under reduced
+    // motion, never in a backgrounded tab — rAF is throttled to zero there,
+    // so the curtain would never lift and the cream screen would block the
+    // page indefinitely). Just read its verdict.
+    if (!document.documentElement.dataset.preloading) {
+      el.remove();
+      // Deferred a frame: astro:page-load listeners fire in registration
+      // order, and the hero may not have subscribed to elden:intro yet.
+      requestAnimationFrame(announce);
+      return;
+    }
+
+    try {
+      sessionStorage.setItem(SEEN_KEY, "1");
+    } catch (e) {
+      /* Private modes throw on write. Worst case the intro replays on the
+         next navigation — not worth failing the page over. */
+    }
+
+    const counter = document.getElementById("preloader-count");
+    const value = { n: 0 };
+
+    // Insurance: whatever happens to the timeline (tab backgrounded mid-run,
+    // GSAP stalling), the curtain is gone and the page usable after 5s.
+    const watchdog = setTimeout(() => {
+      announce();
+      unlock();
+      el.remove();
+    }, 5000);
+
+    // The site's one signature brand-color moment: the counter tints from
+    // cream to brand green as it counts to 100, cream again on the very
+    // next visit's cold-render (this whole tween never runs a second time
+    // in a session — see the sessionStorage check above). Ink-side only
+    // (green, not navy — navy measures 1.7:1 on this bg-ink canvas, below
+    // even the 3:1 non-text minimum, so it would just be invisible here;
+    // see the token comment in global.css for the full rule). A literal
+    // rgb() rather than the CSS var: GSAP's color interpolator numerically
+    // lerps between two resolved colors and can't resolve a var() reference
+    // itself, only getComputedStyle can — so the token's value is
+    // duplicated here rather than referenced. Keep them in sync if the
+    // brand green ever changes.
+    gsap
+      .timeline()
+      .to(value, {
+        n: 100,
+        duration: 1.3,
+        ease: "power2.inOut",
+        onUpdate: () => {
+          if (counter) counter.textContent = String(Math.round(value.n)).padStart(2, "0");
+        },
+      })
+      .to(counter, { color: "rgb(73, 155, 86)", duration: 1.3, ease: "power2.inOut" }, "<")
+      .to(el, {
+        // Slides the whole curtain off-screen upward, rather than animating
+        // `clip-path: inset()` to reveal what's beneath it. Both read as
+        // the same wipe-up, but percentage-based clip-path animations are a
+        // known category of WebKit/Safari bug: sub-pixel rounding at the
+        // clip boundary during compositing can leave a stray hairline where
+        // the edge was — a persistent thin bright line, exactly what showed
+        // up here. `transform: translateY` is a plain GPU-composited move
+        // with no clip boundary to round.
+        yPercent: -100,
+        duration: 0.9,
+        ease: "power3.inOut",
+        onStart: () => {
+          announce(); // hero reveal rides the curtain, not after it
+          unlock(); // and the page is scrollable again as it lifts
+        },
+        onComplete: () => {
+          clearTimeout(watchdog);
+          el.remove();
+        },
+      });
+  }
+
+  document.addEventListener("astro:page-load", initPreloader);
+</script>

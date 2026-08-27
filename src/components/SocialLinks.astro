@@ -1,0 +1,48 @@
+---
+// Instagram + LinkedIn, real URLs supplied directly.
+interface Props {
+  class?: string;
+}
+const { class: className = "" } = Astro.props;
+---
+
+<ul class:list={["flex items-center gap-[16px]", className]}>
+  <li>
+    <a
+      href="https://www.instagram.com/eldenuae/"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Elden on Instagram"
+      class="block cursor-pointer text-cream transition-colors hover:text-muted"
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="2.5" y="2.5" width="19" height="19" rx="5" stroke="currentColor" stroke-width="1.6" />
+        <circle cx="12" cy="12" r="4.4" stroke="currentColor" stroke-width="1.6" />
+        <circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" />
+      </svg>
+    </a>
+  </li>
+  <li>
+    <a
+      href="https://www.linkedin.com/company/elden-uae/"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Elden on LinkedIn"
+      class="block cursor-pointer text-cream transition-colors hover:text-muted"
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="2.5" y="2.5" width="19" height="19" rx="5" stroke="currentColor" stroke-width="1.6" />
+        <line x1="7.3" y1="10.2" x2="7.3" y2="17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+        <circle cx="7.3" cy="7" r="1.2" fill="currentColor" />
+        <path
+          d="M11.2 17v-4.2c0-1.7 1-2.7 2.4-2.7s2.3 1 2.3 2.7V17"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        ></path>
+        <line x1="11.2" y1="10.2" x2="11.2" y2="17" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+      </svg>
+    </a>
+  </li>
+</ul>

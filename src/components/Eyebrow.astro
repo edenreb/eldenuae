@@ -1,0 +1,17 @@
+---
+// Eyebrow label — measured on the reference: a 4px cream square, 10px gap,
+// then sentence-case text at body size/weight (not the uppercase-tracked
+// caption style this replaces everywhere).
+interface Props {
+  class?: string;
+}
+const { class: className = "" } = Astro.props;
+---
+
+<!-- data-rise="23" is the reference's own measured offset for these dot
+     markers — they travel further than the text they label, so the dot
+     arrives a beat after the line settles. -->
+<p class:list={["flex items-center gap-[10px] text-body text-cream", className]} data-rise="23">
+  <span aria-hidden="true" class="h-[4px] w-[4px] shrink-0 bg-cream"></span>
+  <slot />
+</p>

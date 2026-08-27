@@ -1,0 +1,115 @@
+---
+// Text-first hero, restructured to match the reference (measured live at
+// 1440px, not estimated): section pads 180px from the top with a 64px gap,
+// the headline runs at 80px capped to a 1200px measure, and the photograph
+// sits as a full-bleed block BELOW the headline rather than behind it.
+//
+// This retires the previous 100dvh photo-with-scrim hero and its layered
+// parallax branch. The layered branch was unreachable anyway — its assets
+// directory only ever contained a README, so the single-photo fallback was
+// what actually shipped. The scrim goes with it: nothing overlays the
+// photograph now, so no contrast floor is needed under the type.
+//
+// Deviation, deliberate: the reference's hero is headline + image only, with
+// its lead-in copy in the next section down. Elden's sub-line and primary
+// CTA are kept here, in the gap between the two, so the main call to action
+// stays above the fold. Same rhythm, one extra row.
+import { Picture } from "astro:assets";
+import Button from "./Button.astro";
+import heroImage from "../assets/anantara-penthouse/1.jpg";
+---
+
+<!-- pt-[96/140px] here, not the header's own height — the reference's 180px
+     top padding is measured on the Hero Section itself, independent of
+     wherever its header sits. An earlier pass assumed the header (now in
+     normal flow) substituted for part of that gap and shrank this to
+     48/72px; side-by-side comparison against the live reference showed
+     that was wrong — the reference reserves ~170px of genuine breathing
+     room between its nav row and headline, not ~90px. --><section id="hero" class="flex w-full flex-col gap-[64px] pt-[96px] md:pt-[140px]">
+  <div class="px-[24px] md:px-[32px]">
+    <h1 id="hero-title" class="max-w-[1200px] text-display text-cream">
+      Turnkey fitout, from first sketch to opening day.
+    </h1>
+
+    <div
+      id="hero-sub"
+      class="mt-[32px] flex max-w-[1200px] flex-col gap-[16px] md:flex-row md:items-end md:justify-between"
+    >
+      <p class="max-w-[46ch] text-body text-muted">
+        Interior design to handover. 81 projects across the UAE&rsquo;s fitness, F&amp;B, retail,
+        workplace and hospitality brands.
+      </p>
+      <Button href="/projects" label="View our work" class="shrink-0 self-end" />
+    </div>
+  </div>
+
+  <div id="hero-media" class="w-full overflow-hidden">
+    <Picture
+      src={heroImage}
+      alt="A completed Elden penthouse fitout in Dubai, looking through the living space toward the terrace"
+      formats={["avif", "webp"]}
+      widths={[900, 1400, 2000, 2600]}
+      sizes="100vw"
+      loading="eager"
+      fetchpriority="high"
+      class="h-full w-full object-cover"
+    />
+  </div>
+</section>
+
+<script>
+  import gsap from "gsap";
+  import { splitWords, whenVisible } from "../scripts/motion";
+
+  function initHero() {
+    const title = document.getElementById("hero-title");
+    if (!title) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    whenVisible(() => {
+      splitWords(title);
+      // splitWords wraps each word in an overflow-hidden mask sized for the
+      // slide-up reveal other headings use. This effect is opacity-only —
+      // nothing translates — so the mask has no job here except clipping
+      // descenders (g, y) below the line box. Open it up.
+      title.querySelectorAll<HTMLElement>(".word-mask").forEach((el) => {
+        el.style.overflow = "visible";
+      });
+      const words = title.querySelectorAll<HTMLElement>(":scope > span > span");
+
+      // The reference's measured hero animation is a mount-triggered spring
+      // (bounce 0.1, delay 0.8, duration 1) — not scroll-linked. A scroll-
+      // scrubbed version was tried first and had two problems: it depended
+      // on GSAP's pin interacting correctly with Lenis (it didn't reliably),
+      // and a fast scroll or wheel flick could carry the section out of view
+      // before the words finished brightening regardless. A mount-triggered
+      // stagger — the same family the image and sub-row already use below —
+      // plays to completion on its own timer once triggered, independent of
+      // whatever the user does with the scrollbar afterward.
+      let done = false;
+      const reveal = () => {
+        if (done) return;
+        done = true;
+        // The mount animations must wait for the preloader curtain, or they
+        // play behind it and are over before it lifts. Preloader dispatches
+        // `elden:intro` as the curtain starts wiping, so the hero entrance
+        // rides it.
+        gsap.from(words, { opacity: 0.001, duration: 1, delay: 0.8, stagger: 0.09, ease: "settle" });
+        // Measured appear springs: image {bounce:0.1, delay:0.8, duration:1}
+        // from y:100, sub-row {bounce:0.1, delay:1.2, duration:0.8} from
+        // y:40. GSAP has no bounce parameter; back.out(0.9) stands in for
+        // the 0.1 overshoot. Delays are relative to the curtain lifting.
+        gsap.from("#hero-media", { y: 100, opacity: 0, duration: 1, delay: 0.8, ease: "back.out(0.9)" });
+        gsap.from("#hero-sub", { y: 40, opacity: 0, duration: 0.8, delay: 1.2, ease: "back.out(0.9)" });
+      };
+
+      if (document.documentElement.dataset.introReady) reveal();
+      else document.addEventListener("elden:intro", reveal, { once: true });
+      // Insurance, mirroring the preloader's own watchdog: never leave the
+      // hero stuck invisible if the intro event never arrives.
+      setTimeout(reveal, 4000);
+    });
+  }
+
+  document.addEventListener("astro:page-load", initHero);
+</script>

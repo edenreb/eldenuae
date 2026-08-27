@@ -1,0 +1,98 @@
+---
+import Base from "../layouts/Base.astro";
+import Eyebrow from "../components/Eyebrow.astro";
+import { Picture } from "astro:assets";
+import breakImage from "../assets/anantara-penthouse/2.jpg";
+
+const values = [
+  {
+    title: "One contract.",
+    copy: "Design and build under a single agreement. No second contractor to coordinate, no gap in accountability.",
+  },
+  {
+    title: "One team.",
+    copy: "The people who draw the space are the people who build it. Design intent doesn't get lost in a handoff.",
+  },
+  {
+    title: "Real numbers.",
+    copy: "Quoted cost and quoted date are the numbers you get at handover — not the opening bid in a negotiation.",
+  },
+  {
+    title: "Built to trade.",
+    copy: "A fitout isn't finished when the paint dries. It's finished when the doors open and the business runs.",
+  },
+];
+---
+
+<Base
+  title="About"
+  description="9+ years and 81+ turnkey fitout projects across the UAE. Interior design to handover, one team, one contract."
+>
+  <section class="px-[24px] pt-[48px] md:px-[32px] md:pt-[72px]">
+    <div class="mx-auto max-w-[1440px]">
+      <Eyebrow>About Elden</Eyebrow>
+      <h1 class="mt-[12px] max-w-[16ch] text-display text-cream">
+        9 years of turning shells into trading businesses.
+      </h1>
+      <p class="mt-[24px] max-w-[640px] text-body text-cream">
+        <!-- PLACEHOLDER COPY: replace with Elden's real founding story before launch -->
+        Elden started as a small design team frustrated by watching its own drawings get diluted by
+        someone else's build crew. Nine years and 81+ projects later, we're a single turnkey
+        practice across fitness, F&amp;B, retail, workplace, and hospitality — design and
+        construction under one roof, one contract, one accountable team.
+      </p>
+    </div>
+  </section>
+
+  <section class="px-[24px] py-[48px] md:px-[32px] md:py-[72px]">
+    <div class="mx-auto grid max-w-[1440px] grid-cols-1 gap-[32px] sm:grid-cols-2 lg:grid-cols-4">
+      {values.map((v) => (
+        <div class="flex flex-col gap-[16px]">
+          <div class="rule" data-reveal-rule></div>
+          <h2 class="text-subheading text-cream">{v.title}</h2>
+          <p class="text-body text-muted">{v.copy}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="aspect-[16/9] w-full overflow-hidden md:aspect-[21/9]">
+    <Picture
+      src={breakImage}
+      alt="Interior detail from an Elden turnkey project"
+      formats={["avif", "webp"]}
+      widths={[800, 1400, 2000]}
+      sizes="100vw"
+      loading="lazy"
+      class="h-full w-full object-cover"
+    />
+  </section>
+
+  <section class="px-[24px] py-[48px] md:px-[32px] md:py-[72px]">
+    <div class="mx-auto grid max-w-[1440px] grid-cols-1 gap-[32px] sm:grid-cols-3">
+      <div class="text-center sm:text-left">
+        <p class="tabular-nums text-heading leading-none text-cream">81+</p>
+        <p class="mt-[8px] text-caption text-muted">Projects delivered</p>
+      </div>
+      <div class="text-center sm:text-left">
+        <p class="tabular-nums text-heading leading-none text-cream">9+</p>
+        <p class="mt-[8px] text-caption text-muted">Years in the UAE</p>
+      </div>
+      <div class="text-center sm:text-left">
+        <p class="tabular-nums text-heading leading-none text-cream">6</p>
+        <p class="mt-[8px] text-caption text-muted">Sectors served</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="px-[24px] py-[48px] md:px-[32px] md:py-[72px]">
+    <div class="mx-auto flex max-w-[1440px] flex-col items-start gap-[24px] sm:flex-row sm:items-center sm:justify-between">
+      <h2 class="max-w-[20ch] text-heading text-cream">
+        Have a space that needs building?
+      </h2>
+      <a href="/contact" class="cursor-pointer whitespace-nowrap bg-glass px-[16px] py-[8px] text-body text-cream backdrop-blur-[10px] transition-colors hover:bg-cream hover:text-[var(--color-brand-navy)]">
+        Get in touch
+      </a>
+    </div>
+  </section>
+</Base>

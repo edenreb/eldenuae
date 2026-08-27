@@ -1,0 +1,46 @@
+---
+// ARQEN's button micro-interaction, measured on the reference: two identical
+// text nodes stacked in the same box; the default one shows, hover slides it
+// up and out while the duplicate slides in from below. Confirmed via DOM
+// inspection (two sibling <p> tags, one revealed on :hover) — not guessed.
+//
+// CSS-only. Both copies carry the same text, so the accessible name never
+// changes mid-transition, and nothing here depends on JS running.
+interface Props {
+  href: string;
+  label: string;
+  class?: string;
+  // Set when the caller knows `href` is the page it's currently rendering
+  // on — see Footer.astro's "Get in touch" use. Skips Astro's page
+  // transition (data-astro-reload) so a same-page click reloads instead of
+  // pointlessly replaying the transition animation.
+  reload?: boolean;
+}
+const { href, label, class: className = "", reload = false } = Astro.props;
+---
+
+<a
+  href={href}
+  data-astro-reload={reload ? true : undefined}
+  class:list={[
+    "group relative inline-block cursor-pointer overflow-hidden bg-cream px-[16px] py-[12px] text-button text-ink",
+    className,
+  ]}
+>
+  <span class="relative block overflow-hidden leading-none">
+    <span class="block leading-none transition-transform duration-300 ease-out group-hover:-translate-y-full">
+      {label}
+    </span>
+    {/* The duplicate that slides in on hover — text-brand-navy instead of
+        the resting text-ink, so every CTA site-wide picks up the brand
+        accent for the moment it's actually being interacted with, never as
+        a base color. Cream-side (this button's fill is bg-cream), so navy
+        is the accessible choice, not green. */}
+    <span
+      aria-hidden="true"
+      class="absolute inset-0 block translate-y-full leading-none text-[var(--color-brand-navy)] transition-transform duration-300 ease-out group-hover:translate-y-0"
+    >
+      {label}
+    </span>
+  </span>
+</a>
