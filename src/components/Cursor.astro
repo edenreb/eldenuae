@@ -161,15 +161,33 @@ const label = "Open";
     // nav's own duplicate copy of this same mistake (see Base.astro)
     // wasn't enough on its own because this one — global, not nav-scoped
     // — was still running the whole time.
-    const onMove = (e: PointerEvent) => {
-      moveTo(e.clientX, e.clientY);
+    let lastX = window.innerWidth / 2;
+    let lastY = window.innerHeight / 2;
 
-      const hovered = e.target as Element | null;
+    const applyMode = (hovered: Element | null) => {
       if (hovered?.closest(OPEN)) setMode("open");
       else if (hovered?.closest(GENERIC)) setMode("generic");
       else setMode("none");
     };
+
+    const onMove = (e: PointerEvent) => {
+      lastX = e.clientX;
+      lastY = e.clientY;
+      moveTo(e.clientX, e.clientY);
+      applyMode(e.target as Element | null);
+    };
     window.addEventListener("pointermove", onMove);
+
+    // Scrolling moves whatever's under a *stationary* cursor without firing
+    // pointermove, so `mode` goes stale — the pill can be left reading
+    // "Open" over a card that scrolled out from under it. Re-hit-test at
+    // the last known pointer position on scroll. elementFromPoint forces a
+    // synchronous layout (the same cost onMove above avoids by using
+    // e.target for free), but scroll doesn't run this on every animation
+    // frame the way pointermove does — only on scroll events — so it's
+    // fine here.
+    const onScroll = () => applyMode(document.elementFromPoint(lastX, lastY));
+    window.addEventListener("scroll", onScroll, { passive: true });
 
     // The mouse leaving the browser chrome entirely doesn't fire
     // pointermove — reset explicitly, or exiting fast over a card leaves
@@ -179,6 +197,7 @@ const label = "Open";
 
     cleanup = () => {
       window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("scroll", onScroll);
       document.removeEventListener("pointerleave", onLeave);
     };
   }
