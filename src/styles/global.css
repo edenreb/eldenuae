@@ -401,4 +401,12 @@
     background: var(--color-line);
     border: none;
   }
+
+  /* Same rule, brand-green instead of hairline-white — for the handful of
+     section-opening/closing dividers that should read as a real accent
+     moment rather than pure structure (Philosophy's lead-in, Footer's
+     closing rule). Not the default: most rules stay quiet structure. */
+  .rule-accent {
+    background: var(--color-brand-green);
+  }
 }

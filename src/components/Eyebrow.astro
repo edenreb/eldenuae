@@ -12,6 +12,6 @@ const { class: className = "" } = Astro.props;
      markers — they travel further than the text they label, so the dot
      arrives a beat after the line settles. -->
 <p class:list={["flex items-center gap-[10px] text-body text-cream", className]} data-rise="23">
-  <span aria-hidden="true" class="h-[4px] w-[4px] shrink-0 bg-cream"></span>
+  <span aria-hidden="true" class="h-[4px] w-[4px] shrink-0 bg-[var(--color-brand-green)]"></span>
   <slot />
 </p>

@@ -64,7 +64,7 @@ const columns = [
     </div>
 
     <div class="mt-[48px] flex flex-col gap-[16px] md:gap-[20px]">
-      <div class="rule" data-reveal-rule></div>
+      <div class="rule rule-accent" data-reveal-rule></div>
       <div class="flex flex-col gap-[24px] md:flex-row md:items-start md:justify-between">
         <div>
           <Logo class="h-6 w-auto text-cream" />
@@ -84,7 +84,7 @@ const columns = [
                     <a
                       href={link.href}
                       data-astro-reload={isSamePage(link.href) ? true : undefined}
-                      class="cursor-pointer text-body text-muted hover:text-cream hover:underline"
+                      class="cursor-pointer text-body text-muted hover:text-[var(--color-brand-green)] hover:underline"
                     >
                       {link.label}
                     </a>

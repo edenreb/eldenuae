@@ -128,3 +128,12 @@ const stages = [
 
   document.addEventListener("astro:page-load", initProcessIndex);
 </script>
+
+<style>
+  /* Active stage numeral only — the toggle above already marks the active
+     item text-cream, so this piggybacks on that real state change rather
+     than being a static resting color. */
+  [data-process-item].text-cream .tabular-nums {
+    color: var(--color-brand-green);
+  }
+</style>

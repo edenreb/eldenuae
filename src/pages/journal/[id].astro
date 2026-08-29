@@ -22,7 +22,7 @@ const formatter = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "sho
   <article>
     <section class="px-[24px] pt-[48px] md:px-[32px] md:pt-[72px]">
       <div class="mx-auto max-w-[800px]">
-        <a href="/journal" class="cursor-pointer text-body text-cream hover:underline">&larr; Journal</a>
+        <a href="/journal" class="cursor-pointer text-body text-cream hover:text-[var(--color-brand-green)] hover:underline">&larr; Journal</a>
         <p class="mt-[24px] text-caption text-muted">
           {formatter.format(data.date)} &middot; {data.author}
         </p>
