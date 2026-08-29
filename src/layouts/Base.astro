@@ -5,6 +5,7 @@ import Footer from "../components/Footer.astro";
 import Preloader from "../components/Preloader.astro";
 import Cursor from "../components/Cursor.astro";
 import Logo from "../components/Logo.astro";
+import logoSrc from "../assets/logo.svg";
 import "../styles/global.css";
 
 const links = [
@@ -136,7 +137,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         class="flex h-[40px] cursor-pointer items-center"
         data-astro-reload={isSamePage("/") ? true : undefined}
       >
-        <Logo class="h-[32px] w-auto text-cream" />
+        <img src={logoSrc.src} alt="" class="h-[32px] w-auto" />
         <span class="sr-only">Elden — home</span>
       </a>
     </header>

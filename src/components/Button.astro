@@ -23,7 +23,7 @@ const { href, label, class: className = "", reload = false } = Astro.props;
   href={href}
   data-astro-reload={reload ? true : undefined}
   class:list={[
-    "group relative inline-block cursor-pointer overflow-hidden bg-cream px-[16px] py-[12px] text-button text-ink",
+    "group relative inline-block cursor-pointer overflow-hidden bg-cream px-[16px] py-[12px] text-button text-[var(--color-brand-navy)]",
     className,
   ]}
 >
@@ -31,14 +31,14 @@ const { href, label, class: className = "", reload = false } = Astro.props;
     <span class="block leading-none transition-transform duration-300 ease-out group-hover:-translate-y-full">
       {label}
     </span>
-    {/* The duplicate that slides in on hover — text-brand-navy instead of
-        the resting text-ink, so every CTA site-wide picks up the brand
-        accent for the moment it's actually being interacted with, never as
-        a base color. Cream-side (this button's fill is bg-cream), so navy
-        is the accessible choice, not green. */}
+    {/* The duplicate that slides in on hover — text-ink instead of the
+        resting text-brand-navy, so the button's brand-navy identity
+        inverts to plain ink for the moment it's actually being interacted
+        with. Cream-side (this button's fill is bg-cream), so navy is the
+        accessible resting choice, not green. */}
     <span
       aria-hidden="true"
-      class="absolute inset-0 block translate-y-full leading-none text-[var(--color-brand-navy)] transition-transform duration-300 ease-out group-hover:translate-y-0"
+      class="absolute inset-0 block translate-y-full leading-none text-ink transition-transform duration-300 ease-out group-hover:translate-y-0"
     >
       {label}
     </span>

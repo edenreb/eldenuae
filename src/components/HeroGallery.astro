@@ -19,6 +19,7 @@
 import { Image } from "astro:assets";
 import Button from "./Button.astro";
 import Logo from "./Logo.astro";
+import logoSrc from "../assets/logo.svg";
 
 // Two frames from each project rather than one — 30 planes wants more than
 // the 24 projects can give, and a second frame of the same fitout reads as
@@ -137,7 +138,7 @@ const planes = Array.from({ length: COUNT }, (_, i) => {
         class="pointer-events-auto flex h-[40px] cursor-pointer items-center"
         data-astro-reload
       >
-        <Logo class="h-[32px] w-auto text-cream" />
+        <img src={logoSrc.src} alt="" class="h-[32px] w-auto" />
         <span class="sr-only">Elden — home</span>
       </a>
     </div>

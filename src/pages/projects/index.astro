@@ -28,7 +28,7 @@ const sectors = ["All", ...new Set(projects.map((p) => p.data.sector))];
             type="button"
             data-sector={sector}
             class:list={[
-              "sector-filter cursor-pointer text-caption underline-offset-4 hover:text-cream",
+              "sector-filter cursor-pointer text-caption underline-offset-4 decoration-[var(--color-brand-green)] hover:text-cream",
               sector === "All" ? "underline text-cream" : "text-muted hover:underline",
             ]}
             aria-pressed={sector === "All" ? "true" : "false"}
@@ -96,7 +96,7 @@ const sectors = ["All", ...new Set(projects.map((p) => p.data.sector))];
               <span class="absolute inset-y-0 right-0 whitespace-nowrap text-caption text-muted transition-opacity duration-300 group-hover:opacity-0">
                 {project.data.year}
               </span>
-              <span class="absolute inset-y-0 right-0 text-cream opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+              <span class="absolute inset-y-0 right-0 text-[var(--color-brand-green)] opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                 &#8599;
               </span>
             </span>
