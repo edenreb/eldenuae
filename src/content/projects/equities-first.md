@@ -7,7 +7,6 @@ location: "DIFC Precinct Building No. 2, Dubai"
 scope: ["Design", "MEP", "Fitout"]
 tier: "standard"
 featured: false
-order: 0
 cover: "../../assets/equities-first/1.jpg"
 gallery:
   - "../../assets/equities-first/1.jpg"

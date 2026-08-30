@@ -7,7 +7,6 @@ location: "EMAAR Springs Souq, Dubai"
 scope: ["Fitout", "MEP"]
 tier: "hero"
 featured: true
-order: 6
 cover: "../../assets/natureland/1.jpg"
 gallery:
   - "../../assets/natureland/1.jpg"

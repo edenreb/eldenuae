@@ -7,7 +7,6 @@ location: "Burj Al Salam, World Trade Center, Dubai"
 scope: ["Fitout", "MEP"]
 tier: "standard"
 featured: false
-order: 0
 cover: "../../assets/avyanco-office/1.jpg"
 gallery:
   - "../../assets/avyanco-office/1.jpg"

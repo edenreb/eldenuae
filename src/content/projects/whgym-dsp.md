@@ -7,7 +7,6 @@ location: "Dubai Science Park, Dubai"
 scope: ["Fitout", "MEP"]
 tier: "standard"
 featured: false
-order: 0
 cover: "../../assets/whgym-dsp/1.jpg"
 gallery:
   - "../../assets/whgym-dsp/1.jpg"

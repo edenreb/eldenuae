@@ -7,7 +7,6 @@ location: "Al Quoz 4, Dubai"
 scope: ["Complete Interior Fitout works"]
 tier: "hero"
 featured: true
-order: 1
 cover: "../../assets/whgym-alquoz/1.jpg"
 gallery:
   - "../../assets/whgym-alquoz/1.jpg"

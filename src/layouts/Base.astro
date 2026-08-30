@@ -4,7 +4,6 @@ import { Font } from "astro:assets";
 import Footer from "../components/Footer.astro";
 import Preloader from "../components/Preloader.astro";
 import Cursor from "../components/Cursor.astro";
-import Logo from "../components/Logo.astro";
 import logoSrc from "../assets/logo.svg";
 import "../styles/global.css";
 
@@ -108,6 +107,19 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
           !sessionStorage.getItem("elden:preloaded")
         ) {
           document.documentElement.dataset.preloading = "1";
+          // Last-resort backstop. Preloader.astro has its own 5s watchdog,
+          // but that watchdog lives INSIDE the module it is insuring — if
+          // that chunk never executes (404 after a bad deploy, a throw while
+          // importing gsap), nothing ever clears this flag, and the flag
+          // alone drives both the full-screen curtain and `overflow: hidden`
+          // (see global.css). The page would stay black and unscrollable
+          // forever. This timer is armed in the same inline script that
+          // creates the risk, so it cannot fail to load. 6s > the module's
+          // own 5s watchdog, so in the normal case that one always wins and
+          // this never fires.
+          setTimeout(function () {
+            delete document.documentElement.dataset.preloading;
+          }, 6000);
         }
       } catch (e) {
         /* sessionStorage throws outright in some privacy modes — treat that

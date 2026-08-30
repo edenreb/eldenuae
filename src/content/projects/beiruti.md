@@ -7,7 +7,6 @@ location: "Sheikh Zayed Road, Dubai"
 scope: ["MEP Works"]
 tier: "hero"
 featured: true
-order: 4
 cover: "../../assets/beiruti/1.jpg"
 gallery:
   - "../../assets/beiruti/1.jpg"

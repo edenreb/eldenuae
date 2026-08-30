@@ -7,7 +7,6 @@ location: "Jumeirah Park, Dubai"
 scope: ["Interior Fitout works"]
 tier: "standard"
 featured: false
-order: 0
 cover: "../../assets/whgym-jp/1.jpg"
 gallery:
   - "../../assets/whgym-jp/1.jpg"

@@ -7,7 +7,6 @@ location: "O14 Tower, Business Bay, Dubai"
 scope: ["MEP Works"]
 tier: "standard"
 featured: false
-order: 0
 cover: "../../assets/whygym-bb/1.jpg"
 gallery:
   - "../../assets/whygym-bb/1.jpg"

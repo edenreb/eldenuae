@@ -7,7 +7,6 @@ location: "Galleria Mall, Jumeirah, Dubai"
 scope: ["Complete Interior Fitout works"]
 tier: "hero"
 featured: false
-order: 0
 cover: "../../assets/tbk-galleria/1.jpg"
 gallery:
   - "../../assets/tbk-galleria/1.jpg"

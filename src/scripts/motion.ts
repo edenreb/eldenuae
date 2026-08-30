@@ -91,6 +91,13 @@ export function getLenis() {
 /**
  * Wrap each word in a masked span so it can slide up from behind its own
  * overflow box. Idempotent — re-running on the same element is a no-op.
+ *
+ * TEXT ONLY. This reads `textContent` and rebuilds the element's children
+ * from scratch, so any child markup inside the target — a <span>, an <em>,
+ * a link — is silently DESTROYED, not preserved. Every current call site is
+ * plain text, which is the only reason this is safe today. If a heading ever
+ * needs inline emphasis, it cannot also carry data-reveal-words without
+ * teaching this function to walk text nodes instead.
  */
 export function splitWords(el: HTMLElement) {
   if (el.dataset.split === "true") return;

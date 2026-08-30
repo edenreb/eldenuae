@@ -7,7 +7,6 @@ location: "Duja Tower, Sheikh Zayed Road, Dubai"
 scope: ["Complete Interior Fitout Works"]
 tier: "hero"
 featured: true
-order: 3
 cover: "../../assets/bikanervala/1.jpg"
 gallery:
   - "../../assets/bikanervala/1.jpg"

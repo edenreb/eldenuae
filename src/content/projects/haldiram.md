@@ -7,7 +7,6 @@ location: "Al Raffa, Dubai"
 scope: ["Fitout", "MEP"]
 tier: "hero"
 featured: false
-order: 0
 cover: "../../assets/haldiram/1.jpeg"
 gallery:
   - "../../assets/haldiram/1.jpeg"

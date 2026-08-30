@@ -7,7 +7,6 @@ location: "DIFC Innovation Hub, Dubai"
 scope: ["Fitout", "MEP"]
 tier: "standard"
 featured: false
-order: 0
 cover: "../../assets/baraka/1.jpg"
 gallery:
   - "../../assets/baraka/1.jpg"

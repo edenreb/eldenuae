@@ -2,14 +2,21 @@
 import Base from "../layouts/Base.astro";
 import SocialLinks from "../components/SocialLinks.astro";
 
-const sectors = ["Fitness", "F&B", "Retail", "Workplace", "Hospitality", "Wellness", "Other"];
-
-// Field chrome, measured on the reference's own /contact route: the input is
-// fully transparent with no border and no padding, 40px tall, and the only
-// affordance is a hairline beneath it. The wrapping <label> owns that
-// hairline so it can brighten on focus-within.
-const FIELD = "h-full w-full bg-transparent text-body font-semibold text-cream placeholder:text-muted";
-const WRAP = "flex h-[40px] items-center border-b-2 border-line transition-colors focus-within:border-cream";
+// This page had a full contact form until it was found to be non-functional:
+// the <form> carried no action/method, form.ts called preventDefault() and
+// then simply hid the form and revealed a "Thanks — that's in." panel. There
+// was no fetch and no endpoint anywhere in the codebase, so every enquiry a
+// visitor typed was discarded in the browser while they were told it had
+// been sent.
+//
+// Until a real endpoint exists, this route sends people to email instead. A
+// mailto is unglamorous, but it actually delivers, and a lost lead costs far
+// more than a plainer contact page. Restore the form only alongside a
+// working submission target — the markup is in git history at 30c548f.
+const MAIL = "info@eldenuae.com";
+const MAILTO = `mailto:${MAIL}?subject=${encodeURIComponent("Project enquiry")}&body=${encodeURIComponent(
+  "Tell us about the space — sector, location, approximate size, and timeline.\n\n",
+)}`;
 
 const details = [
   { label: "General inquiries", value: "info@eldenuae.com", href: "mailto:info@eldenuae.com" },
@@ -56,118 +63,36 @@ const details = [
         </div>
 
         <div>
-          <div
-            id="contact-form-error-summary"
-            hidden
-            role="alert"
-            class="mb-[24px] bg-surface px-[16px] py-[12px] text-body text-cream"
-          >
-            <p class="font-semibold">Please fix the following before submitting:</p>
-          </div>
+          <div class="bg-surface p-[24px] md:p-[32px]">
+            <p class="text-subheading text-cream">Tell us about the space.</p>
+            <p class="mt-[12px] max-w-[42ch] text-body text-muted">
+              Send us the sector, location, approximate size and timeline, and we&rsquo;ll come
+              back with next steps within one working day.
+            </p>
 
-          <div id="contact-form-success" hidden class="bg-surface px-[16px] py-[24px]">
-            <p class="text-subheading text-cream">Thanks — that&rsquo;s in.</p>
-            <p class="mt-[8px] text-body text-cream">We&rsquo;ll be in touch within one working day.</p>
-          </div>
-
-          <form id="contact-form" class="flex flex-col gap-[20px]" novalidate>
-            <div>
-              {/* The visible affordance is the placeholder, as on the
-                  reference. The label stays in the DOM (screen-reader only)
-                  so the field keeps a real accessible name rather than
-                  relying on the placeholder alone. */}
-              <label class={WRAP}>
-                <span class="sr-only">Name (required)</span>
-                <input
-                  id="contact-name"
-                  name="name"
-                  type="text"
-                  required
-                  autocomplete="name"
-                  placeholder="Name"
-                  data-label="Name"
-                  aria-describedby="contact-name-error"
-                  class={FIELD}
-                />
-              </label>
-              <p id="contact-name-error" class="mt-[8px] text-caption text-cream" role="alert"></p>
-            </div>
-
-            <div>
-              <label class={WRAP}>
-                <span class="sr-only">Email (required)</span>
-                <input
-                  id="contact-email"
-                  name="email"
-                  type="email"
-                  required
-                  autocomplete="email"
-                  placeholder="Email"
-                  data-label="Email"
-                  aria-describedby="contact-email-error"
-                  class={FIELD}
-                />
-              </label>
-              <p id="contact-email-error" class="mt-[8px] text-caption text-cream" role="alert"></p>
-            </div>
-
-            <label class={WRAP}>
-              <span class="sr-only">Phone</span>
-              <input
-                id="contact-phone"
-                name="phone"
-                type="tel"
-                autocomplete="tel"
-                placeholder="Phone"
-                class={FIELD}
-              />
-            </label>
-
-            <label class={WRAP}>
-              <span class="sr-only">Project sector</span>
-              <select id="contact-sector" name="sector" class={FIELD}>
-                {sectors.map((s) => <option value={s}>{s}</option>)}
-              </select>
-            </label>
-
-            <div>
-              <label class="flex flex-col border-b-2 border-line transition-colors focus-within:border-cream">
-                <span class="sr-only">Tell us about the space (required)</span>
-                <textarea
-                  id="contact-message"
-                  name="message"
-                  required
-                  rows={4}
-                  placeholder="Tell us about the space"
-                  data-label="Message"
-                  aria-describedby="contact-message-error"
-                  class="w-full resize-none bg-transparent py-[8px] text-body font-semibold text-cream placeholder:text-muted"
-                ></textarea>
-              </label>
-              <p id="contact-message-error" class="mt-[8px] text-caption text-cream" role="alert"></p>
-            </div>
-
-            {/* group so the dot picks up the same hover as the label text —
-                bg-cream surface, so brand navy on hover, matching every
-                other cream CTA site-wide. */}
-            <button
-              type="submit"
-              class="group mt-[12px] flex cursor-pointer items-center gap-[10px] self-end bg-cream px-[16px] py-[8px] text-button text-ink transition-[color,opacity] hover:text-[var(--color-brand-navy)] hover:opacity-90"
+            <a
+              href={MAILTO}
+              class="group mt-[24px] inline-flex cursor-pointer items-center gap-[10px] bg-cream px-[16px] py-[8px] text-button text-[var(--color-brand-navy)] transition-[color,opacity] hover:text-ink hover:opacity-90"
             >
-              Send message
+              Email us
               <span
                 aria-hidden="true"
-                class="h-[4px] w-[4px] shrink-0 bg-ink transition-colors group-hover:bg-[var(--color-brand-navy)]"
+                class="h-[4px] w-[4px] shrink-0 bg-[var(--color-brand-navy)] transition-colors group-hover:bg-ink"
               ></span>
-            </button>
-          </form>
+            </a>
+
+            {/* The address in plain text as well as behind the button — a
+                mailto: does nothing on a device with no mail client
+                configured, and without this there'd be no way to copy it. */}
+            <p class="mt-[16px] text-caption text-muted">
+              Or write to{" "}
+              <a href={`mailto:${MAIL}`} class="cursor-pointer text-cream underline underline-offset-4">
+                {MAIL}
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     </div>
   </section>
 </Base>
-
-<script>
-  import { initFormValidation } from "../scripts/form";
-  document.addEventListener("astro:page-load", () => initFormValidation("contact-form"));
-</script>
