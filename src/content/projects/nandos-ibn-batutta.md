@@ -7,7 +7,6 @@ location: "Ibn Battuta Mall, Dubai"
 scope: ["MEP Works"]
 tier: "hero"
 featured: false
-order: 0
 cover: "../../assets/nandos-ibn-batutta/1.jpg"
 gallery:
   - "../../assets/nandos-ibn-batutta/1.jpg"

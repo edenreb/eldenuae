@@ -7,7 +7,6 @@ location: "Khawaneej Mall, Dubai"
 scope: ["Design", "Fitout", "FF&E"]
 tier: "standard"
 featured: false
-order: 0
 cover: "../../assets/foret-cafe/1.jpg"
 gallery:
   - "../../assets/foret-cafe/1.jpg"

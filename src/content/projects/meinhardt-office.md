@@ -7,7 +7,6 @@ location: "Al Salam Tower, Dubai Internet City"
 scope: ["Fitout", "MEP"]
 tier: "hero"
 featured: true
-order: 5
 cover: "../../assets/meinhardt-office/1.jpg"
 gallery:
   - "../../assets/meinhardt-office/1.jpg"

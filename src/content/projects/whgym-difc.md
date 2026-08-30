@@ -7,7 +7,6 @@ location: "Gate Avenue, DIFC, Dubai"
 scope: ["Interior Fitout", "MEP"]
 tier: "hero"
 featured: false
-order: 0
 cover: "../../assets/whgym-difc/1.jpg"
 gallery:
   - "../../assets/whgym-difc/1.jpg"

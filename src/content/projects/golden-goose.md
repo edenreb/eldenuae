@@ -7,7 +7,6 @@ location: "Mall of the Emirates, Dubai"
 scope: ["Fitout", "MEP"]
 tier: "compact"
 featured: false
-order: 0
 cover: "../../assets/golden-goose/1.jpg"
 gallery:
   - "../../assets/golden-goose/1.jpg"

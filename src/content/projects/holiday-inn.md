@@ -7,7 +7,6 @@ location: "Al Barsha 1, Dubai"
 scope: ["Fitout", "MEP"]
 tier: "hero"
 featured: false
-order: 0
 cover: "../../assets/holiday-inn/1.jpg"
 gallery:
   - "../../assets/holiday-inn/1.jpg"

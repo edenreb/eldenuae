@@ -25,7 +25,6 @@ const projects = defineCollection({
       featured: z.boolean().default(false),
       cover: image(),
       gallery: z.array(image()),
-      order: z.number().default(0),
     }),
 });
 

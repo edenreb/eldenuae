@@ -7,7 +7,6 @@ location: "Al Khawaneej Mall, Dubai"
 scope: ["Interior Fitout", "MEP"]
 tier: "standard"
 featured: false
-order: 0
 cover: "../../assets/whgym-khawaneej/1.jpg"
 gallery:
   - "../../assets/whgym-khawaneej/1.jpg"

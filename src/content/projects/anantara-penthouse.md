@@ -7,7 +7,6 @@ location: "Palm Jumeirah, Dubai"
 scope: ["Fitout", "MEP"]
 tier: "hero"
 featured: true
-order: 2
 cover: "../../assets/anantara-penthouse/1.jpg"
 gallery:
   - "../../assets/anantara-penthouse/1.jpg"
