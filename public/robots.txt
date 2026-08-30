@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://elden.ae/sitemap-index.xml

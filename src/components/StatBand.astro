@@ -24,7 +24,16 @@ const stats = [
 </section>
 
 <script>
+  // The unobserve() below already releases each counter once it has fired,
+  // but a visitor who leaves before scrolling this far leaves the observer
+  // holding stat nodes that never intersected. Tear down on route change so
+  // that case can't accumulate either.
+  let observer: IntersectionObserver | null = null;
+
   function initStatCounters() {
+    observer?.disconnect();
+    observer = null;
+
     const nodes = document.querySelectorAll<HTMLElement>("[data-count]");
     if (!nodes.length) return;
 
@@ -48,20 +57,24 @@ const stats = [
       requestAnimationFrame(tick);
     };
 
-    const observer = new IntersectionObserver(
+    observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             animate(entry.target as HTMLElement);
-            observer.unobserve(entry.target);
+            observer?.unobserve(entry.target);
           }
         });
       },
       { threshold: 0.6 },
     );
 
-    nodes.forEach((node) => observer.observe(node));
+    nodes.forEach((node) => observer?.observe(node));
   }
 
   document.addEventListener("astro:page-load", initStatCounters);
+  document.addEventListener("astro:before-swap", () => {
+    observer?.disconnect();
+    observer = null;
+  });
 </script>

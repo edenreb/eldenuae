@@ -101,14 +101,23 @@ const stages = [
 </section>
 
 <script>
+  // Torn down on every route change, same pattern as Cursor.astro. Without
+  // this, each astro:page-load built another observer over the new
+  // [data-stage] nodes while the previous one stayed alive holding the old,
+  // now-detached ones — one more leaked observer per visit to this page.
+  let observer: IntersectionObserver | null = null;
+
   function initProcessIndex() {
+    observer?.disconnect();
+    observer = null;
+
     const index = document.getElementById("process-index");
     const stages = document.querySelectorAll<HTMLElement>("[data-stage]");
     if (!index || !stages.length) return;
 
     const items = index.querySelectorAll<HTMLElement>("[data-process-item]");
 
-    const observer = new IntersectionObserver(
+    observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
@@ -123,10 +132,14 @@ const stages = [
       { rootMargin: "-45% 0px -45% 0px" },
     );
 
-    stages.forEach((stage) => observer.observe(stage));
+    stages.forEach((stage) => observer?.observe(stage));
   }
 
   document.addEventListener("astro:page-load", initProcessIndex);
+  document.addEventListener("astro:before-swap", () => {
+    observer?.disconnect();
+    observer = null;
+  });
 </script>
 
 <style>

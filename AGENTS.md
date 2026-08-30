@@ -1,12 +1,23 @@
 ## Development
 
+Astro is a local dependency, not a global binary — every command needs the
+`npx` prefix (a bare `astro ...` fails with `command not found`).
+
 When starting the dev server, use background mode:
 
 ```
-astro dev --background
+npx astro dev --background
 ```
 
-Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
+Manage the background server with `npx astro dev stop`, `npx astro dev status`,
+and `npx astro dev logs`.
+
+Other useful commands:
+
+```
+npx astro build     # production build (also the closest thing to a test suite)
+npx astro check     # TypeScript / template diagnostics
+```
 
 ## Documentation
 
