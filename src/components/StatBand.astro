@@ -6,7 +6,7 @@ const stats = [
 ];
 ---
 
-<section class="px-[24px] py-[64px] md:px-[32px] md:py-[96px]">
+<section class="band-deep px-[24px] py-[144px] md:px-[32px] md:py-[216px]">
   <div class="mx-auto grid max-w-[1440px] grid-cols-1 gap-[48px] sm:grid-cols-3 sm:gap-[24px]">
     {stats.map((stat) => (
       <div class="text-center sm:text-left">
@@ -17,7 +17,7 @@ const stats = [
         >
           0{stat.suffix}
         </p>
-        <p class="mt-[12px] text-body text-muted">{stat.label}</p>
+        <p class="mt-[12px] text-body text-cream">{stat.label}</p>
       </div>
     ))}
   </div>

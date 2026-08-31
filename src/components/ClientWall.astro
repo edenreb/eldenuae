@@ -7,9 +7,13 @@ const logos = Array.from({ length: 18 }, (_, i) => i + 1);
 
 const images = import.meta.glob<{ default: ImageMetadata }>("../assets/clients/*.png", { eager: true });
 const getLogo = (n: number) => images[`../assets/clients/${n}.png`]?.default;
+// Colour-on-hover variant, `N_hover.png` beside each `N.png`. Optional by
+// design: a logo with no hover file just stays greyscale rather than
+// breaking, so adding the rest later needs no code change here.
+const getHover = (n: number) => images[`../assets/clients/${n}_hover.png`]?.default;
 ---
 
-<section class="overflow-hidden px-[24px] py-[48px] md:px-[32px] md:py-[72px]">
+<section class="overflow-hidden px-[24px] py-[96px] md:px-[32px] md:py-[144px]">
   <div class="mx-auto max-w-[1440px]">
     <div class="flex max-w-[439px] flex-col gap-[24px]">
       <Eyebrow>Selected Clients</Eyebrow>
@@ -22,16 +26,28 @@ const getLogo = (n: number) => images[`../assets/clients/${n}.png`]?.default;
       <div class="marquee-track flex w-max items-center gap-[24px]">
         {[...logos, ...logos].map((n) => {
           const logo = getLogo(n);
+          const hover = getHover(n);
           return (
-            <div class="flex h-[136px] w-[280px] shrink-0 items-center justify-center">
+            <div class="group relative flex h-[136px] w-[280px] shrink-0 items-center justify-center">
               <img
                 src={logo?.src}
                 width={logo?.width}
                 height={logo?.height}
                 alt=""
-                class="h-[92px] w-auto object-contain saturate-0"
+                class="h-[92px] w-auto object-contain saturate-0 transition-opacity duration-300 group-hover:opacity-0"
                 loading="lazy"
               />
+              {hover && (
+                <img
+                  src={hover.src}
+                  width={hover.width}
+                  height={hover.height}
+                  alt=""
+                  aria-hidden="true"
+                  class="pointer-events-none absolute h-[92px] w-auto object-contain opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                  loading="lazy"
+                />
+              )}
             </div>
           );
         })}
@@ -55,6 +71,12 @@ const getLogo = (n: number) => images[`../assets/clients/${n}.png`]?.default;
     to {
       transform: translateX(-50%);
     }
+  }
+  /* The hover swap is unusable on a moving target — the logo slides out
+     from under the cursor mid-fade. Pausing while the pointer is over the
+     row is what makes it hoverable at all. */
+  .marquee-row:hover .marquee-track {
+    animation-play-state: paused;
   }
   @media (prefers-reduced-motion: reduce) {
     .marquee-track {

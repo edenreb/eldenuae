@@ -23,9 +23,11 @@ const projects = (await getCollection("projects"))
   .slice(0, 6);
 ---
 
-<section class="px-[24px] py-[48px] md:px-[32px] md:py-[72px]">
-  <div class="mx-auto max-w-[1440px]">
-    <h2 class="text-heading text-cream" data-reveal-words>Selected Projects</h2>
+<div class="band-deep">
+<section class="px-[24px] py-[96px] md:px-[32px] md:py-[144px]">
+  <div class="mx-auto flex max-w-[1440px] items-center gap-[24px]">
+    <h2 class="shrink-0 text-heading text-cream" data-reveal-words>Selected Projects</h2>
+    <div class="rule rule-accent" data-reveal-rule></div>
   </div>
 </section>
 
@@ -52,7 +54,7 @@ const projects = (await getCollection("projects"))
      grow always sums to exactly the container's width, so it can't overflow
      the way a fixed-basis row could on a narrow pointer-fine window. -->
 <div class="hidden pointer-fine:block">
-  <div class="px-[24px] pb-[48px] md:px-[32px] md:pb-[72px]">
+  <div class="px-[24px] pb-[96px] md:px-[32px] md:pb-[144px]">
     <div class="mx-auto max-w-[1440px]">
       <div class="flex h-[320px] w-full gap-[8px] overflow-x-auto sm:h-[420px] md:h-[520px]">
         {
@@ -103,6 +105,8 @@ const projects = (await getCollection("projects"))
       </div>
     </div>
   </div>
+</div>
+
 </div>
 
 <!-- Card-over-card stack — pointer: coarse/none (touch, or no pointer at

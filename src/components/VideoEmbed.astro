@@ -1,0 +1,35 @@
+---
+// YouTube embed for journal articles. youtube-nocookie + `loading="lazy"`:
+// no cookie is set and no player JS is fetched until the reader scrolls to
+// it, so dropping one of these into an article doesn't cost the page its
+// Core Web Vitals — which matters, since these articles exist for search.
+interface Props {
+  // YouTube video ID only, not a full URL (e.g. "dQw4w9WgXcQ").
+  id: string;
+  title: string;
+  caption?: string;
+}
+const { id, title, caption } = Astro.props;
+---
+
+{
+  /* Renders nothing without an ID rather than an empty black box — articles
+     can ship the markup before the video exists. */
+  id && (
+    <figure class="mt-[34px]">
+      <div class="aspect-video w-full overflow-hidden bg-ink">
+        <iframe
+          src={`https://www.youtube-nocookie.com/embed/${id}`}
+          title={title}
+          loading="lazy"
+          allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+          class="h-full w-full"
+          style="border: 0;"
+        />
+      </div>
+      {caption && <figcaption class="mt-[12px] text-caption text-muted">{caption}</figcaption>}
+    </figure>
+  )
+}

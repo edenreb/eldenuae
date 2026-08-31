@@ -48,7 +48,7 @@ const sectors = ["All", ...new Set(projects.map((p) => p.data.sector))];
        exactly the image's shape. Gaps widened (12px → 32/48px) — the
        masonry's tight gutter was the single biggest "crowded" complaint
        against the reference's own generous grid. -->
-  <section class="px-[24px] py-[48px] md:px-[32px] md:py-[72px]">
+  <section class="px-[24px] py-[96px] md:px-[32px] md:py-[144px]">
     <div class="mx-auto grid max-w-[1440px] grid-cols-1 gap-x-[32px] gap-y-[48px] sm:grid-cols-2 lg:gap-x-[48px] lg:gap-y-[64px]">
       {projects.map((project) => (
         <a

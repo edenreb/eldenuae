@@ -40,7 +40,7 @@ const restOfGallery = data.gallery.slice(1);
     </div>
   </section>
 
-  <section class="px-[24px] py-[32px] md:px-[32px] md:py-[48px]">
+  <section class="px-[24px] py-[32px] md:px-[32px] md:py-[96px]">
     <div class="mx-auto grid max-w-[1440px] grid-cols-1 gap-[32px] md:grid-cols-[1fr_320px] md:gap-[48px]">
       <div>
         <p class="text-caption text-muted">{data.sector}</p>
@@ -73,7 +73,7 @@ const restOfGallery = data.gallery.slice(1);
   </section>
 
   {restOfGallery.length > 0 && (
-    <section class="px-[24px] pb-[48px] md:px-[32px] md:pb-[72px]">
+    <section class="px-[24px] pb-[96px] md:px-[32px] md:pb-[144px]">
       <div class="mx-auto grid max-w-[1440px] grid-cols-1 gap-x-[32px] gap-y-[48px] sm:grid-cols-2">
         {restOfGallery.map((img) => (
           <Picture
@@ -90,7 +90,7 @@ const restOfGallery = data.gallery.slice(1);
     </section>
   )}
 
-  <section class="px-[24px] py-[48px] md:px-[32px] md:py-[72px]">
+  <section class="px-[24px] py-[96px] md:px-[32px] md:py-[144px]">
     <div class="mx-auto mb-[48px] max-w-[1440px] rule" data-reveal-rule></div>
     <a href={`/projects/${nextProject.id}`} class="group mx-auto flex max-w-[1440px] items-center justify-between gap-[16px] cursor-pointer">
       <div>
