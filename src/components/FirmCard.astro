@@ -1,0 +1,91 @@
+---
+import { Image } from "astro:assets";
+// One entry in a firm round-up article. Logo slot + colour-coded pros and
+// cons, so a reader scanning ten of these can compare without reading ten
+// paragraphs.
+interface Props {
+  rank: number;
+  name: string;
+  // Imported image, e.g. `import depa from "../../assets/_blogs/depa.jpg"`.
+  // Optional — falls back to a monogram tile so an entry can ship before
+  // its artwork exists.
+  logo?: ImageMetadata;
+  // Neutral one-line profile. Used for every firm that isn't us: a factual
+  // description of what they build, with no recommendation attached.
+  summary?: string;
+  // One-line specialisation, rendered as "Primary speciality".
+  speciality?: string;
+  // Pros/cons are Elden-only by design — a "Strengths" list under a
+  // competitor's name is an endorsement, and this article exists to route
+  // enquiries to us. Both optional; the block is skipped when absent.
+  pros?: string[];
+  cons?: string[];
+}
+const { rank, name, logo, summary, speciality, pros, cons } = Astro.props;
+
+const monogram = name
+  .split(" ")
+  .slice(0, 2)
+  .map((w) => w[0])
+  .join("");
+---
+
+<div class="firm-card mt-[28px] mb-[8px] flex flex-col gap-[20px] border-l-[2px] border-l-[var(--color-line)] pl-[20px]">
+  <div class="flex items-center gap-[16px]">
+    <div class="flex h-[76px] w-[120px] shrink-0 items-center justify-center overflow-hidden rounded-lg bg-cream p-[10px]">
+      {
+        logo ? (
+          /* object-contain, not cover: the supplied marks run from square to
+             2.8:1, and a fixed square tile would crop the wide wordmarks. */
+          <Image src={logo} alt={`${name} logo`} width={240} height={152} class="h-full w-full object-contain" />
+        ) : (
+          /* Neutral placeholder until real artwork is dropped in — a broken
+             image icon next to a competitor's name reads worse than initials. */
+          <span aria-hidden="true" class="text-[1.25rem] font-semibold text-[var(--color-brand-navy)]">{monogram}</span>
+        )
+      }
+    </div>
+    <div>
+      <p class="text-body text-muted">No. {rank}</p>
+      <p class="text-[1.75rem] leading-none text-cream">{name}</p>
+    </div>
+  </div>
+
+  {summary && <p class="text-[1.0625rem] text-muted">{summary}</p>}
+  {speciality && (
+    <p class="text-[1.0625rem] text-muted">
+      <span class="text-cream">Primary speciality:</span> {speciality}
+    </p>
+  )}
+
+  {(pros || cons) && (
+  <dl class="grid grid-cols-1 gap-[12px] sm:grid-cols-2">
+    {pros && (
+    <div>
+      <dt class="text-caption uppercase tracking-[0.12em] text-[var(--color-brand-green)]">Strengths</dt>
+      <ul class="mt-[8px] flex flex-col gap-[6px]">
+        {pros!.map((p) => (
+          <li class="flex gap-[8px] text-[1.0625rem] text-cream">
+            <span aria-hidden="true" class="text-[var(--color-brand-green)]">+</span>
+            <span>{p}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+    )}
+    {cons && (
+    <div>
+      <dt class="text-caption uppercase tracking-[0.12em] text-[#e0785f]">Watch-outs</dt>
+      <ul class="mt-[8px] flex flex-col gap-[6px]">
+        {cons!.map((c) => (
+          <li class="flex gap-[8px] text-[1.0625rem] text-muted">
+            <span aria-hidden="true" class="text-[#e0785f]">&minus;</span>
+            <span>{c}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+    )}
+  </dl>
+  )}
+</div>

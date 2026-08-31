@@ -72,12 +72,22 @@
      other token where the role flipped, so `bg-cream` now means "the warm
      off-white surface" wherever that surface is used, same as before. */
   --color-cream: #f0ece6;
-  --color-ink: #0c0c0a;
+  /* Page canvas — Elden blue, a darkened cut of --color-brand-navy below.
+     Every surface that used to be near-black ink is now this: it IS the
+     site background, set on <html>/<body> and reused by the handful of
+     opaque panels (hero, preloader, project tiles) that must not show
+     imagery through. Measured: cream on this -> 15:1, --color-muted -> 4.9:1
+     --color-muted -> 5.5:1, --color-brand-green -> 5.7:1. */
+  --color-ink: #090c1e;
+  /* One step darker than the canvas, same hue — the banding used to set a
+     few sections (StatBand, Selected Projects, Testimonials) apart from the
+     page without introducing a second colour. */
+  --color-ink-deep: #060814;
   /* Semi-transparent panel colour for the floating nav, footer card, and
      project caption cards — measured as rgba(20,20,18,0.75). Blur radius
      varies per surface (5px on project cards, 10px on nav/footer) so it
      isn't baked into the token — set per component. */
-  --color-glass: rgb(20 20 18 / 0.75);
+  --color-glass: rgb(14 18 42 / 0.75);
   /* Secondary text — labels, captions, legal, meta. Measured directly off
      the reference (rgb(138,133,125)). 5.35:1 on --color-ink, clears WCAG AA
      for normal text — this is the fix for the "everything is full-strength
@@ -89,7 +99,7 @@
   --color-line: rgb(255 255 255 / 0.1);
   /* Opaque sibling of --color-glass, for surfaces that shouldn't show
      through to imagery (form fields). */
-  --color-surface: #141412;
+  --color-surface: #0e1228;
 
   /* Brand accents — NOT part of the "strictly two" base palette above, and
      never a resting/base color: no backgrounds, no body text, no borders.
@@ -390,6 +400,22 @@
   .word-inner {
     display: inline-block;
     will-change: transform;
+  }
+
+  /* Darker banded section (StatBand, Selected Projects, Testimonials).
+     A gradient rather than a flat `background: var(--color-ink-deep)`: the
+     flat version put a hard 1px seam wherever a banded section met the
+     canvas. Solid through the middle, easing out over the section's own
+     top and bottom padding, so the two colours meet as a fade instead of
+     an edge. */
+  .band-deep {
+    background: linear-gradient(
+      to bottom,
+      transparent 0,
+      var(--color-ink-deep) 96px,
+      var(--color-ink-deep) calc(100% - 96px),
+      transparent 100%
+    );
   }
 
   /* Divider — replaces every `border-t/border border-cream` hairline.

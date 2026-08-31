@@ -6,13 +6,16 @@ import { Picture } from "astro:assets";
 
 const posts = (await getCollection("journal"))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 3);
+  // One lead + the next four stacked beside it. Capped, not unbounded:
+  // this is a teaser for /journal, and the side column has to stay roughly
+  // as tall as the lead image next to it.
+  .slice(0, 5);
 
 const [lead, ...rest] = posts;
 const formatter = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric" });
 ---
 
-<section class="px-[24px] py-[48px] md:px-[32px] md:py-[72px]">
+<section class="px-[24px] py-[96px] md:px-[32px] md:py-[144px]">
   <div class="mx-auto max-w-[1440px]">
     <div class="flex items-baseline justify-between gap-[16px]">
       <h2 class="text-heading text-cream" data-reveal-words>

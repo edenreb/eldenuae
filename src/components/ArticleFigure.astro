@@ -1,0 +1,40 @@
+---
+// Project photo inside an article. Breaks out of the 720px reading column
+// on wider screens — a photo constrained to text measure reads as an
+// illustration; one that runs wider reads as the work.
+import { Picture } from "astro:assets";
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  caption?: string;
+  href?: string;
+}
+const { src, alt, caption, href } = Astro.props;
+---
+
+<figure class="mt-[56px] mb-[56px] md:-mx-[80px]">
+  <div class="aspect-[3/2] w-full overflow-hidden rounded-xl">
+    <Picture
+      src={src}
+      alt={alt}
+      formats={["avif", "webp"]}
+      widths={[600, 900, 1400]}
+      sizes="(min-width: 768px) 880px, 100vw"
+      loading="lazy"
+      class="h-full w-full object-cover"
+    />
+  </div>
+  {
+    caption && (
+      <figcaption class="mt-[12px] text-caption text-muted">
+        {href ? (
+          <a href={href} class="underline-offset-4 hover:text-[var(--color-brand-green)] hover:underline">
+            {caption}
+          </a>
+        ) : (
+          caption
+        )}
+      </figcaption>
+    )
+  }
+</figure>

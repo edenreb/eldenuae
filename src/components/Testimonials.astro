@@ -33,7 +33,7 @@ const quotes = [
 ];
 ---
 
-<section class="px-[24px] py-[48px] md:px-[32px] md:py-[72px]">
+<section class="band-deep px-[24px] py-[144px] md:px-[32px] md:py-[216px]">
   <div class="mx-auto max-w-[1440px]">
     <h2 class="text-heading text-cream" data-reveal-words>
       What clients say.
@@ -44,6 +44,12 @@ const quotes = [
         quotes.map((q) => (
           <blockquote class="flex flex-col gap-[16px]">
             <div class="rule" data-reveal-rule></div>
+            {/* Static 5/5 — no rating was ever collected from these clients;
+                this is presentation, not sourced data. Same caveat as the
+                quotes above: confirm before launch or drop it. */}
+            <p class="text-body leading-none tracking-[0.2em] text-[#d9a531]" aria-label="Rated 5 out of 5">
+              <span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            </p>
             <p class="text-subheading text-cream">&ldquo;{q.body}&rdquo;</p>
             <footer class="flex items-center gap-[12px] text-caption">
               <Image
