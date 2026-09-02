@@ -1,5 +1,5 @@
 ---
-import Logo from "./Logo.astro";
+import logoSrc from "../assets/logo.svg";
 import Button from "./Button.astro";
 import SocialLinks from "./SocialLinks.astro";
 
@@ -68,7 +68,7 @@ const columns = [
       <div class="rule rule-accent" data-reveal-rule></div>
       <div class="flex flex-col gap-[24px] md:flex-row md:items-start md:justify-between">
         <div>
-          <Logo class="h-6 w-auto text-cream" />
+          <img src={logoSrc.src} alt="Elden" class="h-[32px] w-auto" />
           <p class="mt-[12px] max-w-[36ch] text-body text-muted">
             Turnkey fitout for the UAE&rsquo;s fitness, F&amp;B, retail, workplace and hospitality brands.
           </p>

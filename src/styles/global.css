@@ -88,11 +88,16 @@
      varies per surface (5px on project cards, 10px on nav/footer) so it
      isn't baked into the token — set per component. */
   --color-glass: rgb(14 18 42 / 0.75);
-  /* Secondary text — labels, captions, legal, meta. Measured directly off
-     the reference (rgb(138,133,125)). 5.35:1 on --color-ink, clears WCAG AA
-     for normal text — this is the fix for the "everything is full-strength
-     cream" contrast problem; never darken it further. */
-  --color-muted: #8a857d;
+  /* Secondary text — labels, captions, legal, meta. Was rgb(138,133,125),
+     taken off the reference back when the canvas was near-black: a WARM
+     grey (R>G>B) that had nothing to sit against once the canvas became
+     the cool navy --color-ink. Against blue it read muddy rather than
+     quiet, and at 5.29:1 it was the lowest-contrast text on the site.
+     Retuned to a cool grey-blue of the same family as the canvas, which
+     buys 6.57:1 as well — still clearly secondary next to cream's 16.48:1,
+     so the hierarchy is unchanged; it just belongs to the palette now.
+     Never darken it past 4.5:1. */
+  --color-muted: #8f96ab;
   /* Divider colour. The reference has ZERO CSS borders — every hairline is
      a 2px <div> at 10% white. Use the `.rule` utility below instead of
      `border-*-cream`, which no longer exists anywhere in this codebase. */
@@ -127,35 +132,48 @@
      bumped to match instead of falling back to a lighter weight. */
   --font-sans: "Switzer", "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
 
-  /* Type scale — measured live off arqen.framer.media's rendered CSS
-     (16px root; the reference's own presets, not estimated). Its scale
-     tops out at 80px, nowhere near the 201px this scale used to reach —
-     that gap was the main driver of the "too high contrast" / "doesn't
-     read as minimal" complaint. */
-  --text-caption: 0.8rem; /* 12.8px */
-  --text-caption--line-height: 1.4;
-  --text-caption--letter-spacing: -0.02em;
+  /* Type scale — the steps used to ACCELERATE: 1.25x, 1.50x, 1.67x, 2.00x
+     from caption up to display, spanning 6.25x end to end. Compounding
+     jumps are what made the size differences read as drastic, and they
+     also left body copy looking small purely by comparison rather than in
+     absolute terms. Reworked to a near-even ramp — 1.29x, 1.33x, 1.50x,
+     1.67x, spanning 4.29x — by lifting the floor (caption 12.8->14, body
+     16->18) and pulling the ceiling down (heading 40->36, display 80->60).
+
+     Tracking now ramps with size instead of jumping. It was a flat -0.02em
+     for everything small and -0.04em for everything large, so a heading
+     next to body copy changed size AND tightness in one step; -0.01 /
+     -0.02 / -0.03 / -0.04 spreads that across the scale. Tight tracking on
+     small text is also the thing that most makes it feel cramped, which
+     compounded the "too small" read.
+
+     Mobile minimums used to invert: subheading floored at 15.36px, BELOW
+     body's 16px, so a subheading was smaller than the copy under it on
+     narrow screens. Every clamp floor is now >= body. */
+  --text-caption: 0.875rem; /* 14px */
+  --text-caption--line-height: 1.45;
+  --text-caption--letter-spacing: -0.01em;
   --text-caption--font-weight: 600;
 
-  --text-body: 1rem; /* 16px — does not scale down; the reference never shrinks it */
-  --text-body--line-height: 1.5;
-  --text-body--letter-spacing: -0.02em;
+  --text-body: 1.125rem; /* 18px — does not scale down */
+  --text-body--line-height: 1.6;
+  --text-body--letter-spacing: -0.01em;
 
-  --text-button: clamp(0.85rem, 1.3vw, 1rem); /* 13.6–16px */
+  --text-button: clamp(0.9375rem, 1.2vw, 1rem); /* 15–16px */
   --text-button--line-height: 1;
-  --text-button--letter-spacing: -0.02em;
+  --text-button--letter-spacing: -0.01em;
   --text-button--font-weight: 600;
 
-  --text-subheading: clamp(0.96rem, 3vw, 1.5rem); /* 15.36–24px */
-  --text-subheading--line-height: 1.4;
-  --text-subheading--letter-spacing: -0.04em;
+  --text-subheading: clamp(1.125rem, 2.4vw, 1.5rem); /* 18–24px */
+  --text-subheading--line-height: 1.45;
+  --text-subheading--letter-spacing: -0.02em;
 
-  --text-heading: clamp(1.6rem, 6vw, 2.5rem); /* 25.6–40px */
-  --text-heading--line-height: 1.2;
-  --text-heading--letter-spacing: -0.04em;
+  --text-heading: clamp(1.75rem, 4.5vw, 2.25rem); /* 28–36px */
+  --text-heading--line-height: 1.25;
+  --text-heading--letter-spacing: -0.03em;
 
-  --text-display: clamp(3.2rem, 8vw, 5rem); /* 51.2–80px — hero h1 only */
-  --text-display--line-height: 1;
+  --text-display: clamp(2.5rem, 6.5vw, 3.75rem); /* 40–60px — hero h1 only */
+  --text-display--line-height: 1.05;
   --text-display--letter-spacing: -0.04em;
 
   /* Spacing — the reference's rhythm is a uniform 72px section padding and
@@ -189,6 +207,9 @@
 
   --z-nav: 60;
   --z-skiplink: 70;
+  /* Above nav and skip link, below the cursor — the custom cursor should
+     stay visible while the curtain is across. Preloader still outranks it. */
+  --z-curtain: 75;
   --z-cursor: 80;
   --z-preloader: 100;
 }
@@ -279,7 +300,10 @@
   h2,
   h3 {
     font-weight: 600;
-    letter-spacing: -0.04em;
+    /* Matches --text-heading's tracking. Headings carrying an explicit
+       text-* utility still win; this is only the unclassed fallback, and
+       -0.04em left those tracked as tightly as the 60px hero. */
+    letter-spacing: -0.03em;
     text-wrap: balance;
   }
 
@@ -319,35 +343,43 @@
     outline: none;
   }
 
-  /* Page transitions: a horizontal wipe — the incoming page slides in from
-     the right and covers the outgoing one, which stays put underneath
-     (revealed progressively) rather than animating itself. Was a vertical
-     curtain-up sharing the preloader's own gesture; swapped to horizontal
-     on request, same underlying mechanism.
+  /* Page transitions: a brand curtain sweeps across, the page swaps while
+     hidden behind it, then it sweeps off. Because the swap happens fully
+     covered, the page change itself is never animated — which is the whole
+     point: nothing reads as content sliding, dissolving, or zooming, the
+     failure mode of every version this replaced.
 
-     transform, not clip-path — this fires on EVERY route change (any
-     `::view-transition-new(root)` swap), and an animated `clip-path` here
-     is the same class of bug the preloader's own exit animation had: a
-     stray seam at the clip boundary that a browser repaint (e.g. any
-     click) clears, which is exactly the "there for a bit, then a click
-     makes it go away" pattern reported after navigating — this fires far
-     more often than the once-per-session preloader, so it's the more
-     likely source of that report. */
-  @keyframes wipe-in {
-    from {
-      transform: translateX(100%);
-    }
-    to {
-      transform: translateX(0);
-    }
-  }
+     The panel enters from the left and exits to the right, so across a
+     whole navigation it reads as ONE object passing over the viewport
+     rather than two unrelated animations that happen to meet in the middle.
 
+     The native view transition is deliberately a no-op. Astro still drives
+     the swap through startViewTransition, but with no animation on either
+     root pseudo the swap is an instant cut — correct here, since it happens
+     behind an opaque panel where any crossfade would be invisible work.
+     This is what keeps the curtain the only motion on screen. */
+  ::view-transition-old(root),
   ::view-transition-new(root) {
-    animation: wipe-in 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+    animation: none;
   }
 
-  ::view-transition-old(root) {
-    animation: none;
+  /* Sits outside <main> and persists across swaps (transition:persist in
+     Base.astro), so the covering panel is the same DOM node before and
+     after the page changes under it. Without persist the swap replaces the
+     node mid-sweep and the new one renders at its resting off-screen
+     position, uncovering the page early.
+
+     pointer-events stay off even while covering: the panel is across for
+     well under a second, and making it interactive would swallow a click
+     aimed at the page landing underneath. */
+  #curtain {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-curtain);
+    background: var(--color-brand-green);
+    transform: translateX(-100%);
+    pointer-events: none;
+    will-change: transform;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -360,6 +392,10 @@
       scroll-behavior: auto !important;
     }
 
+    /* The root pseudos are already animation:none above. The curtain
+       itself is driven by the Web Animations API, which this block cannot
+       reach — Base.astro checks prefers-reduced-motion directly and skips
+       the sweep, navigating instantly instead. */
     ::view-transition-new(root),
     ::view-transition-old(root) {
       animation: none !important;

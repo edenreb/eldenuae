@@ -132,6 +132,13 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <Preloader />
     <Cursor />
 
+    <!-- Page-transition curtain. transition:persist keeps this the SAME DOM
+         node across a swap, so it stays covering while the page changes
+         underneath; without it Astro replaces the node mid-sweep and the
+         replacement renders at its resting off-screen position, uncovering
+         the new page early. Empty and aria-hidden — decorative only. -->
+    <div id="curtain" aria-hidden="true" transition:persist></div>
+
     <a
       href="#main-content"
       class="fixed left-[24px] top-[12px] -translate-y-24 bg-ink px-[16px] py-[8px] text-body text-cream transition-transform focus:translate-y-0"
@@ -265,6 +272,74 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       });
       document.addEventListener("astro:after-swap", () => {
         delete document.documentElement.dataset.transitioning;
+      });
+
+      // Curtain sweep. The panel covers the viewport BEFORE the page is
+      // fetched and swapped, then leaves once the new page is up, so the
+      // swap itself is never visible and needs no animation of its own.
+      const CURTAIN_MS = 520;
+      const CURTAIN_EASE = "cubic-bezier(0.76, 0, 0.24, 1)";
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+      let sweeping: Animation | null = null;
+      // Only sweep out after a sweep in. astro:page-load also fires on the
+      // very first load, where no navigation happened and the curtain is
+      // parked off-screen — without this the panel would wipe across the
+      // screen once on arrival, over the preloader's own intro.
+      let navigating = false;
+
+      const curtainEl = () => document.getElementById("curtain");
+
+      const sweep = (from: string, to: string) => {
+        const el = curtainEl();
+        if (!el || reduced.matches) return Promise.resolve();
+        sweeping?.cancel();
+        sweeping = el.animate(
+          [{ transform: `translateX(${from})` }, { transform: `translateX(${to})` }],
+          { duration: CURTAIN_MS, easing: CURTAIN_EASE, fill: "forwards" },
+        );
+        // A cancelled animation rejects; that is the expected path when a
+        // second navigation interrupts one already in flight.
+        return sweeping.finished.catch(() => {});
+      };
+
+      document.addEventListener("astro:before-preparation", (event) => {
+        const e = event as unknown as { loader: () => Promise<void> };
+        const load = e.loader;
+        navigating = true;
+        // Astro's documented hook for holding a navigation open: the swap
+        // waits on whatever this resolves, so the fetch overlaps the sweep
+        // and the page is only replaced once the panel is actually across.
+        e.loader = async () => {
+          await sweep("-100%", "0%");
+          await load();
+        };
+      });
+
+      document.addEventListener("astro:after-swap", () => {
+        // Belt-and-braces alongside transition:persist — pin the panel to
+        // covering, so a swap that did not preserve the running animation
+        // still cannot flash the new page before the sweep out.
+        if (!navigating || reduced.matches) return;
+        const el = curtainEl();
+        if (!el) return;
+        sweeping?.cancel();
+        el.style.transform = "translateX(0)";
+      });
+
+      document.addEventListener("astro:page-load", () => {
+        if (!navigating) return;
+        navigating = false;
+        const el = curtainEl();
+        if (!el || reduced.matches) return;
+        void sweep("0%", "100%").then(() => {
+          // Park it back on the left, ready to enter the same way next
+          // time. Leaving it finished at +100% would make the next
+          // navigation sweep in from the right instead.
+          sweeping?.cancel();
+          sweeping = null;
+          el.style.transform = "translateX(-100%)";
+        });
       });
 
       // Force scroll-to-top on every route change, explicitly, rather than
