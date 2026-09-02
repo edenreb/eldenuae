@@ -11,6 +11,7 @@ const links = [
   { href: "/projects", label: "Projects" },
   { href: "/about", label: "About" },
   { href: "/journal", label: "Journal" },
+  { href: "/careers", label: "Careers" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -200,9 +201,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <!-- Mobile nav: the desktop nav above is `hidden` below `sm` with
          nothing standing in for it — mobile had no way to navigate the
          site at all except the wordmark-to-home link. A bottom-center
-         mini bar instead of a hamburger/overflow panel: only 4 links,
-         all of which fit comfortably in one row, so a full slide-out menu
-         would be one tap of indirection for no benefit. `bottom` combines
+         mini bar instead of a hamburger/overflow panel: 5 links, which
+         still fit in one row at 320px once the per-link padding drops to
+         8px, so a full slide-out menu would be one tap of indirection for
+         no benefit. Adding a 6th is what would break this — check the row
+         at 320px before doing it. `bottom` combines
          a base offset with `env(safe-area-inset-bottom)` so it clears the
          home-indicator gesture area on notched iOS devices rather than
          sitting flush against it. -->
@@ -222,7 +225,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
               aria-current={isActive(link.href) ? "page" : undefined}
               data-astro-reload={isSamePage(link.href) ? true : undefined}
               class:list={[
-                "relative block cursor-pointer px-[10px] py-[8px] text-caption",
+                "relative block cursor-pointer px-[8px] py-[8px] text-caption",
                 // Was text-cream for the active tab — brand green marks
                 // "you are here" instead, same ink-side accent as the
                 // desktop underline above.

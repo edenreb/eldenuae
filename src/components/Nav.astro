@@ -1,0 +1,103 @@
+---
+// DESIGN.md — Black Navigation Bar: full-bleed #000000 bar, cream text,
+// logo far left, links beside it, 17px vertical / 25px horizontal padding.
+import Logo from "./Logo.astro";
+
+const links = [
+  { href: "/projects", label: "Projects" },
+  { href: "/journal", label: "Journal" },
+  { href: "/about", label: "About" },
+  { href: "/career", label: "Career" },
+];
+
+const path = Astro.url.pathname;
+const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
+---
+
+<header
+  id="site-nav"
+  class="fixed inset-x-0 top-0 bg-ink text-cream transition-transform duration-500"
+  style="z-index: var(--z-nav)"
+>
+  <div class="mx-auto flex max-w-[1440px] items-center justify-between px-[17px] py-[17px] md:px-[25px]">
+    <a href="/" class="cursor-pointer">
+      <Logo class="h-[22px] w-auto" />
+      <span class="sr-only">Elden — home</span>
+    </a>
+
+    <nav aria-label="Primary" class="hidden items-center gap-[25px] md:flex">
+      {links.map((link) => (
+        <a
+          href={link.href}
+          class:list={[
+            "cursor-pointer text-body-sm underline-offset-4",
+            isActive(link.href) ? "underline" : "hover:underline",
+          ]}
+          aria-current={isActive(link.href) ? "page" : undefined}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+
+    <a
+      href="/contact"
+      class:list={[
+        "hidden cursor-pointer text-body-sm underline-offset-4 md:inline",
+        isActive("/contact") ? "underline" : "hover:underline",
+      ]}
+      aria-current={isActive("/contact") ? "page" : undefined}
+    >
+      Contact
+    </a>
+
+    <details class="relative md:hidden">
+      <summary class="menu-summary cursor-pointer text-body-sm">Menu</summary>
+      <div class="absolute right-0 top-[calc(100%+1px)] flex w-[200px] flex-col gap-[13px] border border-cream bg-ink px-[17px] py-[17px]">
+        {[...links, { href: "/contact", label: "Contact" }].map((link) => (
+          <a
+            href={link.href}
+            class:list={["cursor-pointer text-body-sm underline-offset-4", isActive(link.href) ? "underline" : ""]}
+            aria-current={isActive(link.href) ? "page" : undefined}
+          >
+            {link.label}
+          </a>
+        ))}
+      </div>
+    </details>
+  </div>
+</header>
+
+<style>
+  .menu-summary::-webkit-details-marker {
+    display: none;
+  }
+  .menu-summary {
+    list-style: none;
+  }
+</style>
+
+<script>
+  function initNavScroll() {
+    const nav = document.getElementById("site-nav");
+    if (!nav) return;
+
+    let last = window.scrollY;
+
+    window.addEventListener(
+      "scroll",
+      () => {
+        const y = window.scrollY;
+        // Keep the bar down near the top of the page regardless of direction,
+        // and never hide it while the mobile menu is open.
+        const menuOpen = nav.querySelector("details[open]");
+        const hide = y > last && y > 200 && !menuOpen;
+        nav.classList.toggle("-translate-y-full", hide);
+        last = y;
+      },
+      { passive: true },
+    );
+  }
+
+  document.addEventListener("astro:page-load", initNavScroll);
+</script>

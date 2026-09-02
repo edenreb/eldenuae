@@ -1,0 +1,171 @@
+---
+import Base from "../layouts/Base.astro";
+
+// PLACEHOLDER COPY: replace with Elden's real open roles before launch.
+const roles = [
+  { title: "Senior Interior Designer", dept: "Design", location: "Dubai" },
+  { title: "Fitout Project Manager", dept: "Delivery", location: "Dubai" },
+  { title: "MEP Coordinator", dept: "Delivery", location: "Dubai" },
+  { title: "Site Supervisor", dept: "Delivery", location: "Dubai" },
+];
+---
+
+<Base
+  title="Career"
+  description="Join Elden — a turnkey fitout team delivering 87+ projects across the UAE. Open roles and applications."
+>
+  <section class="px-[17px] pt-[50px] md:px-[25px] md:pt-[84px]">
+    <div class="mx-auto max-w-[1440px]">
+      <p class="text-caption uppercase tracking-[0.08em] text-ink">Careers</p>
+      <h1 class="mt-[13px] max-w-[18ch] text-display-lg leading-[0.88] tracking-[-0.04em] text-ink">
+        Build things that open.
+      </h1>
+      <p class="mt-[25px] max-w-[640px] text-body text-ink md:ml-[59px]">
+        <!-- PLACEHOLDER COPY: replace with Elden's real hiring pitch before launch -->
+        We're a design-and-build team — designers who understand buildability and site teams who
+        protect design intent. If you'd rather see your work open its doors than sit in a drawer,
+        we're hiring across design and delivery.
+      </p>
+    </div>
+  </section>
+
+  <section class="px-[17px] py-[50px] md:px-[25px] md:py-[84px]">
+    <div class="mx-auto max-w-[1440px]">
+      <h2 class="text-heading leading-[1.06] tracking-[-0.02em] text-ink">Open roles.</h2>
+      <ul class="mt-[25px] flex flex-col divide-y divide-ink border-t border-ink">
+        {roles.map((role) => (
+          <li class="flex flex-col gap-[5px] py-[17px] sm:flex-row sm:items-center sm:justify-between">
+            <span class="text-body-sm text-ink">{role.title}</span>
+            <span class="text-caption uppercase tracking-[0.08em] text-ink">
+              {role.dept} &middot; {role.location}
+            </span>
+          </li>
+        ))}
+      </ul>
+      <p class="mt-[17px] text-body-sm text-ink">
+        Don't see the right role? Apply below with a general application — we keep every submission on file.
+      </p>
+    </div>
+  </section>
+
+  <section class="border-t border-ink px-[17px] py-[50px] md:px-[25px] md:py-[84px]">
+    <div class="mx-auto max-w-[640px]">
+      <h2 class="text-heading-sm leading-[1.1] text-ink">Apply.</h2>
+
+      <div
+        id="career-form-error-summary"
+        hidden
+        role="alert"
+        class="mt-[25px] border border-ink bg-cream px-[17px] py-[13px] text-body-sm text-ink"
+      >
+        <p class="font-bold">Please fix the following before submitting:</p>
+      </div>
+
+      <div id="career-form-success" hidden class="mt-[25px] border border-ink px-[17px] py-[25px]">
+        <p class="text-heading-sm text-ink">Application received.</p>
+        <p class="mt-[8px] text-body-sm text-ink">
+          We review every application and reply if there's a fit for a current or upcoming role.
+        </p>
+      </div>
+
+      <form id="career-form" class="mt-[25px] flex flex-col gap-[17px]" novalidate>
+        <div>
+          <label for="career-name" class="block text-body-sm text-ink">
+            Full name <span aria-hidden="true">*</span>
+          </label>
+          <input
+            id="career-name"
+            name="name"
+            type="text"
+            required
+            autocomplete="name"
+            data-label="Full name"
+            aria-describedby="career-name-error"
+            class="mt-[5px] h-[44px] w-full border border-ink px-[13px] text-body-sm text-ink focus:border-ink"
+          />
+          <p id="career-name-error" class="mt-[5px] text-caption text-ink" role="alert"></p>
+        </div>
+
+        <div>
+          <label for="career-email" class="block text-body-sm text-ink">
+            Email <span aria-hidden="true">*</span>
+          </label>
+          <input
+            id="career-email"
+            name="email"
+            type="email"
+            required
+            autocomplete="email"
+            data-label="Email"
+            aria-describedby="career-email-error"
+            class="mt-[5px] h-[44px] w-full border border-ink px-[13px] text-body-sm text-ink focus:border-ink"
+          />
+          <p id="career-email-error" class="mt-[5px] text-caption text-ink" role="alert"></p>
+        </div>
+
+        <div>
+          <label for="career-phone" class="block text-body-sm text-ink">Phone</label>
+          <input
+            id="career-phone"
+            name="phone"
+            type="tel"
+            autocomplete="tel"
+            class="mt-[5px] h-[44px] w-full border border-ink px-[13px] text-body-sm text-ink focus:border-ink"
+          />
+        </div>
+
+        <div>
+          <label for="career-role" class="block text-body-sm text-ink">Role</label>
+          <select
+            id="career-role"
+            name="role"
+            class="mt-[5px] h-[44px] w-full border border-ink bg-cream px-[13px] text-body-sm text-ink focus:border-ink"
+          >
+            {roles.map((r) => <option value={r.title}>{r.title}</option>)}
+            <option value="General application">General application</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="career-cv" class="block text-body-sm text-ink">
+            CV / resume <span aria-hidden="true">*</span>
+          </label>
+          <input
+            id="career-cv"
+            name="cv"
+            type="file"
+            required
+            accept=".pdf,.doc,.docx"
+            data-label="CV / resume"
+            aria-describedby="career-cv-error career-cv-hint"
+            class="mt-[5px] block w-full cursor-pointer border border-ink px-[13px] py-[8px] text-body-sm text-ink file:mr-[13px] file:cursor-pointer file:border-0 file:bg-ink file:px-[13px] file:py-[6px] file:text-cream"
+          />
+          <p id="career-cv-hint" class="mt-[5px] text-caption text-ink">PDF or Word, up to 10MB.</p>
+          <p id="career-cv-error" class="mt-[5px] text-caption text-ink" role="alert"></p>
+        </div>
+
+        <div>
+          <label for="career-note" class="block text-body-sm text-ink">Cover note</label>
+          <textarea
+            id="career-note"
+            name="note"
+            rows={4}
+            class="mt-[5px] w-full border border-ink p-[13px] text-body-sm text-ink focus:border-ink"
+          ></textarea>
+        </div>
+
+        <button
+          type="submit"
+          class="mt-[8px] w-full cursor-pointer border border-ink bg-cream px-[17px] py-[8px] text-body-sm text-ink transition-colors hover:bg-ink hover:text-cream sm:w-auto"
+        >
+          Submit application
+        </button>
+      </form>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { initFormValidation } from "../scripts/form";
+  document.addEventListener("astro:page-load", () => initFormValidation("career-form"));
+</script>
