@@ -35,9 +35,9 @@ import Eyebrow from "./Eyebrow.astro";
 // anything else.
 const images = [img1, img2, img3, img4, img5, img6, img7, img8];
 
-// PLACEHOLDER COPY: replace with Elden's own words before launch.
+const LEAD = "To support our vision by:";
 const TEXT =
-  "Every fitout begins with listening — to how the space will actually be used, the trade patterns of a working kitchen, the flow of a gym floor at peak hour. We believe a good fitout doesn't just look right on opening day; it works right for years after.";
+  "Realizing our clients' visions through the most functional, sustainable and innovative interior solutions. Providing and maintaining creative professional excellence, exceptional customer service, and quantifiable results.";
 ---
 
 <!-- No outer 200vh wrapper anymore — ScrollTrigger's pinSpacing (default
@@ -81,7 +81,8 @@ const TEXT =
          viewport), not a centered/right-aligned narrow column. -->
     <div class="flex flex-col gap-[24px] md:flex-1">
       <div class="rule rule-accent" data-reveal-rule></div>
-      <Eyebrow>Our Philosophy</Eyebrow>
+      <Eyebrow>Our Mission</Eyebrow>
+      <p class="text-body text-muted">{LEAD}</p>
       <p class="text-heading leading-[1.2] text-cream" data-reveal-words>
         {TEXT}
       </p>

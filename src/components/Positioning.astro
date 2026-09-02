@@ -1,18 +1,25 @@
 ---
 // About teaser — display-scale paragraph + CTA, matching the reference's
-// own "For over a decade..." section. PLACEHOLDER COPY: replace with
-// Elden's real founding story before launch.
+// own "For over a decade..." section.
 import Button from "./Button.astro";
 
-const TEXT =
-  "Elden was founded nine years ago on a simple frustration: watching good design get diluted by someone else's build crew. Today we're a single turnkey practice — one team taking a project from first sketch to opening day, across fitness, F&B, retail, workplace, and hospitality throughout the UAE.";
+const PARAGRAPHS = [
+  "Elden was founded in 2018 after seeing the inefficiencies of watching good design get misinterpreted by someone else's fitout crew.",
+  "Today we're one turnkey studio that takes your project from first sketch to opening day, across fitness, F&B, retail, workplace, and hospitality throughout the UAE.",
+  "Our vision is to become the customer's first choice and a benchmark company in providing quality interior design and fit-out services across the region.",
+];
 ---
 
 <section class="px-[24px] py-[96px] md:px-[32px] md:py-[144px]">
   <div class="mx-auto max-w-[1440px]">
-    <p class="max-w-[30ch] text-heading text-cream" data-scroll-words>
-      {TEXT}
-    </p>
+    <!-- max-w on the paragraphs, not the wrapper: `ch` resolves against the
+         element's own font-size, so on a body-sized wrapper 30ch is a much
+         narrower column than the same value on text-heading. -->
+    <div class="flex flex-col gap-[24px]">
+      {PARAGRAPHS.map((text) => (
+        <p class="max-w-[30ch] text-heading text-cream" data-scroll-words>{text}</p>
+      ))}
+    </div>
     <div class="mt-[32px]">
       <Button href="/about" label="View More About Us" />
     </div>
