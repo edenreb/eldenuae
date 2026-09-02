@@ -20,7 +20,7 @@
 //     reduced-motion users never see a stuck cream screen
 //   - contains nothing focusable, so it cannot trap the keyboard
 //   - aria-hidden: decoration over content that is already in the DOM
-import Logo from "./Logo.astro";
+import logoSrc from "../assets/logo.svg";
 ---
 
 <div
@@ -30,7 +30,7 @@ import Logo from "./Logo.astro";
   style="z-index: var(--z-preloader)"
 >
   <div class="flex w-full max-w-[1440px] items-end justify-between px-[24px] md:px-[32px]">
-    <Logo class="h-[28px] w-auto text-cream md:h-[40px]" />
+    <img src={logoSrc.src} alt="" fetchpriority="high" class="h-[28px] w-auto md:h-[40px]" />
     <p id="preloader-count" class="tabular-nums text-heading leading-none text-cream">00</p>
   </div>
 </div>
