@@ -1,9 +1,9 @@
 ---
-// Session-scoped entry sequence: wordmark + a tabular counter running to
-// 100, then a cream curtain wipes upward. (An earlier version stopped the
-// count at 87 — Elden's project count — but that reads as a stalled/broken
-// loader rather than a deliberate number; a preloader counter is expected
-// to reach 100.)
+// Session-scoped entry sequence: the wordmark holds the centre of the screen
+// while a progress bar fills along the bottom edge, its counter running to
+// 100. (An earlier version stopped the count at 87 — Elden's project count —
+// but that reads as a stalled/broken loader rather than a deliberate number;
+// a preloader counter is expected to reach 100.)
 //
 // It does not touch the hero. When the curtain clears it dispatches
 // `elden:intro`; the hero owns its own reveal and listens for that. When the
@@ -26,12 +26,47 @@ import logoSrc from "../assets/logo.svg";
 <div
   id="preloader"
   aria-hidden="true"
-  class="fixed inset-0 flex items-center justify-center bg-ink"
+  class="fixed inset-0 overflow-hidden"
   style="z-index: var(--z-preloader)"
 >
-  <div class="flex w-full max-w-[1440px] items-end justify-between px-[24px] md:px-[32px]">
-    <img src={logoSrc.src} alt="" fetchpriority="high" class="h-[28px] w-auto md:h-[40px]" />
-    <p id="preloader-count" class="tabular-nums text-heading leading-none text-cream">00</p>
+  <!-- The panel is two halves rather than one sheet, so the intro ends by
+       opening the page rather than sliding off it. They carry the ink fill;
+       the wrapper above is transparent, or there would be nothing to open.
+       Each is 50.5% tall so they overlap across the seam — at exactly 50%
+       an odd viewport height leaves a one-pixel line of the page showing
+       through the middle for the whole load. -->
+  <div id="preloader-top" class="absolute inset-x-0 top-0 h-[50.5%] bg-ink"></div>
+  <div id="preloader-bottom" class="absolute inset-x-0 bottom-0 h-[50.5%] bg-ink"></div>
+
+  <!-- Centring wrapper rather than a translate on the image itself: the exit
+       animates the mark's own transform, and a Tailwind `-translate-*` on the
+       same element would be the thing GSAP overwrites. -->
+  <div class="absolute inset-0 flex items-center justify-center">
+    <img
+      id="preloader-mark"
+      src={logoSrc.src}
+      alt=""
+      fetchpriority="high"
+      class="h-[32px] w-auto md:h-[44px]"
+    />
+  </div>
+
+  <div
+    id="preloader-foot"
+    class="absolute inset-x-0 bottom-0 px-[24px] pb-[24px] md:px-[32px] md:pb-[32px]"
+  >
+    <p
+      id="preloader-count"
+      class="mb-[16px] tabular-nums text-heading leading-none text-cream"
+    >
+      00
+    </p>
+    <!-- `.rule` is the site's 2px/10%-white hairline utility — the same
+         divider used across the page, reused here as the bar's unfilled
+         track rather than a one-off border. -->
+    <div id="preloader-track" class="rule overflow-hidden">
+      <div id="preloader-fill" class="h-full w-full bg-cream"></div>
+    </div>
   </div>
 </div>
 
@@ -44,7 +79,22 @@ import logoSrc from "../assets/logo.svg";
     display: none;
   }
   :global(html[data-preloading]) #preloader {
-    display: flex;
+    display: block;
+  }
+
+  /* Start empty, and grow from the left. Declared here rather than left to
+     GSAP's first frame: the bar is painted before the script runs, and a
+     full-width cream bar flashing for one frame is the whole thing this
+     preloader exists to avoid. */
+  #preloader-fill {
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+
+  /* The bar thickens in place on the way to 100, so it grows upward off the
+     baseline instead of straddling it. */
+  #preloader-track {
+    transform-origin: center bottom;
   }
 </style>
 
@@ -52,6 +102,12 @@ import logoSrc from "../assets/logo.svg";
   import gsap from "gsap";
 
   const SEEN_KEY = "elden:preloaded";
+  // A literal rgb() rather than the CSS var: GSAP's color interpolator
+  // numerically lerps between two resolved colors and can't resolve a var()
+  // reference itself, only getComputedStyle can — so the token's value is
+  // duplicated here rather than referenced. Keep in sync with
+  // --color-brand-green if the brand green ever changes.
+  const BRAND_GREEN = "rgb(73, 155, 86)";
 
   function initPreloader() {
     const el = document.getElementById("preloader");
@@ -89,6 +145,10 @@ import logoSrc from "../assets/logo.svg";
     }
 
     const counter = document.getElementById("preloader-count");
+    const mark = document.getElementById("preloader-mark");
+    const track = document.getElementById("preloader-track");
+    const halves = [document.getElementById("preloader-top"), document.getElementById("preloader-bottom")];
+    const fill = document.getElementById("preloader-fill");
     const value = { n: 0 };
 
     // Insurance: whatever happens to the timeline (tab backgrounded mid-run,
@@ -99,50 +159,68 @@ import logoSrc from "../assets/logo.svg";
       el.remove();
     }, 5000);
 
-    // The site's one signature brand-color moment: the counter tints from
-    // cream to brand green as it counts to 100, cream again on the very
-    // next visit's cold-render (this whole tween never runs a second time
-    // in a session — see the sessionStorage check above). Ink-side only
-    // (green, not navy — navy measures 1.7:1 on this bg-ink canvas, below
-    // even the 3:1 non-text minimum, so it would just be invisible here;
-    // see the token comment in global.css for the full rule). A literal
-    // rgb() rather than the CSS var: GSAP's color interpolator numerically
-    // lerps between two resolved colors and can't resolve a var() reference
-    // itself, only getComputedStyle can — so the token's value is
-    // duplicated here rather than referenced. Keep them in sync if the
-    // brand green ever changes.
     gsap
       .timeline()
+      // Load. The counter, the bar and the site's one signature brand-color
+      // moment (cream tinting to brand green) all run off the same 1.25s —
+      // three readings of a single progress value, not three animations.
+      // Green and not navy: navy measures 1.7:1 on this bg-ink canvas, below
+      // even the 3:1 non-text minimum, so it would just be invisible here.
       .to(value, {
         n: 100,
-        duration: 1.3,
+        duration: 1.2,
         ease: "power2.inOut",
         onUpdate: () => {
           if (counter) counter.textContent = String(Math.round(value.n)).padStart(2, "0");
         },
       })
-      .to(counter, { color: "rgb(73, 155, 86)", duration: 1.3, ease: "power2.inOut" }, "<")
-      .to(el, {
-        // Slides the whole curtain off-screen upward, rather than animating
-        // `clip-path: inset()` to reveal what's beneath it. Both read as
-        // the same wipe-up, but percentage-based clip-path animations are a
-        // known category of WebKit/Safari bug: sub-pixel rounding at the
-        // clip boundary during compositing can leave a stray hairline where
-        // the edge was — a persistent thin bright line, exactly what showed
-        // up here. `transform: translateY` is a plain GPU-composited move
-        // with no clip boundary to round.
-        yPercent: -100,
-        duration: 0.9,
-        ease: "power3.inOut",
-        onStart: () => {
-          announce(); // hero reveal rides the curtain, not after it
-          unlock(); // and the page is scrollable again as it lifts
+      .to(fill, { scaleX: 1, duration: 1.2, ease: "power2.inOut" }, "<")
+      .to(counter, { color: BRAND_GREEN, duration: 1.2, ease: "power2.inOut" }, "<")
+
+      // Arrival at 100. The bar flushes green and swells off its baseline,
+      // then settles — a beat that acknowledges the number instead of
+      // cutting straight from counting to gone.
+      .to(fill, { backgroundColor: BRAND_GREEN, duration: 0.18, ease: "power2.out" })
+      .to(track, { scaleY: 4, duration: 0.18, ease: "power2.out" }, "<")
+      .to(track, { scaleY: 1, duration: 0.28, ease: "power2.inOut" }, "+=0.05")
+
+      // Exit, staged so the furniture leaves before the panel does. The bar
+      // empties the way it filled — left edge chasing the right — rather
+      // than fading, so the load reads as completing rather than stopping.
+      .set(fill, { transformOrigin: "right center" })
+      .to(fill, { scaleX: 0, duration: 0.45, ease: "power3.inOut" }, "-=0.1")
+      .to(counter, { y: 28, autoAlpha: 0, duration: 0.4, ease: "power2.in" }, "<")
+
+      // The mark has to be gone before the halves part, not riding them —
+      // it sits dead on the seam, so anything still visible there gets torn
+      // down the middle. Hence no overlap worth speaking of below.
+      .to(mark, { scale: 1.14, autoAlpha: 0, duration: 0.45, ease: "power2.in" }, "-=0.25")
+
+      // The open. Two halves clearing in opposite directions rather than one
+      // sheet sliding off: the page is revealed from the centre outward,
+      // which is the point of splitting it at all.
+      //
+      // power3.inOut and not the accelerate-away curve used for panels that
+      // are merely getting out of the way — here the movement IS the reveal,
+      // so it earns a settle at the end instead of being rushed off.
+      .to(
+        halves[0],
+        {
+          yPercent: -100,
+          duration: 0.85,
+          ease: "power3.inOut",
+          onStart: () => {
+            announce(); // hero reveal rides the opening, not after it
+            unlock(); // and the page is scrollable again as it parts
+          },
+          onComplete: () => {
+            clearTimeout(watchdog);
+            el.remove();
+          },
         },
-        onComplete: () => {
-          clearTimeout(watchdog);
-          el.remove();
-        },
-      });
+        "-=0.05",
+      )
+      .to(halves[1], { yPercent: 100, duration: 0.85, ease: "power3.inOut" }, "<");
   }
 
   document.addEventListener("astro:page-load", initPreloader);
