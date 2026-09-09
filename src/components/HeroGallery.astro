@@ -194,19 +194,33 @@ const planes = Array.from({ length: COUNT }, (_, i) => {
   }
 
   #hero-quote {
-    font-family: var(--font-display-serif), Georgia, serif;
-    font-style: italic;
+    font-family: var(--font-sans);
     font-weight: 500;
-    /* Playfair's own proportions carry the size — this runs a little larger
-       than the sans --text-display token because a serif at the same optical
-       weight reads smaller. */
-    font-size: clamp(2.4rem, 7vw, 5.5rem);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
+    /* Deliberately the one thing on the site larger than --text-display
+       (44–64px): this is the hero line, and the display token has to also
+       work as an h1 on interior pages where 96px would not. The italic
+       this used to carry was inherited from the Playfair serif that ran
+       here originally, where it was the point; upright is the right read
+       for Barlow, which has no calligraphic case to make. */
+    font-size: clamp(2.75rem, 7.5vw, 6rem);
+    line-height: 1.02;
+    /* Tighter than the italic version ran. Upright glyphs at this size sit
+       further apart optically, and the display token is already at -0.04em
+       by 64px — this sits between the two. */
+    letter-spacing: -0.03em;
     /* Second, tighter contrast guarantee on the glyphs themselves — holds
        the edge crisp right at the scrim's feathered boundary, where the
-       radial gradient alone is weakest. */
-    text-shadow: 0 2px 24px rgb(0 0 0 / 0.45);
+       radial gradient alone is weakest.
+
+       Two layers, not one. The old single 24px/0.45 blur was spread so wide
+       and so faint that it did nothing anywhere: over the photography it
+       was too weak to separate the glyphs, and over flat canvas a soft
+       black haze is invisible against a background that is already almost
+       black. The tight layer is what actually draws the edge; the wide one
+       is the lift behind it. */
+    text-shadow:
+      0 3px 8px rgb(0 0 0 / 0.7),
+      0 10px 40px rgb(0 0 0 / 0.85);
   }
 
   #hero-stage {
@@ -215,7 +229,7 @@ const planes = Array.from({ length: COUNT }, (_, i) => {
   }
 
   .hero-plane {
-    position: absolute;
+    position: absolute; 
     top: 50%;
     left: 50%;
     width: calc(clamp(200px, 26vw, 520px) * var(--scale));

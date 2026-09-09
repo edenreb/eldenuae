@@ -1,68 +1,5 @@
 @import "tailwindcss";
 
-/* Switzer — the actual typeface (not a substitute). Confirmed by reading
-   arqen.framer.media's own @font-face rules and rich-text presets directly:
-   every h1/h2/h3/p on the site sets --framer-font-family to "Switzer", at
-   weight 600. Files pulled from the site's own third-party-assets/fontshare
-   CDN response, not redistributed from Fontshare's package — same license
-   terms (Switzer is free/OFL via Fontshare) either way. */
-@font-face {
-  font-family: "Switzer";
-  src: url("/fonts/switzer/Switzer-500.woff2") format("woff2");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Switzer";
-  src: url("/fonts/switzer/Switzer-500i.woff2") format("woff2");
-  font-weight: 500;
-  font-style: italic;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Switzer";
-  src: url("/fonts/switzer/Switzer-600.woff2") format("woff2");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Switzer";
-  src: url("/fonts/switzer/Switzer-600i.woff2") format("woff2");
-  font-weight: 600;
-  font-style: italic;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Switzer";
-  src: url("/fonts/switzer/Switzer-700.woff2") format("woff2");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Switzer";
-  src: url("/fonts/switzer/Switzer-700i.woff2") format("woff2");
-  font-weight: 700;
-  font-style: italic;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Switzer";
-  src: url("/fonts/switzer/Switzer-900.woff2") format("woff2");
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Switzer";
-  src: url("/fonts/switzer/Switzer-900i.woff2") format("woff2");
-  font-weight: 900;
-  font-style: italic;
-  font-display: swap;
-}
-
 @theme {
   /* Colors — strictly two, per DESIGN.md, now run inverted (dark canvas,
      light ink) to match the ARQEN reference exactly. Values measured live
@@ -126,53 +63,59 @@
   --color-brand-green: rgb(73 155 86);
   --color-brand-navy: rgb(42 51 124);
 
-  /* Typography — Switzer, confirmed as arqen.framer.media's real body/heading
-     face (see @font-face comment above). Site body copy renders at weight
-     600, not 400 — Switzer has no 400 cut, so default text weight below is
-     bumped to match instead of falling back to a lighter weight. */
-  --font-sans: "Switzer", "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  /* Typography — one family for the whole site. --font-barlow is defined by Astro's
+     Fonts API (see astro.config.mjs) and already carries the generated
+     metric-matched fallback, so the local stack behind it is only there for
+     the window before that CSS lands. */
+  --font-sans: var(--font-barlow), ui-sans-serif, system-ui, -apple-system, sans-serif;
 
-  /* Type scale — the steps used to ACCELERATE: 1.25x, 1.50x, 1.67x, 2.00x
-     from caption up to display, spanning 6.25x end to end. Compounding
-     jumps are what made the size differences read as drastic, and they
-     also left body copy looking small purely by comparison rather than in
-     absolute terms. Reworked to a near-even ramp — 1.29x, 1.33x, 1.50x,
-     1.67x, spanning 4.29x — by lifting the floor (caption 12.8->14, body
-     16->18) and pulling the ceiling down (heading 40->36, display 80->60).
+  /* Type scale. Two passes have landed here. The first flattened a scale
+     whose steps ACCELERATED (1.25x, 1.50x, 1.67x, 2.00x, spanning 6.25x
+     end to end) into a near-even ramp, because compounding jumps were what
+     made body copy read small by comparison rather than in absolute terms.
 
-     Tracking now ramps with size instead of jumping. It was a flat -0.02em
-     for everything small and -0.04em for everything large, so a heading
-     next to body copy changed size AND tightness in one step; -0.01 /
-     -0.02 / -0.03 / -0.04 spreads that across the scale. Tight tracking on
-     small text is also the thing that most makes it feel cramped, which
-     compounded the "too small" read.
+     This is the second: every step moved up again, in absolute terms. Two
+     reasons. The ramp was already even, so the remaining complaint — text
+     that is simply hard to read — could only be answered with size. And
+     Barlow replaced Switzer, which is not a like-for-like swap at a given
+     px: Barlow is the narrower face and sets optically smaller, so holding
+     the old numbers would have made the site read smaller than before the
+     typeface changed.
 
-     Mobile minimums used to invert: subheading floored at 15.36px, BELOW
-     body's 16px, so a subheading was smaller than the copy under it on
-     narrow screens. Every clamp floor is now >= body. */
-  --text-caption: 0.875rem; /* 14px */
+     Body is now 20px, which is also what the journal's long-form column
+     had already settled on independently (.prose-body in journal/[id]) —
+     the two agreeing is the point, not a coincidence to leave in place.
+
+     Tracking ramps with size rather than jumping: 0 / -0.01 / -0.02 /
+     -0.03 / -0.04 across the scale. Caption sits at 0 now — tight tracking
+     on small text is the thing that most makes it feel cramped, and
+     captions are where the "too small" read was loudest.
+
+     Every clamp floor is still >= body, so a subheading can never end up
+     smaller than the copy underneath it on a narrow screen. */
+  --text-caption: 1rem; /* 16px */
   --text-caption--line-height: 1.45;
-  --text-caption--letter-spacing: -0.01em;
+  --text-caption--letter-spacing: 0em;
   --text-caption--font-weight: 600;
 
-  --text-body: 1.125rem; /* 18px — does not scale down */
+  --text-body: 1.25rem; /* 20px — does not scale down */
   --text-body--line-height: 1.6;
   --text-body--letter-spacing: -0.01em;
 
-  --text-button: clamp(0.9375rem, 1.2vw, 1rem); /* 15–16px */
+  --text-button: clamp(1rem, 1.2vw, 1.0625rem); /* 16–17px */
   --text-button--line-height: 1;
   --text-button--letter-spacing: -0.01em;
   --text-button--font-weight: 600;
 
-  --text-subheading: clamp(1.125rem, 2.4vw, 1.5rem); /* 18–24px */
-  --text-subheading--line-height: 1.45;
+  --text-subheading: clamp(1.25rem, 2.4vw, 1.75rem); /* 20–28px */
+  --text-subheading--line-height: 1.4;
   --text-subheading--letter-spacing: -0.02em;
 
-  --text-heading: clamp(1.75rem, 4.5vw, 2.25rem); /* 28–36px */
-  --text-heading--line-height: 1.25;
+  --text-heading: clamp(2rem, 4.5vw, 2.625rem); /* 32–42px */
+  --text-heading--line-height: 1.2;
   --text-heading--letter-spacing: -0.03em;
 
-  --text-display: clamp(2.5rem, 6.5vw, 3.75rem); /* 40–60px — hero h1 only */
+  --text-display: clamp(2.75rem, 6.5vw, 4rem); /* 44–64px — hero h1 only */
   --text-display--line-height: 1.05;
   --text-display--letter-spacing: -0.04em;
 
@@ -205,11 +148,15 @@
      the header's own padding. */
   --header-h: 88px;
 
+  /* BELOW the nav on purpose, which is why this sits here and not up with
+     the other overlays. The page-transition scrim washes out everything
+     under the header while the header itself stays put — the nav is the one
+     element common to both pages, and holding it still is what stops a
+     navigation reading as a full page teardown. Above the reveal-animation
+     layers underneath it, so nothing in the page can paint over the wash. */
+  --z-curtain: 55;
   --z-nav: 60;
   --z-skiplink: 70;
-  /* Above nav and skip link, below the cursor — the custom cursor should
-     stay visible while the curtain is across. Preloader still outranks it. */
-  --z-curtain: 75;
   --z-cursor: 80;
   --z-preloader: 100;
 }
@@ -260,8 +207,10 @@
     background: var(--color-ink);
     color: var(--color-cream);
     font-family: var(--font-sans);
-    /* Switzer ships no 400 cut; 500 is the most common body-copy weight
-       measured across the reference's text presets. */
+    /* 500, not 400. Inherited from the reference's text presets and kept
+       through the move to Barlow so the page's density didn't change with
+       the typeface. Barlow does have a 400 cut if this ever wants to be
+       lighter — it would need adding to the weights list in astro.config. */
     font-weight: 500;
     -webkit-font-smoothing: antialiased;
     /* Same reasoning as <html> above — `clip` doesn't break sticky. */
@@ -290,8 +239,7 @@
   }
 
   /* Heading weight/tracking measured on the reference: 600 uniform across
-     h1–h3 (Switzer's real 600 cut, confirmed via the site's own
-     --framer-font-weight) and -0.04em tracking uniform at every size.
+     h1–h3 and -0.04em tracking uniform at every size.
      Utility classes on individual headings still win where one sets its
      own weight or tracking. */
   /* Kill orphaned words too: balance headline line-lengths, avoid
@@ -343,43 +291,42 @@
     outline: none;
   }
 
-  /* Page transitions: a brand curtain sweeps across, the page swaps while
-     hidden behind it, then it sweeps off. Because the swap happens fully
-     covered, the page change itself is never animated — which is the whole
-     point: nothing reads as content sliding, dissolving, or zooming, the
-     failure mode of every version this replaced.
-
-     The panel enters from the left and exits to the right, so across a
-     whole navigation it reads as ONE object passing over the viewport
-     rather than two unrelated animations that happen to meet in the middle.
+  /* Page transitions: the page fades to its own background navy, swaps
+     while hidden behind that, then fades back. The nav rides above the
+     scrim and never moves.
 
      The native view transition is deliberately a no-op. Astro still drives
      the swap through startViewTransition, but with no animation on either
      root pseudo the swap is an instant cut — correct here, since it happens
-     behind an opaque panel where any crossfade would be invisible work.
-     This is what keeps the curtain the only motion on screen. */
+     behind an opaque scrim where any crossfade would be invisible work. It
+     would also be a different effect: the root pseudos cross-fade the two
+     pages into each other, which is not a fade to navy. */
   ::view-transition-old(root),
   ::view-transition-new(root) {
     animation: none;
   }
 
   /* Sits outside <main> and persists across swaps (transition:persist in
-     Base.astro), so the covering panel is the same DOM node before and
-     after the page changes under it. Without persist the swap replaces the
-     node mid-sweep and the new one renders at its resting off-screen
-     position, uncovering the page early.
+     Base.astro), so the scrim covering the page is the same DOM node before
+     and after the page changes under it. Without persist the swap replaces
+     the node mid-fade and the replacement renders at its resting opacity 0,
+     uncovering the page early.
 
-     pointer-events stay off even while covering: the panel is across for
-     well under a second, and making it interactive would swallow a click
-     aimed at the page landing underneath. */
+     Painted in the page's own background navy, so what the fade reads as is
+     the content dissolving away to bare canvas rather than a coloured sheet
+     dropping over it.
+
+     pointer-events stay off even while opaque: the scrim is up for well
+     under a second, and making it interactive would swallow a click aimed
+     at the page landing underneath. */
   #curtain {
     position: fixed;
     inset: 0;
     z-index: var(--z-curtain);
-    background: var(--color-brand-green);
-    transform: translateX(-100%);
+    background: var(--color-ink);
+    opacity: 0;
     pointer-events: none;
-    will-change: transform;
+    will-change: opacity;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -392,10 +339,10 @@
       scroll-behavior: auto !important;
     }
 
-    /* The root pseudos are already animation:none above. The curtain
-       itself is driven by the Web Animations API, which this block cannot
-       reach — Base.astro checks prefers-reduced-motion directly and skips
-       the sweep, navigating instantly instead. */
+    /* The root pseudos are already animation:none above. The scrim itself
+       is driven by the Web Animations API, which this block cannot reach —
+       Base.astro checks prefers-reduced-motion directly and skips the fade,
+       navigating instantly instead. */
     ::view-transition-new(root),
     ::view-transition-old(root) {
       animation: none !important;

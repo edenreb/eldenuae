@@ -41,19 +41,19 @@ const monogram = name
         ) : (
           /* Neutral placeholder until real artwork is dropped in — a broken
              image icon next to a competitor's name reads worse than initials. */
-          <span aria-hidden="true" class="text-[1.25rem] font-semibold text-[var(--color-brand-navy)]">{monogram}</span>
+          <span aria-hidden="true" class="text-body font-semibold text-[var(--color-brand-navy)]">{monogram}</span>
         )
       }
     </div>
     <div>
       <p class="text-body text-muted">No. {rank}</p>
-      <p class="text-[1.75rem] leading-none text-cream">{name}</p>
+      <p class="text-subheading leading-none text-cream">{name}</p>
     </div>
   </div>
 
-  {summary && <p class="text-[1.0625rem] text-muted">{summary}</p>}
+  {summary && <p class="text-body text-muted">{summary}</p>}
   {speciality && (
-    <p class="text-[1.0625rem] text-muted">
+    <p class="text-body text-muted">
       <span class="text-cream">Primary speciality:</span> {speciality}
     </p>
   )}
@@ -65,7 +65,7 @@ const monogram = name
       <dt class="text-caption uppercase tracking-[0.12em] text-[var(--color-brand-green)]">Strengths</dt>
       <ul class="mt-[8px] flex flex-col gap-[6px]">
         {pros!.map((p) => (
-          <li class="flex gap-[8px] text-[1.0625rem] text-cream">
+          <li class="flex gap-[8px] text-body text-cream">
             <span aria-hidden="true" class="text-[var(--color-brand-green)]">+</span>
             <span>{p}</span>
           </li>
@@ -78,7 +78,7 @@ const monogram = name
       <dt class="text-caption uppercase tracking-[0.12em] text-[#e0785f]">Watch-outs</dt>
       <ul class="mt-[8px] flex flex-col gap-[6px]">
         {cons!.map((c) => (
-          <li class="flex gap-[8px] text-[1.0625rem] text-muted">
+          <li class="flex gap-[8px] text-body text-muted">
             <span aria-hidden="true" class="text-[#e0785f]">&minus;</span>
             <span>{c}</span>
           </li>

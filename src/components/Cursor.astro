@@ -85,10 +85,19 @@ const label = "Open";
     gsap.set(dot, { scale: 0.3 });
     gsap.set(pill, { scale: 0.3 });
 
-    const dotXTo = gsap.quickTo(dot, "x", { duration: 0.5, ease: "power3" });
-    const dotYTo = gsap.quickTo(dot, "y", { duration: 0.5, ease: "power3" });
-    const pillXTo = gsap.quickTo(pill, "x", { duration: 0.5, ease: "power3" });
-    const pillYTo = gsap.quickTo(pill, "y", { duration: 0.5, ease: "power3" });
+    // How far the shapes trail the real pointer. Was 0.5s, which at speed
+    // left the dot visibly behind the hand rather than attached to it —
+    // the tail of a power3.out is long even though most of the distance is
+    // covered early. 0.2 keeps the smoothing that makes this read as a
+    // designed object instead of a second native cursor, without the lag.
+    // One constant rather than the same number four times: these four have
+    // to move together or the pill and the dot separate mid-travel.
+    const FOLLOW_S = 0.2;
+
+    const dotXTo = gsap.quickTo(dot, "x", { duration: FOLLOW_S, ease: "power3" });
+    const dotYTo = gsap.quickTo(dot, "y", { duration: FOLLOW_S, ease: "power3" });
+    const pillXTo = gsap.quickTo(pill, "x", { duration: FOLLOW_S, ease: "power3" });
+    const pillYTo = gsap.quickTo(pill, "y", { duration: FOLLOW_S, ease: "power3" });
 
     // Positioned immediately, before any real pointermove — otherwise the
     // shapes sit at the raw (0,0) origin and visibly jump to the pointer
