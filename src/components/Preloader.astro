@@ -1,14 +1,24 @@
 ---
-// Session-scoped entry sequence: the wordmark holds the centre of the screen
-// while a progress bar fills along the bottom edge, its counter running to
-// 100. (An earlier version stopped the count at 87 — Elden's project count —
-// but that reads as a stalled/broken loader rather than a deliberate number;
-// a preloader counter is expected to reach 100.)
+// Session-scoped entry sequence: the ELDEN wordmark draws itself in as line
+// art — each letterform's outline traces on, left to right, then fills
+// solid with its real brand color — while a progress bar and counter along
+// the bottom edge run the SAME clock, so the number reaching 100 and the
+// mark finishing its fill are the same event read two ways, not two
+// animations that happen to end together. Holds a beat, then both fade
+// away to reveal the page.
 //
-// It does not touch the hero. When the curtain clears it dispatches
-// `elden:intro`; the hero owns its own reveal and listens for that. When the
-// preloader is skipped the event fires immediately, so the hero behaves the
-// same either way.
+// Path data is the same nine shapes as src/assets/logo.svg (the real
+// navbar/hero mark), copied in rather than imported as an <img> — an
+// outline-draw animation needs to address each letterform as its own SVG
+// <path> and call getTotalLength() on it, which isn't possible through an
+// <img>. src/components/Logo.astro already duplicates this same geometry
+// for its own (single-color) purposes; same tradeoff, same reason. Keep
+// both in sync with logo.svg if the mark itself ever changes.
+//
+// It does not touch the hero. When it clears it dispatches `elden:intro`;
+// the hero owns its own reveal and listens for that. When the preloader is
+// skipped the event fires immediately, so the hero behaves the same either
+// way.
 //
 // Whether it plays at all is decided by the inline head script in
 // Base.astro, before first paint — see the comment there. This component
@@ -20,52 +30,58 @@
 //     reduced-motion users never see a stuck cream screen
 //   - contains nothing focusable, so it cannot trap the keyboard
 //   - aria-hidden: decoration over content that is already in the DOM
-import logoSrc from "../assets/logo.svg";
 ---
 
-<div
-  id="preloader"
-  aria-hidden="true"
-  class="fixed inset-0 overflow-hidden"
-  style="z-index: var(--z-preloader)"
->
-  <!-- The panel is two halves rather than one sheet, so the intro ends by
-       opening the page rather than sliding off it. They carry the ink fill;
-       the wrapper above is transparent, or there would be nothing to open.
-       Each is 50.5% tall so they overlap across the seam — at exactly 50%
-       an odd viewport height leaves a one-pixel line of the page showing
-       through the middle for the whole load. -->
-  <div id="preloader-top" class="absolute inset-x-0 top-0 h-[50.5%] bg-ink"></div>
-  <div id="preloader-bottom" class="absolute inset-x-0 bottom-0 h-[50.5%] bg-ink"></div>
-
-  <!-- Centring wrapper rather than a translate on the image itself: the exit
-       animates the mark's own transform, and a Tailwind `-translate-*` on the
-       same element would be the thing GSAP overwrites. -->
-  <div class="absolute inset-0 flex items-center justify-center">
-    <img
+<div id="preloader" aria-hidden="true" class="fixed inset-0 bg-ink" style="z-index: var(--z-preloader)">
+  <div class="absolute inset-0 flex items-center justify-center px-[24px]">
+    <svg
       id="preloader-mark"
-      src={logoSrc.src}
-      alt=""
-      fetchpriority="high"
-      class="h-[32px] w-auto md:h-[44px]"
-    />
+      viewBox="0 0 618 71"
+      role="img"
+      aria-label="Elden"
+      class="h-auto w-[240px] sm:w-[320px] md:w-[420px]"
+      style="transform-origin: center;"
+    >
+      <path fill="#38c467" stroke="#38c467" d="M 5.25 4.24 C 6.69 3.41 8.42 3.58 10.01 3.51 C 41.34 3.56 72.66 3.52 103.98 3.53 C 106.22 3.38 108.63 4.25 109.78 6.28 C 112.39 10.36 109.53 17.59 104.14 17.04 C 74.77 17.16 45.39 16.99 16.01 17.13 C 12.58 17.00 8.90 17.73 5.66 16.25 C 1.72 13.71 0.54 6.69 5.25 4.24 Z"></path>
+      <path fill="#38c467" stroke="#38c467" d="M 8.12 28.17 C 40.07 28.08 72.08 28.17 104.06 28.14 C 109.32 27.69 112.63 34.55 109.82 38.70 C 108.52 41.17 105.73 42.37 103.02 42.17 C 71.99 42.15 40.97 42.15 9.94 42.16 C 6.15 42.55 2.85 39.50 2.11 35.94 C 1.57 32.30 4.74 28.97 8.12 28.17 Z"></path>
+      <path fill="#38c467" stroke="#38c467" d="M 7.24 53.38 C 9.46 53.01 11.73 53.17 13.97 53.15 C 44.29 53.36 74.60 53.03 104.92 53.21 C 112.52 53.12 112.69 66.55 105.09 66.58 C 73.04 66.66 40.99 66.60 8.95 66.61 C 5.32 66.84 1.97 63.60 1.98 59.98 C 1.83 56.88 4.28 54.07 7.24 53.38 Z"></path>
+      <path fill="#ffffff" stroke="#ffffff" d="M 134.34 3.52 C 138.09 1.93 142.56 5.02 142.45 9.06 C 142.49 21.34 142.28 33.62 142.56 45.90 C 142.77 48.63 144.01 52.16 147.10 52.67 C 151.69 53.39 156.36 53.00 160.99 53.09 C 181.67 52.99 202.35 53.32 223.03 53.00 C 226.82 52.99 231.78 52.00 234.32 55.62 C 237.36 59.36 235.25 66.45 230.10 66.71 C 204.74 66.68 179.37 66.67 154.00 66.70 C 149.61 66.66 144.91 67.38 140.88 65.18 C 133.86 62.21 129.77 54.42 129.85 46.99 C 129.92 34.63 129.87 22.27 129.89 9.91 C 129.68 7.08 131.57 4.26 134.34 3.52 Z"></path>
+      <path fill="#ffffff" stroke="#ffffff" d="M 259.23 3.36 C 261.80 2.88 264.44 3.08 267.04 3.05 C 290.69 3.08 314.34 3.04 338.00 3.07 C 342.12 3.09 346.60 3.33 350.03 5.90 C 352.33 7.61 354.63 9.36 356.65 11.42 C 366.43 23.89 367.36 42.52 358.82 55.88 C 354.81 61.25 349.20 66.65 342.05 66.68 C 315.04 66.72 288.02 66.62 261.00 66.74 C 256.94 67.00 254.14 62.76 254.27 59.04 C 254.20 43.35 254.29 27.65 254.22 11.96 C 254.04 8.53 255.63 4.35 259.23 3.36 M 267.80 17.21 C 267.48 29.09 267.70 40.98 267.69 52.86 C 286.76 53.40 305.86 52.94 324.94 53.09 C 329.99 52.97 335.07 53.43 340.09 52.70 C 345.18 51.92 349.49 47.83 350.73 42.87 C 352.93 37.02 352.40 30.47 350.18 24.72 C 347.72 20.00 342.38 16.92 337.05 17.19 C 313.97 17.22 290.89 17.19 267.80 17.21 Z"></path>
+      <path fill="#38c467" stroke="#38c467" d="M 383.90 15.06 C 379.94 11.63 382.41 3.32 388.00 3.61 C 420.34 3.46 452.70 3.51 485.04 3.59 C 489.89 3.57 492.02 9.93 489.76 13.63 C 488.69 14.92 487.38 15.97 486.14 17.08 C 454.43 17.09 422.73 17.05 391.02 17.10 C 388.53 17.14 385.78 16.89 383.90 15.06 Z"></path>
+      <path fill="#38c467" stroke="#38c467" d="M 386.39 28.51 C 388.52 27.85 390.80 28.18 393.00 28.12 C 423.35 28.19 453.71 28.08 484.07 28.17 C 488.35 27.95 491.78 32.53 490.45 36.59 C 489.83 40.04 486.49 42.46 483.02 42.16 C 452.02 42.16 421.01 42.14 390.00 42.17 C 387.33 42.31 384.56 41.19 383.16 38.84 C 380.73 35.36 382.53 30.08 386.39 28.51 Z"></path>
+      <path fill="#38c467" stroke="#38c467" d="M 387.27 53.31 C 419.19 53.07 451.14 53.36 483.07 53.08 C 486.47 52.74 489.57 55.27 490.63 58.37 C 491.59 62.38 488.40 67.16 484.01 66.64 C 451.79 66.35 419.57 66.86 387.36 66.51 C 380.41 65.88 380.35 54.15 387.27 53.31 Z"></path>
+      <path fill="#ffffff" stroke="#ffffff" d="M 608.25 3.44 C 611.47 2.46 615.76 4.11 616.35 7.73 C 617.31 12.42 616.73 17.25 616.88 22.00 C 616.82 32.69 617.03 43.40 616.69 54.09 C 616.59 60.37 611.59 66.57 605.09 66.81 C 600.32 67.78 596.46 64.48 592.63 62.28 C 581.54 54.27 569.68 47.38 558.43 39.61 C 552.15 35.13 545.29 31.52 539.22 26.74 C 535.56 24.49 531.96 22.04 527.98 20.41 C 525.40 20.03 524.89 23.08 524.90 24.97 C 524.59 36.29 524.99 47.64 524.70 58.97 C 524.48 61.02 524.55 63.46 522.85 64.93 C 520.19 67.62 514.89 67.46 512.82 64.12 C 511.04 61.79 511.51 58.72 511.41 55.99 C 511.44 43.12 511.27 30.25 511.51 17.38 C 511.48 11.84 514.55 5.84 520.02 3.99 C 523.14 3.10 526.67 2.98 529.69 4.31 C 542.54 11.47 554.09 20.68 566.57 28.45 C 573.65 33.00 580.45 37.99 587.73 42.24 C 592.17 44.74 595.78 48.99 600.99 49.91 C 603.26 49.02 603.17 46.10 603.43 44.06 C 603.52 33.03 603.58 22.00 603.48 10.97 C 603.21 7.77 605.11 4.41 608.25 3.44 Z"></path>
+    </svg>
   </div>
 
   <div
     id="preloader-foot"
     class="absolute inset-x-0 bottom-0 px-[24px] pb-[24px] md:px-[32px] md:pb-[32px]"
   >
-    <p
-      id="preloader-count"
-      class="mb-[16px] tabular-nums text-heading leading-none text-cream"
-    >
-      00
-    </p>
     <!-- `.rule` is the site's 2px/10%-white hairline utility — the same
          divider used across the page, reused here as the bar's unfilled
-         track rather than a one-off border. -->
-    <div id="preloader-track" class="rule overflow-hidden">
-      <div id="preloader-fill" class="h-full w-full bg-cream"></div>
+         track rather than a one-off border. The counter used to sit in
+         flow above the track; it's a positioned sibling now so its `left`
+         can be driven by the same progress value as the fill, riding the
+         fill's own leading edge instead of sitting fixed at the start of
+         the line. overflow-hidden and the arrival scaleY both live on a
+         wrapper INSIDE the track, not the track itself: the counter is
+         also a child of the track (its `left` is a percentage of the same
+         box the fill's width is), and a transform scales everything
+         painted inside the element it's on — putting the thickening
+         scaleY on the track would stretch the counter's digits right
+         along with the bar for that beat. Scaling only the inner wrapper
+         thickens the fill/rule alone and leaves the counter untouched. -->
+    <div id="preloader-track" class="relative rule">
+      <div id="preloader-bar" class="h-full w-full overflow-hidden">
+        <div id="preloader-fill" class="h-full w-full bg-cream"></div>
+      </div>
+      <p
+        id="preloader-count"
+        class="absolute bottom-[calc(100%+16px)] left-0 tabular-nums text-heading leading-none text-cream"
+      >
+        00
+      </p>
     </div>
   </div>
 </div>
@@ -74,7 +90,19 @@ import logoSrc from "../assets/logo.svg";
   /* Painted from the very first frame when the head script says the intro
      is playing, and never rendered at all otherwise. This is what replaced
      the `hidden` attribute: `hidden` could only be cleared from JS running
-     after paint, which is exactly the flash we were trying to avoid. */
+     after paint, which is exactly the flash we were trying to avoid.
+
+     This rule's job ends once the script below takes over: initPreloader
+     sets #preloader's display directly as soon as it commits to running
+     the real sequence, so the panel's visibility for the rest of its life
+     is owned by JS, not by this flag. It has to be — data-preloading also
+     drives the scroll lock (see global.css) and gets cleared deliberately
+     early, mid-exit, so the page is scrollable again as the mark fades.
+     An earlier version let this same rule keep gating #preloader too, so
+     clearing the flag didn't just unlock scroll — it also matched this
+     selector out of existence and cut #preloader to display:none on the
+     same frame, instantly, before its fade-out tween had played a single
+     visible frame. One flag, two lifecycles that only looked like one. */
   #preloader {
     display: none;
   }
@@ -82,18 +110,34 @@ import logoSrc from "../assets/logo.svg";
     display: block;
   }
 
+  /* Large safe default, well past any real letterform's traced length —
+     guarantees every path starts fully hidden (offset === array length)
+     before the script computes each one's exact length via
+     getTotalLength() and overwrites both numbers together. Because offset
+     and array move in lockstep, the overwrite doesn't change what's on
+     screen (still 0% drawn either way), so there's no flash when it
+     happens; the JS values are only more precise, not different in kind. */
+  #preloader-mark path {
+    fill-opacity: 0;
+    stroke-width: 2;
+    stroke-dasharray: 2000;
+    stroke-dashoffset: 2000;
+    vector-effect: non-scaling-stroke;
+  }
+
   /* Start empty, and grow from the left. Declared here rather than left to
      GSAP's first frame: the bar is painted before the script runs, and a
-     full-width cream bar flashing for one frame is the whole thing this
-     preloader exists to avoid. */
+     full-width cream bar flashing for one frame is the whole thing this is
+     built to avoid. */
   #preloader-fill {
     transform: scaleX(0);
     transform-origin: left center;
   }
 
-  /* The bar thickens in place on the way to 100, so it grows upward off the
-     baseline instead of straddling it. */
-  #preloader-track {
+  /* The bar thickens in place on arrival at 100, so it grows upward off the
+     baseline instead of straddling it. Scales #preloader-bar, not
+     #preloader-track — see the markup comment above for why. */
+  #preloader-bar {
     transform-origin: center bottom;
   }
 </style>
@@ -120,15 +164,15 @@ import logoSrc from "../assets/logo.svg";
       document.documentElement.dataset.introReady = "1";
       document.dispatchEvent(new CustomEvent("elden:intro"));
     };
-    // Releases the scroll lock. Idempotent — the wipe and the watchdog can
-    // both reach it.
+    // Releases the scroll lock. Idempotent — the watchdog and the real
+    // sequence can both reach it.
     const unlock = () => delete document.documentElement.dataset.preloading;
 
     // Whether to play was already settled before first paint by the inline
     // head script in Base.astro (once per session, never under reduced
     // motion, never in a backgrounded tab — rAF is throttled to zero there,
-    // so the curtain would never lift and the cream screen would block the
-    // page indefinitely). Just read its verdict.
+    // so the mark would never finish drawing and the ink screen would block
+    // the page indefinitely). Just read its verdict.
     if (!document.documentElement.dataset.preloading) {
       el.remove();
       // Deferred a frame: astro:page-load listeners fire in registration
@@ -137,6 +181,11 @@ import logoSrc from "../assets/logo.svg";
       return;
     }
 
+    // From here on #preloader's own visibility is owned by this script, not
+    // by the data-preloading flag — see the long comment on the CSS rule
+    // above for why that split matters.
+    el.style.display = "block";
+
     try {
       sessionStorage.setItem(SEEN_KEY, "1");
     } catch (e) {
@@ -144,83 +193,149 @@ import logoSrc from "../assets/logo.svg";
          next navigation — not worth failing the page over. */
     }
 
-    const counter = document.getElementById("preloader-count");
     const mark = document.getElementById("preloader-mark");
+    const paths = mark ? [...mark.querySelectorAll("path")] : [];
+    const counter = document.getElementById("preloader-count");
     const track = document.getElementById("preloader-track");
-    const halves = [document.getElementById("preloader-top"), document.getElementById("preloader-bottom")];
+    const bar = document.getElementById("preloader-bar");
     const fill = document.getElementById("preloader-fill");
     const value = { n: 0 };
 
     // Insurance: whatever happens to the timeline (tab backgrounded mid-run,
-    // GSAP stalling), the curtain is gone and the page usable after 5s.
+    // GSAP stalling), the preloader is gone and the page usable after 8s.
     const watchdog = setTimeout(() => {
       announce();
       unlock();
       el.remove();
-    }, 5000);
+    }, 8000);
+
+    if (!paths.length) {
+      // Defensive: nothing to draw. Behave like the no-preload path above
+      // rather than sit on an empty timeline waiting on the watchdog.
+      clearTimeout(watchdog);
+      announce();
+      unlock();
+      el.remove();
+      return;
+    }
+
+    // Each path's own traced length, not the CSS fallback's round number —
+    // keeps the draw speed visually even across letterforms of very
+    // different length (one bar of an "E" vs. the full outline of the "D",
+    // holes included).
+    paths.forEach((p) => {
+      const len = p.getTotalLength();
+      gsap.set(p, { strokeDasharray: len, strokeDashoffset: len });
+    });
+
+    // Centres the counter over its own `left` position via GSAP's own
+    // xPercent, not a raw inline `transform: translateX(-50%)` — the exit
+    // below animates this same element's `y`, and GSAP owns the whole
+    // `transform` property once it touches any part of it. A transform it
+    // didn't set itself wouldn't survive that later write; xPercent is
+    // GSAP's supported way to bake in a permanent "percent of my own size"
+    // offset that composes correctly with whatever else gets animated on
+    // top of it (same idiom Cursor.astro uses for its centred dot/pill).
+    if (counter) gsap.set(counter, { xPercent: -50 });
+
+    // The counter is centred on its own `left` point, so at 0% and 100% it
+    // would hang half its width off each end of the track. Clamp `left` in
+    // pixels to keep the whole box inside the line. Half-width is measured
+    // at the WIDEST real content ("100"), read once here — swap it in, read,
+    // put "00" back, all before any paint.
+    const trackWidth = track ? track.getBoundingClientRect().width : 0;
+    let counterHalfWidth = 0;
+    if (counter) {
+      counter.textContent = "100";
+      counterHalfWidth = counter.getBoundingClientRect().width / 2;
+      counter.textContent = "00";
+    }
+    const counterMinX = counterHalfWidth;
+    const counterMaxX = Math.max(trackWidth - counterHalfWidth, counterHalfWidth);
+
+    // Per-path draw duration and the left-to-right stagger between them.
+    // DRAW_TOTAL is how long the full sequence of paths takes to finish
+    // drawing, tail included — that's also how long the counter and bar
+    // run for, since they're timing the same event, not a separate one.
+    const DRAW_S = 1.6;
+    const STAGGER_S = 0.14;
+    const DRAW_TOTAL = (paths.length - 1) * STAGGER_S + DRAW_S;
+    const FILL_S = 0.7;
 
     gsap
       .timeline()
-      // Load. The counter, the bar and the site's one signature brand-color
-      // moment (cream tinting to brand green) all run off the same 1.25s —
-      // three readings of a single progress value, not three animations.
-      // Green and not navy: navy measures 1.7:1 on this bg-ink canvas, below
-      // even the 3:1 non-text minimum, so it would just be invisible here.
-      .to(value, {
-        n: 100,
-        duration: 1.2,
-        ease: "power2.inOut",
-        onUpdate: () => {
-          if (counter) counter.textContent = String(Math.round(value.n)).padStart(2, "0");
+      // Draw, count, and fill the bar together — three readings of one
+      // progress value, not three animations that happen to agree. The
+      // paths are already in reading order in the markup (E, L, D, E, N),
+      // so a plain left-to-right stagger is what makes the draw read as the
+      // word being written rather than nine shapes resolving at once.
+      .to(
+        paths,
+        { strokeDashoffset: 0, duration: DRAW_S, stagger: STAGGER_S, ease: "power2.inOut" },
+        0,
+      )
+      .to(
+        value,
+        {
+          n: 100,
+          duration: DRAW_TOTAL,
+          ease: "power2.inOut",
+          onUpdate: () => {
+            if (!counter) return;
+            counter.textContent = String(Math.round(value.n)).padStart(2, "0");
+            // Rides the fill's own leading edge: the raw target is a plain
+            // percentage of the track's width, the same width the fill's
+            // scaleX is a fraction of, so the two stay lined up. Then
+            // clamped into pixels so the counter's own box — not just its
+            // centre — never crosses either end of the track.
+            const raw = (value.n / 100) * trackWidth;
+            counter.style.left = `${Math.min(Math.max(raw, counterMinX), counterMaxX)}px`;
+          },
         },
-      })
-      .to(fill, { scaleX: 1, duration: 1.2, ease: "power2.inOut" }, "<")
-      .to(counter, { color: BRAND_GREEN, duration: 1.2, ease: "power2.inOut" }, "<")
+        0,
+      )
+      .to(fill, { scaleX: 1, duration: DRAW_TOTAL, ease: "power2.inOut" }, 0)
+
+      // Ink fills in behind the completed outline rather than the drawing
+      // cutting straight to solid — the crossfade is what makes it read as
+      // the same mark gaining weight, not a swap to a different asset.
+      .to(paths, { fillOpacity: 1, duration: FILL_S, ease: "power2.out" }, "-=0.38")
+      .to(paths, { strokeOpacity: 0, duration: FILL_S, ease: "power2.out" }, "<")
 
       // Arrival at 100. The bar flushes green and swells off its baseline,
-      // then settles — a beat that acknowledges the number instead of
-      // cutting straight from counting to gone.
-      .to(fill, { backgroundColor: BRAND_GREEN, duration: 0.18, ease: "power2.out" })
-      .to(track, { scaleY: 4, duration: 0.18, ease: "power2.out" }, "<")
-      .to(track, { scaleY: 1, duration: 0.28, ease: "power2.inOut" }, "+=0.05")
+      // the counter tints to match — a beat that acknowledges the number
+      // instead of cutting straight from counting to gone.
+      .to(fill, { backgroundColor: BRAND_GREEN, duration: 0.3, ease: "power2.out" })
+      .to(counter, { color: BRAND_GREEN, duration: 0.3, ease: "power2.out" }, "<")
+      .to(bar, { scaleY: 4, duration: 0.3, ease: "power2.out" }, "<")
+      .to(bar, { scaleY: 1, duration: 0.45, ease: "power2.inOut" }, "+=0.08")
 
-      // Exit, staged so the furniture leaves before the panel does. The bar
-      // empties the way it filled — left edge chasing the right — rather
-      // than fading, so the load reads as completing rather than stopping.
+      // Hold, then out. The mark and the bar leave the same way they
+      // arrived — as themselves, fading and settling back — rather than
+      // introducing new geometry (a splitting panel, a sliding curtain)
+      // for the exit alone that has nothing to do with what was just drawn.
+      .to({}, { duration: 0.4 })
       .set(fill, { transformOrigin: "right center" })
-      .to(fill, { scaleX: 0, duration: 0.45, ease: "power3.inOut" }, "-=0.1")
-      .to(counter, { y: 28, autoAlpha: 0, duration: 0.4, ease: "power2.in" }, "<")
-
-      // The mark has to be gone before the halves part, not riding them —
-      // it sits dead on the seam, so anything still visible there gets torn
-      // down the middle. Hence no overlap worth speaking of below.
-      .to(mark, { scale: 1.14, autoAlpha: 0, duration: 0.45, ease: "power2.in" }, "-=0.25")
-
-      // The open. Two halves clearing in opposite directions rather than one
-      // sheet sliding off: the page is revealed from the centre outward,
-      // which is the point of splitting it at all.
-      //
-      // power3.inOut and not the accelerate-away curve used for panels that
-      // are merely getting out of the way — here the movement IS the reveal,
-      // so it earns a settle at the end instead of being rushed off.
+      .to(fill, { scaleX: 0, duration: 0.85, ease: "power3.inOut" }, "-=0.15")
+      .to(counter, { y: 28, autoAlpha: 0, duration: 0.8, ease: "power2.in" }, "<")
+      .to(mark, { scale: 0.94, autoAlpha: 0, duration: 0.95, ease: "power2.in" }, "-=0.38")
       .to(
-        halves[0],
+        el,
         {
-          yPercent: -100,
-          duration: 0.85,
-          ease: "power3.inOut",
+          autoAlpha: 0,
+          duration: 1,
+          ease: "power2.in",
           onStart: () => {
-            announce(); // hero reveal rides the opening, not after it
-            unlock(); // and the page is scrollable again as it parts
+            announce(); // hero reveal rides the fade, not after it
+            unlock(); // and the page is scrollable again as it clears
           },
           onComplete: () => {
             clearTimeout(watchdog);
             el.remove();
           },
         },
-        "-=0.05",
-      )
-      .to(halves[1], { yPercent: 100, duration: 0.85, ease: "power3.inOut" }, "<");
+        "-=0.45",
+      );
   }
 
   document.addEventListener("astro:page-load", initPreloader);
