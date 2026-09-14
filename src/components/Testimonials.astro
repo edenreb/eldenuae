@@ -1,12 +1,8 @@
 ---
-// Photo + name + quote is now the exact combination an earlier version of
-// this section was pulled for: a fabricated quote attributed to a named
-// individual beside a real supplied photograph read as genuine testimony.
-// Adding photos back per explicit request doesn't undo that lesson — it
-// raises the stakes on it. Before this ships, every one of these three
-// needs to be a real, sourced quote this client actually said, not
-// placeholder copy wearing a real name and face.
+// Photo + name + quote reads as genuine testimony. Before launch, every one
+// of these must be a real, sourced quote the named client actually gave.
 import { Image } from "astro:assets";
+import Eyebrow from "./Eyebrow.astro";
 import pankaj from "../assets/testimonials/pankaj-agarwal.jpg";
 import kevin from "../assets/testimonials/kevin-teixeira.jpg";
 import amit from "../assets/testimonials/amit-choubey.jpg";
@@ -33,41 +29,28 @@ const quotes = [
 ];
 ---
 
-<section class="band-deep px-[24px] py-[144px] md:px-[32px] md:py-[216px]">
-  <div class="mx-auto max-w-[1440px]">
-    <h2 class="text-heading text-cream" data-reveal-words>
-      What clients say.
-    </h2>
+<section class="gutter py-[120px] md:py-[200px]">
+  <div>
+    <Eyebrow>Testimonials</Eyebrow>
+    <h2 class="mt-[20px] text-heading uppercase" data-reveal-words>What clients say</h2>
+  </div>
 
-    <div class="mt-[48px] grid grid-cols-1 gap-[32px] md:mt-[72px] md:grid-cols-3 md:gap-[48px]">
-      {
-        quotes.map((q) => (
-          <blockquote class="flex flex-col gap-[16px]">
-            <div class="rule" data-reveal-rule></div>
-            {/* Static 5/5 — no rating was ever collected from these clients;
-                this is presentation, not sourced data. Same caveat as the
-                quotes above: confirm before launch or drop it. */}
-            <p class="text-body leading-none tracking-[0.2em] text-[#d9a531]" aria-label="Rated 5 out of 5">
-              <span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-            </p>
-            <p class="text-subheading text-cream">&ldquo;{q.body}&rdquo;</p>
-            <footer class="flex items-center gap-[12px] text-caption">
-              <Image
-                src={q.photo}
-                alt=""
-                width={40}
-                height={40}
-                class="h-[40px] w-[40px] shrink-0 object-cover"
-                style="border-radius: 999px;"
-              />
-              <div>
-                <p class="text-cream">{q.name}</p>
-                <p class="text-muted">{q.role}</p>
-              </div>
-            </footer>
-          </blockquote>
-        ))
-      }
-    </div>
+  <div class="mt-[56px] grid grid-cols-1 gap-y-[64px] md:mt-[112px] md:grid-cols-3 md:gap-x-[24px]">
+    {
+      quotes.map((q, i) => (
+        <blockquote class="flex flex-col">
+          <div class="rule" data-reveal-rule></div>
+          <p class="meta mt-[16px] text-muted">({String(i + 1).padStart(2, "0")})</p>
+          <p class="mt-[28px] max-w-[26ch] text-lead">&ldquo;{q.body}&rdquo;</p>
+          <footer class="mt-[36px] flex items-center gap-[14px] md:mt-auto md:pt-[48px]">
+            <Image src={q.photo} alt="" width={96} height={96} class="h-[48px] w-[48px] shrink-0 object-cover grayscale" />
+            <div>
+              <p class="text-label uppercase">{q.name}</p>
+              <p class="meta mt-[6px] text-muted">{q.role}</p>
+            </div>
+          </footer>
+        </blockquote>
+      ))
+    }
   </div>
 </section>

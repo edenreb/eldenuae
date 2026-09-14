@@ -1,22 +1,9 @@
 ---
-// "Our Philosophy" — measured on the reference: a fixed-width image column
-// pinned to the left gutter, statement filling the rest of the row to the
-// right. The whole row pins while the (taller) image stack drifts upward
-// inside its own clipped column, so the images cycle through while the
-// statement holds in place.
-//
-// The row pins via ScrollTrigger (pin: true) now, not native CSS
-// `position: sticky` as before. Sticky's un-stick point is implicit — set
-// by how much taller its containing block is than itself — so keeping it
-// in sync with the image parallax meant computing a matching container
-// height separately and hoping the two numbers never drifted apart. They
-// still did (that's the bug report this replaced). Pinning and scrubbing
-// off the *same* ScrollTrigger (same trigger, same end) makes them the
-// same number by construction — nothing to keep in sync because there's
-// only one value. The tradeoff: without JS (or under reduced motion, where
-// the script below returns early) the row is just a normal static 100vh
-// block in flow, not stuck — a fine fallback, and consistent with how
-// every other scroll effect in this codebase degrades (see motion.ts).
+// Mission — a narrow image column on the left, the statement filling the
+// row. On md+ the row pins while the image stack drifts up inside its
+// clipped column; pin and drift share one ScrollTrigger, so their durations
+// are the same number by construction. Without JS, or under reduced motion,
+// it is a plain static row.
 import { Picture } from "astro:assets";
 import img1 from "../assets/anantara-penthouse/4.jpg";
 import img2 from "../assets/tbk-galleria/1.jpg";
@@ -28,11 +15,7 @@ import img7 from "../assets/holiday-inn/2.jpg";
 import img8 from "../assets/holiday-inn/3.jpg";
 import Eyebrow from "./Eyebrow.astro";
 
-// To customize: swap these imports for other files in src/assets/, and
-// add or remove entries here — the section's height and scroll distance
-// (below) are both computed from this array's actual rendered height at
-// runtime, not hardcoded, so any number of images works without retuning
-// anything else.
+// Any number of images works — travel is measured at runtime.
 const images = [img1, img2, img3, img4, img5, img6, img7, img8];
 
 const LEAD = "To support our vision by:";
@@ -40,50 +23,34 @@ const TEXT =
   "Realizing our clients' visions through the most functional, sustainable and innovative interior solutions. Providing and maintaining creative professional excellence, exceptional customer service, and quantifiable results.";
 ---
 
-<!-- No outer 200vh wrapper anymore — ScrollTrigger's pinSpacing (default
-     true) inserts exactly however much extra scroll room the pin needs,
-     computed by the script below, so there's no separate height to keep
-     in sync with anything. Collapses to normal flow below md, matching
-     the reference's own breakpoint behaviour. -->
-<section id="philosophy" class="px-[24px] py-[96px] md:px-[32px] md:py-0">
+<section id="philosophy" class="gutter border-t border-ink/15 py-[96px] md:py-0">
   <div
     id="philosophy-row"
-    class="mx-auto flex max-w-[1440px] flex-col gap-[32px] md:h-screen md:flex-row md:items-center md:gap-[96px] md:py-[72px]"
+    class="flex flex-col gap-[32px] md:h-screen md:flex-row md:items-center md:gap-[96px] md:pt-[calc(var(--header-h)+48px)] md:pb-[48px]"
   >
-    <!-- Hidden below md entirely, not just un-pinned: without the pin (see
-         script below, which bails out under md) this was a static column,
-         so mobile rendered the full 8-image stack inline, one after
-         another, at natural height — a huge, pointless scroll of duplicate
-         photography nobody asked to page through. Skipped outright on
-         mobile per explicit request, rather than shown as a dead stack. -->
-    <div class="hidden flex-col gap-[16px] overflow-hidden md:flex md:h-full md:w-[291px] md:shrink-0">
+    <!-- Hidden below md: without the pin it would be eight stacked photos. -->
+    <div class="hidden overflow-hidden md:block md:h-full md:w-[300px] md:shrink-0">
       <div id="philosophy-stack" class="flex flex-col gap-[16px]">
         {images.map((img, i) => (
-          <div class="aspect-[3/4] w-full shrink-0 overflow-hidden">
+          <div class="aspect-[3/4] w-full shrink-0 overflow-hidden bg-ink">
             <Picture
               src={img}
               alt=""
               formats={["avif", "webp"]}
               widths={[400, 700]}
-              sizes="280px"
+              sizes="300px"
               loading={i === 0 ? "eager" : "lazy"}
               class="h-full w-full object-cover"
-              data-reveal-media
             />
           </div>
         ))}
       </div>
     </div>
 
-    <!-- Fills the remaining row width, not clamped narrow — measured on
-         the reference: image column pinned to the left gutter, text runs
-         the rest of the way to the right edge (~989px wide at 1440px
-         viewport), not a centered/right-aligned narrow column. -->
     <div class="flex flex-col gap-[24px] md:flex-1">
-      <div class="rule rule-accent" data-reveal-rule></div>
-      <Eyebrow>Our Mission</Eyebrow>
+      <Eyebrow>Mission</Eyebrow>
       <p class="text-body text-muted">{LEAD}</p>
-      <p class="text-heading leading-[1.2] text-cream" data-reveal-words>
+      <p class="max-w-[34ch] text-statement" data-reveal-words>
         {TEXT}
       </p>
     </div>
@@ -102,23 +69,14 @@ const TEXT =
     const stack = document.getElementById("philosophy-stack");
     if (!row || !stack) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    if (!window.matchMedia("(min-width: 768px)").matches) return; // pin is md+ only
+    if (!window.matchMedia("(min-width: 768px)").matches) return;
 
     whenVisible(() => {
-      // Travel exactly the stack's own overflow (its full height minus the
-      // clipped viewport it sits in), so the last image lands flush at the
-      // bottom of the column right as the pin releases — never over- or
-      // under-shoots regardless of image count.
+      // Travel exactly the stack's overflow, so the last image lands flush
+      // with the bottom of the column as the pin releases.
       const travel = stack.scrollHeight - stack.parentElement!.clientHeight;
       if (travel <= 0) return;
 
-      // One ScrollTrigger does both jobs: pins the row (pin: true,
-      // pinSpacing left at its default true, so it inserts exactly
-      // `travel` px of extra scroll room itself — no manual section
-      // height to compute or keep in sync with anything) and scrubs the
-      // stack's y over that same `end`. Same trigger, same end, so the
-      // pin duration and the parallax distance are one value, not two
-      // that have to agree.
       gsap.to(stack, {
         y: -travel,
         ease: "none",

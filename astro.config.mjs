@@ -10,24 +10,38 @@ export default defineConfig({
   site: 'https://elden.ae',
   output: 'static',
   integrations: [mdx(), sitemap()],
-  // Barlow is the site's only typeface — headings, body, hero, UI, all of
-  // it. Matching eldenuae.com, which uses Barlow for its body copy (its
-  // headings fall through to whatever the visitor's OS supplies, which is
-  // the inconsistency this replaces rather than copies).
-  //
-  // Routed through Astro's Fonts API rather than a Google Fonts <link> so
-  // the files are downloaded at build time and served from our own origin:
-  // no render-blocking third-party request, no extra DNS/TLS handshake, and
-  // the fallback metrics are generated for us so the swap doesn't shift
-  // layout. Weights are the four the stylesheet actually uses (500/600/700
-  // /900) — adding a weight here is cheap, shipping unused ones is not.
+  // The old /career page was an orphaned duplicate of /careers.
+  redirects: {
+    '/career': '/careers',
+  },
+  // Three faces, each with one job: Inter Tight carries display and UI,
+  // Instrument Serif is the single italic accent word in a headline, Geist
+  // Mono sets meta — labels, years, counts, indices. Routed through Astro's
+  // Fonts API so the files are self-hosted at build time with generated
+  // fallback metrics. Only the weights the stylesheet uses are listed.
   fonts: [
     {
       provider: fontProviders.google(),
-      name: 'Barlow',
-      cssVariable: '--font-barlow',
-      weights: [500, 600, 700, 900],
-      styles: ['normal', 'italic'],
+      name: 'Inter Tight',
+      cssVariable: '--font-inter-tight',
+      weights: [400, 500, 600, 700],
+      styles: ['normal'],
+      subsets: ['latin'],
+    },
+    {
+      provider: fontProviders.google(),
+      name: 'Instrument Serif',
+      cssVariable: '--font-instrument-serif',
+      weights: [400],
+      styles: ['italic'],
+      subsets: ['latin'],
+    },
+    {
+      provider: fontProviders.google(),
+      name: 'Geist Mono',
+      cssVariable: '--font-geist-mono',
+      weights: [400, 500],
+      styles: ['normal'],
       subsets: ['latin'],
     },
   ],

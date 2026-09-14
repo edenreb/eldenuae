@@ -1,8 +1,8 @@
 ---
 import Base from "../layouts/Base.astro";
-import HeroGallery from "../components/HeroGallery.astro";
-import StatBand from "../components/StatBand.astro";
+import Hero from "../components/Hero.astro";
 import Positioning from "../components/Positioning.astro";
+import StatBand from "../components/StatBand.astro";
 import SelectedWork from "../components/SelectedWork.astro";
 import Philosophy from "../components/Philosophy.astro";
 import ClientWall from "../components/ClientWall.astro";
@@ -10,10 +10,10 @@ import Testimonials from "../components/Testimonials.astro";
 import JournalTeaser from "../components/JournalTeaser.astro";
 ---
 
-<Base title="Elden" description="Turnkey fitout, from design to handover. 87+ projects across the UAE.">
-  <HeroGallery />
-  <StatBand />
+<Base title="Elden" description="Turnkey fitout, from design to handover. 87+ projects across the UAE." heroOverlay>
+  <Hero />
   <Positioning />
+  <StatBand />
   <SelectedWork />
   <Philosophy />
   <ClientWall />

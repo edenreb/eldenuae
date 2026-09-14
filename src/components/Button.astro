@@ -1,45 +1,35 @@
 ---
-// ARQEN's button micro-interaction, measured on the reference: two identical
-// text nodes stacked in the same box; the default one shows, hover slides it
-// up and out while the duplicate slides in from below. Confirmed via DOM
-// inspection (two sibling <p> tags, one revealed on :hover) — not guessed.
-//
-// CSS-only. Both copies carry the same text, so the accessible name never
-// changes mid-transition, and nothing here depends on JS running.
+// Outlined square button — a frame, not a block. Hover floods it with its
+// own line colour while the label rolls up and a duplicate rolls in from
+// below. CSS-only; both copies carry the same text so the accessible name
+// never changes mid-transition.
 interface Props {
   href: string;
   label: string;
+  // "ink" on paper surfaces, "paper" over photography and dark bands.
+  tone?: "ink" | "paper";
   class?: string;
-  // Set when the caller knows `href` is the page it's currently rendering
-  // on — see Footer.astro's "Get in touch" use. Skips Astro's page
-  // transition (data-astro-reload) so a same-page click reloads instead of
-  // pointlessly replaying the transition animation.
+  // Caller knows `href` is the current page: reload instead of replaying
+  // the page transition.
   reload?: boolean;
 }
-const { href, label, class: className = "", reload = false } = Astro.props;
+const { href, label, tone = "ink", class: className = "", reload = false } = Astro.props;
 ---
 
 <a
   href={href}
   data-astro-reload={reload ? true : undefined}
   class:list={[
-    "group relative inline-block cursor-pointer overflow-hidden bg-cream px-[16px] py-[12px] text-button text-[var(--color-brand-navy)]",
+    "group relative inline-flex h-[48px] cursor-pointer items-center border px-[20px] text-label uppercase transition-colors duration-300",
+    tone === "ink"
+      ? "border-ink text-ink hover:bg-ink hover:text-paper"
+      : "border-paper text-paper hover:bg-paper hover:text-ink",
     className,
   ]}
 >
-  <span class="relative block overflow-hidden leading-none">
-    <span class="block leading-none transition-transform duration-300 ease-out group-hover:-translate-y-full">
-      {label}
-    </span>
-    {/* The duplicate that slides in on hover — text-ink instead of the
-        resting text-brand-navy, so the button's brand-navy identity
-        inverts to plain ink for the moment it's actually being interacted
-        with. Cream-side (this button's fill is bg-cream), so navy is the
-        accessible resting choice, not green. */}
-    <span
-      aria-hidden="true"
-      class="absolute inset-0 block translate-y-full leading-none text-ink transition-transform duration-300 ease-out group-hover:translate-y-0"
-    >
+  <span class="relative block overflow-hidden">
+    <span class="block transition-transform duration-300 ease-out group-hover:-translate-y-full">{label}</span>
+    <span aria-hidden="true" class="absolute inset-0 block translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0">
       {label}
     </span>
   </span>

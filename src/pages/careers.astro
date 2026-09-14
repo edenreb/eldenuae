@@ -5,10 +5,8 @@ import Button from "../components/Button.astro";
 import { Picture } from "astro:assets";
 import breakImage from "../assets/anantara-penthouse/2.jpg";
 
-// Same decision as contact.astro: mailto, not a form. There is still no
-// submission endpoint anywhere in this codebase, and an application form
-// that silently discards a CV is worse here than on the contact page — the
-// applicant waits weeks on a reply that was never going to come.
+// mailto, not a form: there is no submission endpoint in this codebase, and
+// a form that silently discards a CV is worse than a plain address.
 const MAIL = "info@eldenuae.com";
 
 const applyTo = (subject: string, body: string) =>
@@ -19,11 +17,9 @@ const GENERAL_MAILTO = applyTo(
   "Tell us which discipline you work in, where you are now, and what you'd want to build here.\n\nAttach a CV and a portfolio (PDF, under 10MB).\n\n",
 );
 
-// Deliberately "disciplines we hire across", NOT a vacancy list: nothing in
-// this repo records a real open position, and inventing one would have
-// people apply for a job that doesn't exist. Swap this section for real
-// postings the moment there are any — the row markup takes a title, a
-// scope line and a mailto, so a live role needs no new component.
+// "Disciplines we hire across", NOT a vacancy list — nothing here records a
+// real open position. Swap in real postings when there are any; each row
+// already takes a title, a scope line and its own mailto.
 const disciplines = [
   { title: "Interior design", scope: "Concept through to the detail that survives a site meeting." },
   { title: "Technical detailing", scope: "Drawing packages a joiner can build from without ringing you." },
@@ -63,154 +59,123 @@ const send = [
   title="Careers"
   description="Join Elden's Dubai studio. We hire across design, delivery and site — send a portfolio to info@eldenuae.com."
 >
-  <section class="px-[24px] pt-[48px] md:px-[32px] md:pt-[72px]">
-    <div class="mx-auto max-w-[1440px]">
-      <Eyebrow>Careers</Eyebrow>
-      <h1 class="mt-[12px] max-w-[16ch] text-display text-cream">
-        Draw it. Then go build it.
-      </h1>
-      <p class="mt-[24px] max-w-[640px] text-body text-cream">
-        Most studios hand a drawing over at the site gate and hope. We don't — design and
-        construction are the same team here, under one contract. It makes the work harder to hide
-        behind and a great deal more satisfying to finish.
-      </p>
-      <div class="mt-[32px]">
-        <Button href={GENERAL_MAILTO} label="Send your portfolio" class="self-start" />
+  <section class="gutter pt-[48px] md:pt-[88px]">
+    <Eyebrow>Careers</Eyebrow>
+    <h1 class="mt-[28px] max-w-[14ch] text-display uppercase">
+      Draw it. Then go <em class="accent">build it.</em>
+    </h1>
+    <div class="mt-[48px] grid grid-cols-1 md:mt-[80px] md:grid-cols-12 md:gap-x-[24px]">
+      <div class="md:col-span-6 md:col-start-7">
+        <p class="max-w-[40ch] text-lead">
+          Most studios hand a drawing over at the site gate and hope. We don&rsquo;t — design and construction are the
+          same team here, under one contract. It makes the work harder to hide behind and a great deal more satisfying
+          to finish.
+        </p>
+        <div class="mt-[36px]">
+          <Button href={GENERAL_MAILTO} label="Send your portfolio" />
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="px-[24px] py-[48px] md:px-[32px] md:py-[72px]">
-    <div class="mx-auto grid max-w-[1440px] grid-cols-1 gap-[32px] sm:grid-cols-3">
-      {reasons.map((r) => (
-        <div class="flex flex-col gap-[16px]">
+  <section class="gutter py-[96px] md:py-[160px]">
+    <div class="grid grid-cols-1 gap-y-[48px] sm:grid-cols-3 sm:gap-x-[24px]">
+      {reasons.map((r, i) => (
+        <div>
           <div class="rule" data-reveal-rule></div>
-          <h2 class="text-subheading text-cream">{r.title}</h2>
-          <p class="text-body text-muted">{r.copy}</p>
+          <p class="meta mt-[16px] text-muted">({String(i + 1).padStart(2, "0")})</p>
+          <h2 class="mt-[28px] text-title uppercase">{r.title}</h2>
+          <p class="mt-[16px] max-w-[42ch] text-body text-muted">{r.copy}</p>
         </div>
       ))}
     </div>
   </section>
 
-  <section class="aspect-[16/9] w-full overflow-hidden md:aspect-[21/9]">
-    <Picture
-      src={breakImage}
-      alt="Interior detail from an Elden turnkey project"
-      formats={["avif", "webp"]}
-      widths={[800, 1400, 2000]}
-      sizes="100vw"
-      loading="lazy"
-      class="h-full w-full object-cover"
-    />
-  </section>
-
-  <section class="px-[24px] py-[48px] md:px-[32px] md:py-[72px]">
-    <div class="mx-auto max-w-[1440px]">
-      <div class="flex flex-col gap-[24px] md:flex-row md:items-end md:justify-between">
-        <div>
-          <Eyebrow>Where we hire</Eyebrow>
-          <h2 class="mt-[12px] max-w-[20ch] text-heading text-cream">
-            We don&rsquo;t keep a vacancy list. Write anyway.
-          </h2>
-        </div>
-        <p class="max-w-[42ch] text-body text-muted">
-          Openings here tend to appear with a project rather than a hiring round, so the useful
-          thing is for us to already have your work on file. These are the disciplines we hire
-          across — pick the closest one.
-        </p>
-      </div>
-
-      <!-- Each row is its own mailto rather than one shared address: the
-           prefilled subject is what makes a speculative application
-           filterable on the receiving end, and it costs the applicant
-           nothing. -->
-      <ul class="mt-[48px] flex flex-col">
-        {disciplines.map((d) => (
-          <li>
-            <div class="rule" data-reveal-rule></div>
-            <a
-              href={applyTo(
-                `Application — ${d.title}`,
-                `I'd like to be considered for ${d.title.toLowerCase()} work at Elden.\n\nWhere I am now:\nWhat I've built:\n\nCV and portfolio attached.\n\n`,
-              )}
-              class="group flex cursor-pointer flex-col gap-[8px] py-[24px] md:flex-row md:items-baseline md:justify-between md:gap-[32px]"
-            >
-              <!-- Fixed basis rather than letting the title size to its own
-                   text: without it the scope column starts at a different x on
-                   every row, and a list this long reads as ragged. -->
-              <span class="text-subheading text-cream transition-colors group-hover:text-[var(--color-brand-green)] md:w-[260px] md:shrink-0">
-                {d.title}
-              </span>
-              <span class="text-body text-muted md:flex-1">{d.scope}</span>
-              <span class="flex shrink-0 items-center gap-[8px] text-body text-muted transition-colors group-hover:text-cream">
-                Apply
-                <span
-                  aria-hidden="true"
-                  class="h-[4px] w-[4px] shrink-0 bg-[var(--color-brand-green)]"
-                ></span>
-              </span>
-            </a>
-          </li>
-        ))}
-      </ul>
-      <div class="rule" data-reveal-rule></div>
+  <section class="gutter">
+    <div class="aspect-[4/3] overflow-hidden bg-ink md:aspect-[21/9]" data-reveal>
+      <Picture
+        src={breakImage}
+        alt="Interior detail from an Elden turnkey project"
+        formats={["avif", "webp"]}
+        widths={[800, 1400, 2000, 2600]}
+        sizes="100vw"
+        loading="lazy"
+        class="h-full w-full object-cover"
+      />
     </div>
   </section>
 
-  <section class="px-[24px] py-[48px] md:px-[32px] md:py-[72px]">
-    <div class="mx-auto grid max-w-[1440px] grid-cols-1 gap-[48px] lg:grid-cols-2 lg:gap-[96px]">
+  <section class="gutter py-[120px] md:py-[200px]">
+    <div class="flex flex-col gap-[24px] md:flex-row md:items-end md:justify-between">
       <div>
+        <Eyebrow>Where we hire</Eyebrow>
+        <h2 class="mt-[20px] max-w-[18ch] text-heading uppercase">
+          We don&rsquo;t keep a vacancy list. Write anyway.
+        </h2>
+      </div>
+      <p class="max-w-[42ch] text-body text-muted md:text-right">
+        Openings here tend to appear with a project rather than a hiring round, so the useful thing is for us to
+        already have your work on file. These are the disciplines we hire across — pick the closest one.
+      </p>
+    </div>
+
+    <!-- Each row is its own mailto: the prefilled subject is what makes a
+         speculative application filterable on the receiving end. -->
+    <ul class="mt-[56px] md:mt-[96px]">
+      {disciplines.map((d, i) => (
+        <li class="border-t border-ink/15 last:border-b">
+          <a
+            href={applyTo(
+              `Application — ${d.title}`,
+              `I'd like to be considered for ${d.title.toLowerCase()} work at Elden.\n\nWhere I am now:\nWhat I've built:\n\nCV and portfolio attached.\n\n`,
+            )}
+            class="group grid cursor-pointer grid-cols-[1fr_auto] items-baseline gap-x-[16px] gap-y-[8px] py-[24px] md:grid-cols-12 md:gap-x-[24px] md:py-[28px]"
+          >
+            <span class="meta hidden text-muted md:col-span-1 md:block">({String(i + 1).padStart(2, "0")})</span>
+            <span class="text-title uppercase md:col-span-4">{d.title}</span>
+            <span class="meta self-center text-muted transition-colors group-hover:text-ink md:order-last md:col-span-2 md:justify-self-end">
+              Apply &#8599;
+            </span>
+            <span class="col-span-2 text-body text-muted md:col-span-5">{d.scope}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="gutter pb-[120px] md:pb-[200px]">
+    <div class="grid grid-cols-1 gap-y-[56px] md:grid-cols-12 md:gap-x-[24px]">
+      <div class="md:col-span-5">
         <Eyebrow>What to send</Eyebrow>
-        <h2 class="mt-[12px] max-w-[18ch] text-heading text-cream">
+        <h2 class="mt-[20px] max-w-[16ch] text-heading uppercase">
           Three things, and we&rsquo;ll read all of them.
         </h2>
-        <ul class="mt-[32px] flex flex-col gap-[16px]">
-          {send.map((s) => (
-            <li class="flex gap-[12px] text-body text-muted">
-              <span
-                aria-hidden="true"
-                class="mt-[9px] h-[4px] w-[4px] shrink-0 bg-[var(--color-brand-green)]"
-              ></span>
+        <ol class="mt-[40px]">
+          {send.map((s, i) => (
+            <li class="flex gap-[16px] border-t border-ink/15 py-[18px] text-body last:border-b">
+              <span class="meta mt-[4px] text-muted">({String(i + 1).padStart(2, "0")})</span>
               <span>{s}</span>
             </li>
           ))}
-        </ul>
-        <p class="mt-[24px] max-w-[46ch] text-caption text-muted">
-          Every application is read by the people you&rsquo;d actually work with. If the work fits
-          something we have coming, you&rsquo;ll hear from us — and if it doesn&rsquo;t, we keep it
-          on file rather than deleting it.
+        </ol>
+        <p class="mt-[24px] max-w-[46ch] text-body text-muted">
+          Every application is read by the people you&rsquo;d actually work with. If the work fits something we have
+          coming, you&rsquo;ll hear from us — and if it doesn&rsquo;t, we keep it on file rather than deleting it.
         </p>
       </div>
 
-      <div>
-        <div class="bg-surface p-[24px] md:p-[32px]">
-          <p class="text-subheading text-cream">Send it to the studio.</p>
-          <p class="mt-[12px] max-w-[42ch] text-body text-muted">
-            One address, straight to the Dubai studio. Applications, internships and speculative
-            introductions all go to the same place.
-          </p>
-
-          <a
-            href={GENERAL_MAILTO}
-            class="group mt-[24px] inline-flex cursor-pointer items-center gap-[10px] bg-cream px-[16px] py-[8px] text-button text-[var(--color-brand-navy)] transition-[color,opacity] hover:text-ink hover:opacity-90"
-          >
-            Email your application
-            <span
-              aria-hidden="true"
-              class="h-[4px] w-[4px] shrink-0 bg-[var(--color-brand-navy)] transition-colors group-hover:bg-ink"
-            ></span>
-          </a>
-
-          {/* Same reasoning as contact.astro: a mailto: does nothing on a
-              device with no mail client, so the address is here in copyable
-              plain text too. */}
-          <p class="mt-[16px] text-caption text-muted">
-            Or write to{" "}
-            <a href={`mailto:${MAIL}`} class="cursor-pointer text-cream underline underline-offset-4">
-              {MAIL}
-            </a>
-          </p>
+      <div class="self-start bg-ink p-[28px] text-paper md:col-span-6 md:col-start-7 md:p-[48px]">
+        <p class="text-heading uppercase">Send it to the studio.</p>
+        <p class="mt-[20px] max-w-[42ch] text-body text-mist">
+          One address, straight to the Dubai studio. Applications, internships and speculative introductions all go to
+          the same place.
+        </p>
+        <div class="mt-[36px]">
+          <Button href={GENERAL_MAILTO} label="Email your application" tone="paper" />
         </div>
+        <p class="meta mt-[20px] text-mist">
+          Or write to <a href={`mailto:${MAIL}`} class="cursor-pointer text-paper normal-case underline underline-offset-4">{MAIL}</a>
+        </p>
       </div>
     </div>
   </section>

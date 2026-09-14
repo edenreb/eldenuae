@@ -1,218 +1,131 @@
 ---
-// Layered parallax hero (Osmo "Parallax" effect, ported to Astro).
-//
-// Ported rather than pasted: the original is a React component that spins up
-// its own Lenis and, on cleanup, calls ScrollTrigger.getAll().kill() — which
-// would destroy every trigger on the site, not just its own. This version
-// reuses the single Lenis instance in scripts/motion.ts and kills only what it
-// created.
-//
-// Layers come from src/assets/hero-parallax/ (see the README there). Until all
-// three exist, the single-photograph fallback renders instead, so the hero is
-// never broken while assets are being prepared.
-import { Image, Picture } from "astro:assets";
-import fallbackImage from "../assets/anantara-penthouse/1.jpg";
-
-const layerModules = import.meta.glob<{ default: ImageMetadata }>(
-  "../assets/hero-parallax/*.{webp,png,jpg,jpeg}",
-  { eager: true },
-);
-
-const layerFor = (n: number) =>
-  layerModules[`../assets/hero-parallax/layer-${n}.webp`]?.default ??
-  layerModules[`../assets/hero-parallax/layer-${n}.png`]?.default ??
-  layerModules[`../assets/hero-parallax/layer-${n}.jpg`]?.default;
-
-const near = layerFor(4);
-const mid = layerFor(2);
-const far = layerFor(1);
-const hasLayers = Boolean(far && mid && near);
-
-// Same gradient in both paths — measured at 4.61:1 for the headline (needs 3.0)
-// and 11.13:1 for the sub-line (needs 4.5).
-const SCRIM =
-  "linear-gradient(to top, rgb(0 0 0 / 0.9) 0%, rgb(0 0 0 / 0.76) 26%, rgb(0 0 0 / 0.5) 52%, rgb(0 0 0 / 0) 82%)";
+// Full-bleed photographic hero. One image, one centred line, one action —
+// the photograph carries the page, the type sits on it.
+import { Picture } from "astro:assets";
+import Button from "./Button.astro";
+import heroImage from "../assets/holiday-inn/hero-1.jpg";
 ---
 
-<section
-  id="hero"
-  class="relative min-h-[100dvh] w-full overflow-hidden bg-ink"
-  style="margin-top: calc(var(--nav-h) * -1)"
-  data-has-layers={hasLayers ? "true" : "false"}
->
-  <div id="hero-media" class="absolute inset-0 h-[112%]">
-    {
-      hasLayers ? (
-        <div data-parallax-layers class="hero-layers">
-          <Image src={far!} alt="" widths={[900, 1600, 2400]} sizes="100vw" loading="eager" data-parallax-layer="1" class="hero-layer" />
-          <Image src={mid!} alt="" widths={[900, 1600, 2400]} sizes="100vw" loading="eager" data-parallax-layer="2" class="hero-layer" />
-          <div class="hero-scrim" style={`background: ${SCRIM}`}></div>
-          <div data-parallax-layer="3" class="hero-layer hero-layer--title">
-            <div class="mx-auto w-full max-w-[1440px] px-[17px] pb-[50px] md:px-[25px] md:pb-[84px]">
-              <h1 id="hero-title" class="text-display-xl leading-[0.8] tracking-[-0.07em] text-cream">
-                Turnkey fitout.
-              </h1>
-              <div id="hero-sub" class="mt-[25px] flex flex-col gap-[17px] md:flex-row md:items-end md:justify-between">
-                <p class="max-w-[46ch] text-body text-cream">
-                  Interior design to handover. 87 projects across the UAE&rsquo;s fitness, F&amp;B, retail,
-                  workplace and hospitality brands.
-                </p>
-                <a
-                  href="/projects"
-                  class="pointer-events-auto shrink-0 cursor-pointer border border-cream px-[17px] py-[8px] text-body-sm text-cream transition-colors hover:bg-cream hover:text-ink"
-                >
-                  View our work
-                </a>
-              </div>
-            </div>
-          </div>
-          <Image src={near!} alt="" widths={[900, 1600, 2400]} sizes="100vw" loading="eager" data-parallax-layer="4" class="hero-layer" />
-        </div>
-      ) : (
-        <>
-          <Picture
-            src={fallbackImage}
-            alt="A completed Elden penthouse fitout in Dubai, looking through the living space toward the terrace"
-            formats={["avif", "webp"]}
-            widths={[900, 1400, 2000, 2600]}
-            sizes="100vw"
-            loading="eager"
-            fetchpriority="high"
-            class="h-full w-full object-cover"
-          />
-          <div class="absolute inset-0" style={`background: ${SCRIM}`}></div>
-        </>
-      )
-    }
+<section id="hero" data-hero class="relative h-[100svh] min-h-[560px] w-full overflow-hidden bg-ink text-paper">
+  <div id="hero-media" class="absolute inset-0">
+    <Picture
+      src={heroImage}
+      alt="Guest corridor overlooking the atrium at Holiday Inn Al Barsha, a hospitality fitout by Elden"
+      formats={["avif", "webp"]}
+      widths={[828, 1280, 1920, 2560, 3200]}
+      sizes="100vw"
+      loading="eager"
+      fetchpriority="high"
+      class="h-full w-full object-cover"
+    />
   </div>
+  <div class="hero-scrim pointer-events-none absolute inset-0" aria-hidden="true"></div>
+  <div class="hero-grain pointer-events-none absolute inset-0" aria-hidden="true"></div>
 
-  {
-    !hasLayers && (
-      <div class="relative flex min-h-[100dvh] flex-col justify-end px-[17px] pb-[50px] md:px-[25px] md:pb-[84px]">
-        <div class="mx-auto w-full max-w-[1440px]">
-          <h1 id="hero-title" class="text-display-xl leading-[0.8] tracking-[-0.07em] text-cream">
-            Turnkey fitout.
-          </h1>
-          <div id="hero-sub" class="mt-[25px] flex flex-col gap-[17px] md:flex-row md:items-end md:justify-between">
-            <p class="max-w-[46ch] text-body text-cream">
-              Interior design to handover. 87 projects across the UAE&rsquo;s fitness, F&amp;B, retail,
-              workplace and hospitality brands.
-            </p>
-            <a
-              href="/projects"
-              class="shrink-0 cursor-pointer border border-cream px-[17px] py-[8px] text-body-sm text-cream transition-colors hover:bg-cream hover:text-ink"
-            >
-              View our work
-            </a>
-          </div>
-        </div>
+  <div class="gutter relative flex h-full flex-col">
+    <div id="hero-content" class="flex flex-1 flex-col items-center justify-center pt-[var(--header-h)] text-center">
+      <h1 class="text-display uppercase">
+        <span class="hero-line"><span class="hero-line-inner">Turning places</span></span>{" "}
+        <span class="hero-line"><span class="hero-line-inner">into <em class="accent">spaces.</em></span></span>
+      </h1>
+      <div id="hero-cta" class="mt-[36px] md:mt-[48px]">
+        <Button href="/projects" label="View all projects" tone="paper" />
       </div>
-    )
-  }
+    </div>
+
+    <div id="hero-foot" class="meta grid grid-cols-2 items-end gap-[16px] pb-[20px] md:grid-cols-3">
+      <a href="/projects/holiday-inn" class="cursor-pointer justify-self-start underline-offset-4 hover:underline">
+        (01) Holiday Inn — Al Barsha
+      </a>
+      <span class="hidden justify-self-center md:block" aria-hidden="true">Scroll ↓</span>
+      <span class="justify-self-end text-right">Est. 2014 — Dubai, UAE</span>
+    </div>
+  </div>
 </section>
 
 <style>
-  /* The CSS the original snippet omitted. Every layer is registered to the
-     same box so the planes stay aligned as they travel at different speeds. */
-  .hero-layers {
-    position: relative;
-    height: 100%;
-    width: 100%;
-  }
-
-  .hero-layer {
-    position: absolute;
-    inset: 0;
-    height: 100%;
-    width: 100%;
-    object-fit: cover;
-    will-change: transform;
-  }
-
-  /* Anchored, not parallaxed — the scrim must stay under the type wherever
-     the planes travel, or the headline loses its contrast floor. */
+  /* Three layers of shade, each for a specific piece of type: the top band
+     under the header, a soft pool behind the centred headline, and the
+     bottom band under the meta row. */
   .hero-scrim {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
+    background:
+      linear-gradient(to bottom, rgb(0 0 0 / 0.5) 0%, rgb(0 0 0 / 0) 24%),
+      radial-gradient(ellipse 70% 42% at 50% 50%, rgb(0 0 0 / 0.38), rgb(0 0 0 / 0) 72%),
+      linear-gradient(to top, rgb(0 0 0 / 0.55) 0%, rgb(0 0 0 / 0) 26%),
+      rgb(0 0 0 / 0.14);
   }
 
-  .hero-layer--title {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    /* Layer 4 passes in front of the title; keep clicks reaching the CTA. */
-    pointer-events: none;
+  /* Film grain — static noise tile, no blend mode, so it costs nothing
+     while the photo layer beneath it moves. */
+  .hero-grain {
+    opacity: 0.09;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Each line slides up from behind its own mask. Built in the markup, not
+     split at runtime — splitWords() would destroy the <em> accent. */
+  .hero-line {
+    display: block;
+    overflow: hidden;
+    padding-bottom: 0.1em;
+    margin-bottom: -0.1em;
+  }
+
+  .hero-line-inner {
+    display: block;
+  }
+
+  #hero-media {
+    will-change: transform;
   }
 </style>
 
 <script>
   import gsap from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
-  import { splitWords, whenVisible } from "../scripts/motion";
+  import { whenVisible } from "../scripts/motion";
 
   gsap.registerPlugin(ScrollTrigger);
 
-  // Travel per plane: the nearest moves least, the farthest moves most.
-  const LAYERS = [
-    { layer: "1", yPercent: 70 },
-    { layer: "2", yPercent: 55 },
-    { layer: "3", yPercent: 40 },
-    { layer: "4", yPercent: 10 },
-  ];
-
   function initHero() {
-    const section = document.getElementById("hero");
-    const title = document.getElementById("hero-title");
-    if (!section || !title) return;
-
+    const hero = document.getElementById("hero");
+    if (!hero || hero.dataset.init) return;
+    hero.dataset.init = "1";
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     whenVisible(() => {
-      splitWords(title);
-      const words = title.querySelectorAll(":scope > span > span");
+      // Built paused: from() renders its start state immediately, so the
+      // headline is already masked when the preloader lifts.
+      const intro = gsap
+        .timeline({ paused: true })
+        .from("#hero-media", { scale: 1.16, duration: 2.2, ease: "power3.out" })
+        .from(
+          hero.querySelectorAll(".hero-line-inner"),
+          { yPercent: 110, duration: 1.1, ease: "power4.out", stagger: 0.12 },
+          0.2,
+        )
+        .from(["#hero-cta", "#hero-foot"], { autoAlpha: 0, y: 16, duration: 0.8, ease: "power2.out", stagger: 0.12 }, 0.75);
 
-      let done = false;
-      const reveal = () => {
-        if (done) return;
-        done = true;
-        gsap
-          .timeline()
-          .from("#hero-media", { scale: 1.12, duration: 1.8, ease: "power3.out" })
-          .from(words, { yPercent: 115, duration: 0.9, ease: "power3.out", stagger: 0.09 }, "<0.35")
-          .from("#hero-sub", { opacity: 0, y: 20, duration: 0.7, ease: "power2.out" }, "<0.25")
-          .set([words, "#hero-sub"], { clearProps: "all" });
+      let played = false;
+      const play = () => {
+        if (played) return;
+        played = true;
+        intro.play();
       };
+      if (document.documentElement.dataset.introReady) play();
+      else document.addEventListener("elden:intro", play, { once: true });
+      setTimeout(play, 4000);
 
-      if (document.documentElement.dataset.introReady) reveal();
-      else document.addEventListener("elden:intro", reveal, { once: true });
-      setTimeout(reveal, 4000);
+      // On scroll the photograph lags the page and the headline lifts away.
+      const scrub = { trigger: hero, start: "top top", end: "bottom top", scrub: true };
+      gsap.to("#hero-media", { yPercent: 16, ease: "none", scrollTrigger: scrub });
+      gsap.to("#hero-content", { yPercent: -24, opacity: 0, ease: "none", scrollTrigger: { ...scrub, end: "70% top" } });
     });
-
-    const stage = section.querySelector("[data-parallax-layers]");
-
-    if (stage) {
-      // Layered path: each plane scrubs at its own rate.
-      const tl = gsap.timeline({
-        scrollTrigger: { trigger: section, start: "top top", end: "bottom top", scrub: 0 },
-      });
-
-      LAYERS.forEach((entry, i) => {
-        tl.to(
-          stage.querySelectorAll(`[data-parallax-layer="${entry.layer}"]`),
-          { yPercent: entry.yPercent, ease: "none" },
-          i === 0 ? undefined : "<",
-        );
-      });
-    } else {
-      // Fallback path: single plane drifts behind the type.
-      gsap.to("#hero-media", {
-        yPercent: -12,
-        ease: "none",
-        scrollTrigger: { trigger: section, start: "top top", end: "bottom top", scrub: true },
-      });
-    }
   }
 
+  // Direct call as well as the listener: on the first client-side arrival
+  // at "/" this module can finish loading after astro:page-load has already
+  // fired. The dataset guard stops a normal load from running it twice.
+  initHero();
   document.addEventListener("astro:page-load", initHero);
 </script>

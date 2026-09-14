@@ -15,43 +15,36 @@ const { post } = Astro.props;
 const { data } = post;
 const { Content } = await render(post);
 
-const formatter = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric" });
+const formatter = new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", year: "numeric" });
 ---
 
 <Base title={data.title} description={data.excerpt}>
   <article>
-    <section class="px-[24px] pt-[48px] md:px-[32px] md:pt-[72px]">
-      <div class="mx-auto max-w-[800px]">
-        <a href="/journal" class="cursor-pointer text-body text-cream hover:text-[var(--color-brand-green)] hover:underline">&larr; Journal</a>
-        <p class="mt-[24px] text-body text-muted">
-          {formatter.format(data.date)} &middot; {data.author}
+    <section class="gutter pt-[32px] md:pt-[56px]">
+      <div class="flex items-center justify-between gap-[16px]">
+        <a href="/journal" class="meta cursor-pointer underline-offset-4 hover:underline">&larr; Journal</a>
+        <p class="meta text-right text-muted">
+          {formatter.format(data.date)} — {data.author}
         </p>
-        <h1 class="mt-[16px] max-w-[24ch] text-display text-cream">{data.title}</h1>
-        {data.tags.length > 0 && (
-          <div class="mt-[16px] flex flex-wrap gap-[8px]">
-            {data.tags.map((tag: string) => (
-              <span class="rounded-full bg-surface px-[14px] py-[6px] text-body text-muted">
-                {tag}
-              </span>
-            ))}
-          </div>
-        )}
       </div>
+      <h1 class="mt-[48px] max-w-[22ch] text-heading uppercase md:mt-[80px]">{data.title}</h1>
+      {data.tags.length > 0 && (
+        <ul class="mt-[28px] flex flex-wrap gap-[8px]">
+          {data.tags.map((tag: string) => (
+            <li class="meta border border-ink/20 px-[10px] py-[6px] text-muted">{tag}</li>
+          ))}
+        </ul>
+      )}
     </section>
 
-    <!-- Contained and rounded rather than full-bleed 16/9: at full width the
-         cover pushed the whole article below the fold and out-shouted the
-         headline it was meant to introduce. `rounded-xl` needs no !important
-         despite the global `* { border-radius: 0 }` reset — a class beats a
-         universal selector on specificity. -->
-    <section class="mt-[40px] px-[24px] md:px-[32px]">
-      <div class="mx-auto aspect-[16/10] max-w-[880px] overflow-hidden rounded-xl">
+    <section class="gutter mt-[40px] md:mt-[64px]">
+      <div class="aspect-[4/3] overflow-hidden bg-ink md:aspect-[21/9]">
         <Picture
           src={data.cover}
           alt={`Cover image for the article “${data.title}”`}
           formats={["avif", "webp"]}
-          widths={[600, 900, 1400]}
-          sizes="(min-width: 768px) 880px, 100vw"
+          widths={[800, 1400, 2000]}
+          sizes="100vw"
           loading="eager"
           fetchpriority="high"
           class="h-full w-full object-cover"
@@ -59,8 +52,8 @@ const formatter = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "sho
       </div>
     </section>
 
-    <section class="px-[24px] pt-[40px] pb-[96px] md:px-[32px] md:pt-[56px] md:pb-[144px]">
-      <div class="prose-body mx-auto max-w-[720px] text-cream">
+    <section class="gutter pt-[56px] pb-[120px] md:pt-[96px] md:pb-[200px]">
+      <div class="prose-body mx-auto max-w-[720px]">
         <Content />
       </div>
     </section>
@@ -68,14 +61,12 @@ const formatter = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "sho
 </Base>
 
 <style>
-  /* :global() is required here — <Content /> is a separate MDX module, so
-     its rendered h2/p/ul/li don't carry this component's Astro scope hash. */
-  /* Long-form reading size, deliberately larger than --text-body (16px):
-     this column is 720px of continuous prose, not UI chrome, and 16px at
-     that measure reads cramped. Line height goes up with it. */
+  /* :global() — <Content /> is a separate MDX module without this
+     component's scope hash. Long-form reading size sits a step above UI
+     body copy: 720px of continuous prose reads cramped at 17px. */
   .prose-body {
-    font-size: 1.25rem;
-    line-height: 1.6;
+    font-size: 1.1875rem;
+    line-height: 1.65;
   }
   .prose-body :global(p) {
     margin-top: 20px;
@@ -84,30 +75,37 @@ const formatter = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "sho
     margin-top: 0;
   }
   .prose-body :global(h2) {
-    margin-top: 64px;
-    font-size: var(--text-heading);
+    margin-top: 72px;
+    font-size: var(--text-title);
     line-height: 1.05;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+  }
+  .prose-body :global(h3) {
+    margin-top: 40px;
+    font-size: var(--text-lead);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
   }
   .prose-body :global(ul) {
     margin-top: 16px;
-    list-style: disc;
+    list-style: square;
     padding-left: 20px;
   }
   .prose-body :global(li) {
-    margin-top: 12px;
-  }
-  .prose-body :global(h3) {
-    margin-top: 32px;
-    font-size: var(--text-subheading);
-    line-height: 1.15;
+    margin-top: 10px;
   }
   .prose-body :global(strong) {
-    font-weight: 700;
+    font-weight: 600;
+  }
+  .prose-body :global(a) {
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
   /* Comparison tables scroll inside their own box rather than widening the
-     article column or the page. */
+     article column. */
   .prose-body :global(.table-scroll) {
-    margin-top: 24px;
+    margin-top: 28px;
     overflow-x: auto;
   }
   .prose-body :global(table) {
@@ -119,20 +117,21 @@ const formatter = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "sho
   .prose-body :global(th) {
     text-align: left;
     padding: 12px 16px 12px 0;
-    border-bottom: 2px solid var(--color-brand-green);
-    font-size: var(--text-caption);
-    letter-spacing: 0.08em;
+    border-bottom: 1px solid var(--color-ink);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
     text-transform: uppercase;
-    color: var(--color-brand-green);
   }
   .prose-body :global(td) {
     padding: 12px 16px 12px 0;
-    border-bottom: 1px solid var(--color-line);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 15%, transparent);
     vertical-align: top;
     color: var(--color-muted);
   }
   .prose-body :global(td:first-child) {
-    color: var(--color-cream);
+    color: var(--color-ink);
     white-space: nowrap;
   }
 </style>

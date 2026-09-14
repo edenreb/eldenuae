@@ -28,40 +28,53 @@ const values = [
   title="About"
   description="9+ years and 87+ turnkey fitout projects across the UAE. Interior design to handover, one team, one contract."
 >
-  <section class="px-[24px] pt-[48px] md:px-[32px] md:pt-[72px]">
-    <div class="mx-auto max-w-[1440px]">
-      <Eyebrow>About Elden</Eyebrow>
-      <h1 class="mt-[12px] max-w-[18ch] text-display text-cream">
-        The #1 cost-effective Interior Design & Fitout company in the UAE
-      </h1>
-      <p class="mt-[24px] max-w-[720px] text-subheading text-cream">
-        <!-- PLACEHOLDER COPY: replace with Elden's real founding story before launch -->
-        Elden is a well established and prominent company in the Interior Design & Fit-out and MEP field offering a wide range of internal and external services across the UAE.
+  <section class="gutter pt-[48px] md:pt-[88px]">
+    <Eyebrow>About Elden</Eyebrow>
+    <h1 class="mt-[28px] max-w-[18ch] text-heading uppercase">
+      The #1 cost-effective Interior Design &amp; Fitout company in the UAE
+    </h1>
+    <div class="mt-[48px] grid grid-cols-1 md:mt-[80px] md:grid-cols-12 md:gap-x-[24px]">
+      <!-- PLACEHOLDER COPY: replace with Elden's real founding story before launch -->
+      <p class="max-w-[34ch] text-lead md:col-span-6 md:col-start-7">
+        Elden is a well established and prominent company in the Interior Design &amp; Fit-out and MEP field offering a
+        wide range of internal and external services across the UAE.
       </p>
     </div>
   </section>
 
-  <section class="px-[24px] py-[96px] md:px-[32px] md:py-[144px]">
-    <div class="mx-auto grid max-w-[1440px] grid-cols-1 gap-[32px] sm:grid-cols-2 lg:grid-cols-4">
-      {values.map((v) => (
-        <div class="flex flex-col gap-[16px]">
-          <div class="rule" data-reveal-rule></div>
-          <h2 class="text-subheading text-cream">{v.title}</h2>
-          <p class="text-body text-muted">{v.copy}</p>
-        </div>
-      ))}
+  <section class="gutter mt-[72px] md:mt-[120px]">
+    <div class="aspect-[4/3] overflow-hidden bg-ink md:aspect-[21/9]" data-reveal>
+      <Picture
+        src={breakImage}
+        alt="Interior detail from an Elden turnkey project"
+        formats={["avif", "webp"]}
+        widths={[800, 1400, 2000, 2600]}
+        sizes="100vw"
+        loading="lazy"
+        class="h-full w-full object-cover"
+      />
     </div>
   </section>
 
-  <section class="aspect-[16/9] w-full overflow-hidden md:aspect-[21/9]">
-    <Picture
-      src={breakImage}
-      alt="Interior detail from an Elden turnkey project"
-      formats={["avif", "webp"]}
-      widths={[800, 1400, 2000]}
-      sizes="100vw"
-      loading="lazy"
-      class="h-full w-full object-cover"
-    />
+  <section class="gutter py-[120px] md:py-[200px]">
+    <div class="flex flex-col gap-[24px] md:flex-row md:items-end md:justify-between">
+      <div>
+        <Eyebrow>Services</Eyebrow>
+        <h2 class="mt-[20px] text-heading uppercase" data-reveal-words>What we do</h2>
+      </div>
+      <p class="max-w-[34ch] text-body text-muted md:text-right">
+        Interior design to handover — one team, one contract.
+      </p>
+    </div>
+
+    <ol class="mt-[56px] md:mt-[96px]">
+      {values.map((v, i) => (
+        <li class="grid grid-cols-1 gap-y-[14px] border-t border-ink/15 py-[32px] last:border-b md:grid-cols-12 md:gap-x-[24px] md:py-[48px]">
+          <span class="meta text-muted md:col-span-1">({String(i + 1).padStart(2, "0")})</span>
+          <h3 class="text-title uppercase md:col-span-5">{v.title}</h3>
+          <p class="max-w-[56ch] text-body text-muted md:col-span-6">{v.copy}</p>
+        </li>
+      ))}
+    </ol>
   </section>
 </Base>

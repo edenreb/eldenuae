@@ -30,9 +30,9 @@ const monogram = name
   .join("");
 ---
 
-<div class="firm-card mt-[28px] mb-[8px] flex flex-col gap-[20px] border-l-[2px] border-l-[var(--color-line)] pl-[20px]">
+<div class="firm-card mt-[28px] mb-[8px] flex flex-col gap-[20px] border-l border-l-ink/20 pl-[20px]">
   <div class="flex items-center gap-[16px]">
-    <div class="flex h-[76px] w-[120px] shrink-0 items-center justify-center overflow-hidden rounded-lg bg-cream p-[10px]">
+    <div class="flex h-[76px] w-[120px] shrink-0 items-center justify-center overflow-hidden border border-ink/15 bg-white p-[10px]">
       {
         logo ? (
           /* object-contain, not cover: the supplied marks run from square to
@@ -41,20 +41,20 @@ const monogram = name
         ) : (
           /* Neutral placeholder until real artwork is dropped in — a broken
              image icon next to a competitor's name reads worse than initials. */
-          <span aria-hidden="true" class="text-body font-semibold text-[var(--color-brand-navy)]">{monogram}</span>
+          <span aria-hidden="true" class="text-body font-semibold">{monogram}</span>
         )
       }
     </div>
     <div>
-      <p class="text-body text-muted">No. {rank}</p>
-      <p class="text-subheading leading-none text-cream">{name}</p>
+      <p class="meta text-muted">No. {rank}</p>
+      <p class="mt-[6px] text-title uppercase">{name}</p>
     </div>
   </div>
 
   {summary && <p class="text-body text-muted">{summary}</p>}
   {speciality && (
     <p class="text-body text-muted">
-      <span class="text-cream">Primary speciality:</span> {speciality}
+      <span class="text-ink">Primary speciality:</span> {speciality}
     </p>
   )}
 
@@ -62,11 +62,11 @@ const monogram = name
   <dl class="grid grid-cols-1 gap-[12px] sm:grid-cols-2">
     {pros && (
     <div>
-      <dt class="text-caption uppercase tracking-[0.12em] text-[var(--color-brand-green)]">Strengths</dt>
+      <dt class="meta text-[#2d6e38]">Strengths</dt>
       <ul class="mt-[8px] flex flex-col gap-[6px]">
         {pros!.map((p) => (
-          <li class="flex gap-[8px] text-body text-cream">
-            <span aria-hidden="true" class="text-[var(--color-brand-green)]">+</span>
+          <li class="flex gap-[8px] text-body">
+            <span aria-hidden="true" class="text-[#2d6e38]">+</span>
             <span>{p}</span>
           </li>
         ))}
@@ -75,11 +75,11 @@ const monogram = name
     )}
     {cons && (
     <div>
-      <dt class="text-caption uppercase tracking-[0.12em] text-[#e0785f]">Watch-outs</dt>
+      <dt class="meta text-[#a63d28]">Watch-outs</dt>
       <ul class="mt-[8px] flex flex-col gap-[6px]">
         {cons!.map((c) => (
           <li class="flex gap-[8px] text-body text-muted">
-            <span aria-hidden="true" class="text-[#e0785f]">&minus;</span>
+            <span aria-hidden="true" class="text-[#a63d28]">&minus;</span>
             <span>{c}</span>
           </li>
         ))}

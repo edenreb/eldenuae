@@ -19,96 +19,114 @@ const currentIndex = allProjects.findIndex((p) => p.id === project.id);
 const nextProject = allProjects[(currentIndex + 1) % allProjects.length];
 
 const restOfGallery = data.gallery.slice(1);
+const last = restOfGallery.length - 1;
+// Rhythm: one full-width frame, then a pair. A pair left with one frame
+// runs full width instead of sitting alone at half.
+const isFull = (i: number) => i % 3 === 0 || (i % 3 === 1 && i === last);
+
+const facts = [
+  { label: "Client", value: data.client },
+  { label: "Year", value: String(data.year) },
+  { label: "Location", value: data.location },
+  { label: "Scope", value: data.scope.join(", ") },
+];
 ---
 
-<Base
-  title={data.title}
-  description={data.summary}
->
-  <section class="relative">
-    <div class="aspect-[16/9] w-full overflow-hidden md:aspect-[21/9]">
+<Base title={data.title} description={data.summary}>
+  <section class="gutter pt-[32px] md:pt-[56px]">
+    <div class="flex items-center justify-between gap-[16px]">
+      <a href="/projects" class="meta cursor-pointer underline-offset-4 hover:underline">&larr; All projects</a>
+      <p class="meta text-muted">{data.sector} — {data.year}</p>
+    </div>
+    <h1 class="mt-[48px] max-w-[14ch] text-display uppercase md:mt-[80px]">{data.title}</h1>
+  </section>
+
+  <section class="gutter mt-[40px] md:mt-[72px]">
+    <div class="aspect-[4/3] overflow-hidden bg-ink md:aspect-[21/9]">
       <Picture
         src={data.cover}
         alt={`${data.title} — ${data.sector.toLowerCase()} fitout by Elden`}
         formats={["avif", "webp"]}
-        widths={[800, 1400, 2000]}
+        widths={[800, 1400, 2000, 2600]}
         sizes="100vw"
         loading="eager"
         fetchpriority="high"
         class="h-full w-full object-cover"
+        data-settle
       />
     </div>
   </section>
 
-  <section class="px-[24px] py-[32px] md:px-[32px] md:py-[96px]">
-    <div class="mx-auto grid max-w-[1440px] grid-cols-1 gap-[32px] md:grid-cols-[1fr_320px] md:gap-[48px]">
-      <div>
-        <p class="text-caption text-muted">{data.sector}</p>
-        <h1 class="mt-[8px] text-display text-cream">{data.title}</h1>
-        <div class="prose-body mt-[24px] max-w-[640px] text-body text-cream">
+  <section class="gutter py-[72px] md:py-[140px]">
+    <div class="grid grid-cols-1 gap-y-[56px] md:grid-cols-12 md:gap-x-[24px]">
+      <dl class="grid content-start grid-cols-2 gap-x-[24px] gap-y-[28px] md:col-span-4 md:grid-cols-1">
+        {facts.map((fact) => (
+          <div>
+            <div class="rule" data-reveal-rule></div>
+            <dt class="meta mt-[12px] text-muted">{fact.label}</dt>
+            <dd class="mt-[6px] text-body">{fact.value}</dd>
+          </div>
+        ))}
+      </dl>
+
+      <div class="md:col-span-7 md:col-start-6">
+        <p class="text-statement">{data.summary}</p>
+        <div class="prose-body mt-[32px] max-w-[62ch] text-body text-muted">
           <Content />
         </div>
       </div>
-
-      <dl class="grid grid-cols-2 gap-x-[16px] gap-y-[16px] text-body md:grid-cols-1">
-        <div class="col-span-2 rule mb-[8px] md:hidden" data-reveal-rule></div>
-        <div>
-          <dt class="text-caption text-muted">Client</dt>
-          <dd class="mt-[4px] text-cream">{data.client}</dd>
-        </div>
-        <div>
-          <dt class="text-caption text-muted">Year</dt>
-          <dd class="mt-[4px] text-cream">{data.year}</dd>
-        </div>
-        <div>
-          <dt class="text-caption text-muted">Location</dt>
-          <dd class="mt-[4px] text-cream">{data.location}</dd>
-        </div>
-        <div>
-          <dt class="text-caption text-muted">Scope</dt>
-          <dd class="mt-[4px] text-cream">{data.scope.join(", ")}</dd>
-        </div>
-      </dl>
     </div>
   </section>
 
   {restOfGallery.length > 0 && (
-    <section class="px-[24px] pb-[96px] md:px-[32px] md:pb-[144px]">
-      <div class="mx-auto grid max-w-[1440px] grid-cols-1 gap-x-[32px] gap-y-[48px] sm:grid-cols-2">
-        {restOfGallery.map((img) => (
-          <Picture
-            src={img}
-            alt={`${data.title} — interior detail`}
-            formats={["avif", "webp"]}
-            widths={[500, 900]}
-            sizes="(min-width: 640px) 50vw, 100vw"
-            loading="lazy"
-            class="aspect-[4/3] h-full w-full object-cover"
-          />
+    <section class="gutter pb-[120px] md:pb-[200px]">
+      <div class="grid grid-cols-1 gap-[16px] md:grid-cols-2">
+        {restOfGallery.map((img, i) => (
+          <div class:list={["overflow-hidden bg-ink", isFull(i) ? "aspect-[4/3] md:col-span-2 md:aspect-[16/9]" : "aspect-[4/3]"]} data-reveal>
+            <Picture
+              src={img}
+              alt={`${data.title} — interior detail`}
+              formats={["avif", "webp"]}
+              widths={[600, 1000, 1600, 2400]}
+              sizes={isFull(i) ? "100vw" : "(min-width: 768px) 50vw, 100vw"}
+              loading="lazy"
+              class="h-full w-full object-cover"
+            />
+          </div>
         ))}
       </div>
     </section>
   )}
 
-  <section class="px-[24px] py-[96px] md:px-[32px] md:py-[144px]">
-    <div class="mx-auto mb-[48px] max-w-[1440px] rule" data-reveal-rule></div>
-    <a href={`/projects/${nextProject.id}`} class="group mx-auto flex max-w-[1440px] items-center justify-between gap-[16px] cursor-pointer">
-      <div>
-        <p class="text-caption text-muted">Next project</p>
-        <p class="mt-[8px] text-subheading text-cream group-hover:underline">{nextProject.data.title}</p>
+  <section class="border-t border-ink/15">
+    <a
+      href={`/projects/${nextProject.id}`}
+      data-cursor="open"
+      class="gutter group grid cursor-pointer grid-cols-1 items-end gap-[32px] py-[72px] md:grid-cols-12 md:gap-x-[24px] md:py-[120px]"
+    >
+      <div class="md:col-span-8">
+        <p class="meta text-muted">Next project &rarr;</p>
+        <p class="mt-[20px] text-display uppercase underline-offset-[0.08em] group-hover:underline">{nextProject.data.title}</p>
       </div>
-      <span class="text-subheading text-cream transition-transform group-hover:translate-x-[8px] group-hover:text-[var(--color-brand-green)]">&rarr;</span>
+      <div class="aspect-[4/3] overflow-hidden bg-ink md:col-span-4">
+        <Picture
+          src={nextProject.data.cover}
+          alt=""
+          formats={["avif", "webp"]}
+          widths={[500, 900]}
+          sizes="(min-width: 768px) 33vw, 100vw"
+          loading="lazy"
+          class="h-full w-full object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:scale-[1.05]"
+        />
+      </div>
     </a>
   </section>
 </Base>
 
 <style>
-  /* :global() is required — <Content /> is a separate markdown module, so
-     its rendered <p> tags don't carry this component's Astro scope hash. */
-  .prose-body :global(p) {
-    margin-top: 13px;
-  }
-  .prose-body :global(p:first-child) {
-    margin-top: 0;
+  /* :global() — <Content /> is a separate markdown module without this
+     component's scope hash. */
+  .prose-body :global(p + p) {
+    margin-top: 16px;
   }
 </style>

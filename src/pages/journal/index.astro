@@ -4,44 +4,47 @@ import { getCollection } from "astro:content";
 import { Picture } from "astro:assets";
 
 const posts = (await getCollection("journal")).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-const formatter = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric" });
+const formatter = new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", year: "numeric" });
 ---
 
 <Base
   title="Journal"
   description="Notes on turnkey fitout in the UAE — process, approvals, materials, and what we've learned across 87+ projects."
 >
-  <section class="px-[24px] pt-[48px] md:px-[32px] md:pt-[72px]">
-    <div class="mx-auto max-w-[1440px]">
-      <h1 class="text-display text-cream">Journal.</h1>
-      <p class="mt-[16px] max-w-[60ch] text-body text-cream">
-        Here’s where you get to know our latest in news & advancements as we stride ahead with more recognition and successful projects to our name.
+  <section class="gutter pt-[48px] md:pt-[88px]">
+    <div class="grid grid-cols-1 items-end gap-y-[28px] md:grid-cols-12 md:gap-x-[24px]">
+      <h1 class="text-display uppercase md:col-span-7">Journal</h1>
+      <p class="max-w-[40ch] text-body text-muted md:col-span-4 md:col-start-9 md:justify-self-end md:text-right">
+        Here&rsquo;s where you get to know our latest in news &amp; advancements as we stride ahead with more
+        recognition and successful projects to our name.
       </p>
     </div>
   </section>
 
-  <section class="px-[24px] py-[96px] md:px-[32px] md:py-[144px]">
-    <div class="mx-auto grid max-w-[1440px] grid-cols-1 gap-x-[32px] gap-y-[48px] sm:grid-cols-2 lg:grid-cols-3">
+  <section class="gutter pt-[48px] pb-[120px] md:pt-[88px] md:pb-[200px]">
+    <div class="rule"></div>
+    <p class="meta py-[14px] text-muted">{posts.length} articles</p>
+    <div class="rule"></div>
+
+    <div class="mt-[24px] grid grid-cols-1 gap-x-[16px] gap-y-[64px] sm:grid-cols-2 lg:grid-cols-3">
       {posts.map((post, i) => (
-        <a href={`/journal/${post.id}`} class="group block cursor-pointer">
-          <div class="aspect-[3/2] overflow-hidden">
+        <a href={`/journal/${post.id}`} data-cursor="open" class="group block cursor-pointer">
+          <div class="aspect-[4/3] overflow-hidden bg-ink">
             <Picture
               src={post.data.cover}
               alt={`Cover image for the article “${post.data.title}”`}
               formats={["avif", "webp"]}
-              widths={[400, 700]}
-              sizes="(min-width: 1024px) 30vw, (min-width: 640px) 50vw, 100vw"
+              widths={[400, 700, 1000]}
+              sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
               loading={i < 3 ? "eager" : "lazy"}
-              class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+              class="h-full w-full object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:scale-[1.05]"
             />
           </div>
-          <p class="mt-[12px] text-caption text-muted">
-            {formatter.format(post.data.date)}
-          </p>
-          <h2 class="mt-[4px] text-subheading text-cream group-hover:underline">
+          <p class="meta mt-[16px] text-muted">{formatter.format(post.data.date)}</p>
+          <h2 class="mt-[10px] max-w-[24ch] text-title group-hover:underline group-hover:underline-offset-4">
             {post.data.title}
           </h2>
-          <p class="mt-[8px] text-body text-cream">{post.data.excerpt}</p>
+          <p class="mt-[12px] text-body text-muted">{post.data.excerpt}</p>
         </a>
       ))}
     </div>

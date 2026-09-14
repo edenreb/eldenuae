@@ -1,83 +1,61 @@
 ---
-// Asymmetric editorial split — one lead post at large scale beside two
-// stacked secondaries. Deliberately not three equal columns.
+// One lead article at scale beside an index of the next four.
 import { getCollection } from "astro:content";
 import { Picture } from "astro:assets";
+import Button from "./Button.astro";
+import Eyebrow from "./Eyebrow.astro";
 
 const posts = (await getCollection("journal"))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  // One lead + the next four stacked beside it. Capped, not unbounded:
-  // this is a teaser for /journal, and the side column has to stay roughly
-  // as tall as the lead image next to it.
   .slice(0, 5);
 
 const [lead, ...rest] = posts;
-const formatter = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric" });
+const formatter = new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", year: "numeric" });
 ---
 
-<section class="px-[24px] py-[96px] md:px-[32px] md:py-[144px]">
-  <div class="mx-auto max-w-[1440px]">
-    <div class="flex items-baseline justify-between gap-[16px]">
-      <h2 class="text-heading text-cream" data-reveal-words>
-        From the journal.
-      </h2>
-      <a
-        href="/journal"
-        class="cursor-pointer whitespace-nowrap text-body text-cream underline-offset-4 hover:text-[var(--color-brand-green)] hover:underline"
-      >
-        Read more &rarr;
-      </a>
+<section class="gutter border-t border-ink/15 py-[120px] md:py-[200px]">
+  <div class="flex flex-col gap-[24px] md:flex-row md:items-end md:justify-between">
+    <div>
+      <Eyebrow>Journal</Eyebrow>
+      <h2 class="mt-[20px] text-heading uppercase" data-reveal-words>From the journal</h2>
     </div>
+    <Button href="/journal" label="All articles" class="self-start md:self-auto" />
+  </div>
 
-    <div class="mt-[32px] grid grid-cols-1 gap-[32px] md:mt-[48px] md:grid-cols-[1.35fr_1fr] md:gap-[48px]">
-      <a href={`/journal/${lead.id}`} class="group block cursor-pointer" data-reveal>
-        <div class="aspect-[4/3] overflow-hidden">
-          <Picture
-            src={lead.data.cover}
-            alt={`Cover image for the article “${lead.data.title}”`}
-            formats={["avif", "webp"]}
-            widths={[600, 1000, 1400]}
-            sizes="(min-width: 768px) 55vw, 100vw"
-            loading="lazy"
-            class="h-full w-full object-cover"
-          />
-        </div>
-        <p class="mt-[16px] text-caption text-muted">
-          {formatter.format(lead.data.date)}
-        </p>
-        <h3 class="mt-[8px] max-w-[24ch] text-subheading text-cream group-hover:underline">
-          {lead.data.title}
-        </h3>
-        <p class="mt-[12px] max-w-[52ch] text-body text-muted">{lead.data.excerpt}</p>
-      </a>
-
-      <div class="flex flex-col gap-[32px] md:gap-[48px]">
-        {
-          rest.map((post) => (
-            <a href={`/journal/${post.id}`} class="group grid grid-cols-[100px_1fr] gap-[16px] cursor-pointer">
-              <div class="aspect-square overflow-hidden">
-                <Picture
-                  src={post.data.cover}
-                  alt={`Cover image for the article “${post.data.title}”`}
-                  formats={["avif", "webp"]}
-                  widths={[200, 400]}
-                  sizes="100px"
-                  loading="lazy"
-                  class="h-full w-full object-cover"
-                />
-              </div>
-              <div>
-                <p class="text-caption text-muted">
-                  {formatter.format(post.data.date)}
-                </p>
-                <h3 class="mt-[4px] text-subheading text-cream group-hover:underline">
-                  {post.data.title}
-                </h3>
-              </div>
-            </a>
-          ))
-        }
+  <div class="mt-[56px] grid grid-cols-1 gap-[56px] md:mt-[112px] md:grid-cols-12 md:gap-x-[24px]">
+    <a href={`/journal/${lead.id}`} data-cursor="open" class="group block cursor-pointer md:col-span-7">
+      <div class="aspect-[4/3] overflow-hidden bg-ink" data-reveal>
+        <Picture
+          src={lead.data.cover}
+          alt={`Cover image for the article “${lead.data.title}”`}
+          formats={["avif", "webp"]}
+          widths={[600, 1000, 1400]}
+          sizes="(min-width: 768px) 58vw, 100vw"
+          loading="lazy"
+          class="h-full w-full object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:scale-[1.04]"
+        />
       </div>
-    </div>
+      <p class="meta mt-[20px] text-muted">{formatter.format(lead.data.date)}</p>
+      <h3 class="mt-[12px] max-w-[26ch] text-title group-hover:underline group-hover:underline-offset-4">{lead.data.title}</h3>
+      <p class="mt-[14px] max-w-[52ch] text-body text-muted">{lead.data.excerpt}</p>
+    </a>
+
+    <ol class="flex flex-col md:col-span-5">
+      {
+        rest.map((post, i) => (
+          <li>
+            {i === 0 && <div class="rule" />}
+            <a href={`/journal/${post.id}`} class="group grid cursor-pointer grid-cols-[1fr_auto] gap-x-[16px] gap-y-[10px] py-[24px]">
+              <p class="meta text-muted">{formatter.format(post.data.date)}</p>
+              <span aria-hidden="true" class="row-span-2 self-center text-lead transition-transform duration-300 group-hover:translate-x-[4px] group-hover:-translate-y-[4px]">
+                &#8599;
+              </span>
+              <h3 class="text-lead group-hover:underline group-hover:underline-offset-4">{post.data.title}</h3>
+            </a>
+            <div class="rule" />
+          </li>
+        ))
+      }
+    </ol>
   </div>
 </section>

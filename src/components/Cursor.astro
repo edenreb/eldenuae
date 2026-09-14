@@ -17,21 +17,21 @@
 // changes were ever the actual fix, which means none of them were ever
 // required either.
 // - #cursor-dot: the default/hover circle. mix-blend-mode: difference so
-//   it auto-inverts against both photography and flat ink. Fixed 40px
+//   it auto-inverts against both photography and flat paper. Fixed 40px
 //   box, only ever animates `scale` (transform, no layout) — tweening
 //   `width`/`height` on a blend-mode element is a real, separate Chrome
 //   compositing hazard (this file's git history has that bug); keeping
 //   the box constant and only scaling it avoids it regardless of the
-//   freeze investigation above. Fill is pure #fff, not --color-cream:
+//   freeze investigation above. Fill is pure #fff, not --color-paper:
 //   difference math is 255-minus-the-background-channel, so a near-white
 //   source only ever produces another near-white result — true white is
-//   what actually negates the photo/ink behind it. No will-change on
+//   what actually negates the photo/paper behind it. No will-change on
 //   this element, and its x/y transform lives on the element itself
 //   rather than a wrapper — both are real, separate bugs this file has
 //   already hit (Chrome layer-promotion-vs-blend and stacking-context
 //   confinement, respectively), unrelated to the freeze, and still avoided here.
 // - #cursor-pill: the "Open ↗" state. Fixed 92x36 box, only scale+opacity,
-//   plain `bg-cream`, no blend mode — it's already a solid label.
+//   solid ink with a paper hairline, no blend mode — it's already a label.
 const label = "Open";
 ---
 
@@ -44,10 +44,10 @@ const label = "Open";
   </div>
   <div
     id="cursor-pill"
-    class="pointer-events-none fixed left-0 top-0 flex items-center justify-center overflow-hidden bg-cream opacity-0"
-    style="width: 92px; height: 36px; border: 1px solid var(--color-ink); z-index: var(--z-cursor);"
+    class="pointer-events-none fixed left-0 top-0 flex items-center justify-center overflow-hidden bg-ink opacity-0"
+    style="width: 92px; height: 36px; border: 1px solid var(--color-paper); z-index: var(--z-cursor);"
   >
-    <span id="cursor-label" class="whitespace-nowrap px-[14px] text-caption text-[var(--color-brand-navy)]">{label} &#8599;</span>
+    <span id="cursor-label" class="meta whitespace-nowrap px-[14px] text-paper">{label} &#8599;</span>
   </div>
 </div>
 

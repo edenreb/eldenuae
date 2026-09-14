@@ -1,27 +1,30 @@
 ---
-// About teaser — display-scale paragraph + CTA, matching the reference's
-// own "For over a decade..." section.
+// Studio statement — label in the left margin, one large paragraph filling
+// the rest of the row, brightening word by word as it scrolls through.
 import Button from "./Button.astro";
-
-const PARAGRAPHS = [
-  "Elden was founded in 2014 after seeing the inefficiencies of watching good design get misinterpreted by someone else's fitout crew.",
-  "Today we're one turnkey studio that takes your project from first sketch to opening day, across fitness, F&B, retail, workplace, and hospitality throughout the UAE.",
-  "Our vision is to become the customer's first choice and a benchmark company in providing quality interior design and fit-out services across the region.",
-];
+import Eyebrow from "./Eyebrow.astro";
 ---
 
-<section class="px-[24px] py-[96px] md:px-[32px] md:py-[144px]">
-  <div class="mx-auto max-w-[1440px]">
-    <!-- max-w on the paragraphs, not the wrapper: `ch` resolves against the
-         element's own font-size, so on a body-sized wrapper 30ch is a much
-         narrower column than the same value on text-heading. -->
-    <div class="flex flex-col gap-[24px]">
-      {PARAGRAPHS.map((text) => (
-        <p class="max-w-[30ch] text-heading text-cream" data-scroll-words>{text}</p>
-      ))}
+<section class="gutter pt-[120px] pb-[72px] md:pt-[200px] md:pb-[112px]">
+  <div class="grid grid-cols-1 gap-y-[28px] md:grid-cols-12 md:gap-x-[24px]">
+    <div class="md:col-span-3">
+      <Eyebrow>Studio</Eyebrow>
     </div>
-    <div class="mt-[32px]">
-      <Button href="/about" label="View More About Us" />
+    <div class="md:col-span-9">
+      <p class="max-w-[32ch] text-statement" data-scroll-words>
+        Elden was founded in 2014 after seeing the inefficiencies of watching good design get misinterpreted by
+        someone else's fitout crew. Today we're one turnkey studio that takes your project from first sketch to
+        opening day, across fitness, F&amp;B, retail, workplace, and hospitality throughout the UAE.
+      </p>
+      <div class="mt-[40px] grid grid-cols-1 gap-[28px] md:grid-cols-9 md:gap-x-[24px]">
+        <p class="max-w-[46ch] text-body text-muted md:col-span-5">
+          Our vision is to become the customer's first choice and a benchmark company in providing quality interior
+          design and fit-out services across the region.
+        </p>
+        <div class="md:col-span-4 md:justify-self-end md:self-end">
+          <Button href="/about" label="About the studio" />
+        </div>
+      </div>
     </div>
   </div>
 </section>
