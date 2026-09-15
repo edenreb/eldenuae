@@ -64,11 +64,11 @@ const styles = cellStyles(projects.length);
     <div class="rule"></div>
   </div>
 
-  <!-- Mosaic: rows of 3–4 tiles on a 24-column grid with a hairline gap.
+  <!-- Mosaic: rows of 3–4 tiles on a 24-column grid with a thin frame gap.
        Row heights and column spans come from src/scripts/mosaic.ts as
        inline custom properties per breakpoint, recomputed over the visible
        tiles after every filter so rows always close flush. -->
-  <section class="gutter pt-[4px] pb-[120px] md:pb-[200px]">
+  <section class="gutter pt-[8px] pb-[120px] lg:pt-[12px] md:pb-[200px]">
     <div id="project-grid" class="project-grid">
       {projects.map((project, i) => (
         <a
@@ -78,7 +78,6 @@ const styles = cellStyles(projects.length);
           data-year={project.data.year}
           style={styles[i]}
           class="project-card group relative block cursor-pointer overflow-hidden bg-ink"
-          data-reveal
         >
           <Picture
             src={project.data.cover}
@@ -111,7 +110,14 @@ const styles = cellStyles(projects.length);
   .project-grid {
     display: grid;
     grid-template-columns: repeat(24, minmax(0, 1fr));
-    gap: 4px;
+    /* Photobooth-strip margin: enough to read as a frame edge, not a gutter. */
+    gap: 8px;
+  }
+
+  @media (width >= 64rem) {
+    .project-grid {
+      gap: 12px;
+    }
   }
 
   .project-card {
@@ -151,6 +157,23 @@ const styles = cellStyles(projects.length);
     if (!buttons.length || !yearSelect || !grid) return;
 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // "Develop" reveal, like a photobooth print coming up: each row of tiles
+    // fades in from dark and desaturated, left to right.
+    const hidden = { opacity: 0, filter: "grayscale(1) brightness(0.4) blur(6px)" };
+    const develop = (targets: Element[]) =>
+      gsap.to(targets, {
+        opacity: 1,
+        filter: "grayscale(0) brightness(1) blur(0px)",
+        duration: 1.1,
+        ease: "power2.out",
+        stagger: 0.08,
+        clearProps: "opacity,filter",
+      });
+    if (!reduce) {
+      gsap.set(cards, hidden);
+      ScrollTrigger.batch(cards, { start: "top 92%", once: true, onEnter: develop });
+    }
 
     let sector = "All";
     const matches = (card: HTMLAnchorElement) =>
@@ -196,11 +219,8 @@ const styles = cellStyles(projects.length);
         .to(grid, { opacity: 0, duration: 0.22, ease: "power2.in" })
         .add(layout)
         .set(grid, { opacity: 1 })
-        .fromTo(
-          cards.filter(matches),
-          { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.03, clearProps: "opacity,transform" },
-        );
+        .set(cards.filter(matches), hidden)
+        .add(() => develop(cards.filter(matches)));
     };
 
     buttons.forEach((btn) => {

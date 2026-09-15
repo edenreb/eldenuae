@@ -2,7 +2,7 @@
 title: "Holiday Inn - Al Barsha"
 client: "Holiday Inn Hotels"
 sector: "Hospitality"
-year: 2022
+year: 2025
 location: "Al Barsha 1, Dubai"
 scope: ["Fitout", "MEP"]
 tier: "hero"
