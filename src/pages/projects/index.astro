@@ -68,7 +68,7 @@ const styles = cellStyles(projects.length);
        Row heights and column spans come from src/scripts/mosaic.ts as
        inline custom properties per breakpoint, recomputed over the visible
        tiles after every filter so rows always close flush. -->
-  <section class="gutter pt-[8px] pb-[120px] lg:pt-[12px] md:pb-[200px]">
+  <section class="gutter pt-[12px] pb-[120px] lg:pt-[20px] md:pb-[200px]">
     <div id="project-grid" class="project-grid">
       {projects.map((project, i) => (
         <a
@@ -111,12 +111,12 @@ const styles = cellStyles(projects.length);
     display: grid;
     grid-template-columns: repeat(24, minmax(0, 1fr));
     /* Photobooth-strip margin: enough to read as a frame edge, not a gutter. */
-    gap: 8px;
+    gap: 12px;
   }
 
   @media (width >= 64rem) {
     .project-grid {
-      gap: 12px;
+      gap: 20px;
     }
   }
 
