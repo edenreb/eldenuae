@@ -1,8 +1,8 @@
 ---
 // Scroll-scrubbed walkthrough. The video is exported as one WebP per frame
 // (tools/video-to-frames.mjs) and painted onto a full-viewport canvas that
-// sticks while its 400vh track scrolls past; scroll progress picks the
-// frame. An image sequence rather than scrubbing <video>.currentTime:
+// sticks while its 400vh track scrolls past; scroll progress, from the
+// moment it enters to the moment it leaves, picks the frame. An image sequence rather than scrubbing <video>.currentTime:
 // seeking compressed video snaps to keyframes and stutters, worst in Safari.
 import fs from "node:fs";
 import path from "node:path";
@@ -47,11 +47,9 @@ const [name, place] = project.data.title.split(/\s+[-—]\s+/);
     >
     </div>
 
-    <!-- Title centred on the frame, in its own soft pool of shade. It holds
-         through the opening of the walkthrough, clears for the middle, and
-         returns for the closing frames; the bottom bar stays throughout. -->
+    <!-- Title centred on the frame, in its own soft pool of shade, held for
+         the whole walkthrough alongside the bottom bar. -->
     <div
-      id="sequence-title"
       class="gutter pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center"
       style="background: radial-gradient(ellipse 70% 50% at 50% 50%, rgb(0 0 0 / 0.55), rgb(0 0 0 / 0) 72%);"
     >
@@ -164,24 +162,17 @@ const [name, place] = project.data.title.split(/\s+[-—]\s+/);
         target = state.frame;
         draw();
       },
-      scrollTrigger: { trigger: section, start: "top top", end: "bottom bottom", scrub: 0.3 },
+      // The whole time the section is on screen, not just while it sticks:
+      // frames are already playing as it scrolls in and keep playing as it
+      // scrolls out, so the motion never starts or stops on a hard edge.
+      // Track split: ~1 screen in, 3 stuck, ~1 out — about 30 frames each end.
+      scrollTrigger: { trigger: section, start: "top bottom", end: "bottom top", scrub: 0.3 },
     });
-
-    // Title timeline on the same scroll track as the frames. Durations are
-    // shares of the track: hold 40, out 10, clear 35, back in 10, hold 5.
-    const title = document.getElementById("sequence-title");
-    const titleFade = gsap
-      .timeline({ scrollTrigger: { trigger: section, start: "top top", end: "bottom bottom", scrub: 0.3 } })
-      .to(title, { opacity: 0, y: -40, duration: 10, ease: "power1.in" }, 40)
-      .set(title, { y: 40 }, 85)
-      .to(title, { opacity: 1, y: 0, duration: 10, ease: "power1.out" }, 85)
-      .to({}, { duration: 5 });
 
     cleanup = () => {
       window.removeEventListener("resize", resize);
       loader.disconnect();
       tween.kill();
-      titleFade.kill();
       cleanup = null;
     };
   }

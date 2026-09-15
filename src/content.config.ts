@@ -13,7 +13,6 @@ const projects = defineCollection({
         "Retail",
         "Workplace",
         "Hospitality",
-        "Wellness",
       ]),
       year: z.number(),
       location: z.string(),
