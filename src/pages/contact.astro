@@ -42,13 +42,13 @@ const details = [
         </div>
         {/* A mailto: does nothing without a mail client — keep the address copyable. */}
         <p class="meta mt-[20px] text-muted">
-          Or write to <a href={`mailto:${MAIL}`} class="cursor-pointer text-ink normal-case underline underline-offset-4">{MAIL}</a>
+          Or write to <a href={`mailto:${MAIL}`} class="cursor-pointer text-paper normal-case underline underline-offset-4">{MAIL}</a>
         </p>
       </div>
 
       <dl class="md:col-span-6 md:col-start-7">
         {details.map((d) => (
-          <div class="border-t border-ink/15 py-[24px] md:py-[32px]">
+          <div class="border-t border-paper/15 py-[24px] md:py-[32px]">
             <dt class="meta text-muted">{d.label}</dt>
             <dd class="mt-[12px] text-statement">
               {d.href ? (
@@ -61,7 +61,7 @@ const details = [
             </dd>
           </div>
         ))}
-        <div class="border-y border-ink/15 py-[24px] md:py-[32px]">
+        <div class="border-y border-paper/15 py-[24px] md:py-[32px]">
           <dt class="meta text-muted">Follow along</dt>
           <dd class="mt-[12px] text-lead">
             <SocialLinks />

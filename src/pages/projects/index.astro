@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import { getCollection } from "astro:content";
 import { Picture } from "astro:assets";
+import { cellStyles } from "../../scripts/mosaic";
 
 const projects = (await getCollection("projects")).sort((a, b) => b.data.year - a.data.year);
 
@@ -10,6 +11,7 @@ const countFor = (sector: string) =>
   sector === "All" ? projects.length : projects.filter((p) => p.data.sector === sector).length;
 // Only years that actually have a project.
 const years = [...new Set(projects.map((p) => p.data.year))].sort((a, b) => b - a);
+const styles = cellStyles(projects.length);
 ---
 
 <Base
@@ -19,7 +21,7 @@ const years = [...new Set(projects.map((p) => p.data.year))].sort((a, b) => b - 
   <h1 class="sr-only">Projects</h1>
 
   <!-- Sector tabs at display scale, centred; inactive tabs sit back in the
-       ghost grey (3.3:1 — passes as large text only, which these always
+       ghost grey (3.7:1 — passes as large text only, which these always
        are). Styling keys off aria-pressed, so the script only flips state. -->
   <section class="gutter pt-[48px] pb-[40px] md:pt-[88px] md:pb-[64px]">
     <div
@@ -34,7 +36,7 @@ const years = [...new Set(projects.map((p) => p.data.year))].sort((a, b) => b - 
             type="button"
             data-sector={sector}
             aria-pressed={sector === "All" ? "true" : "false"}
-            class="sector-filter cursor-pointer text-ghost uppercase transition-colors duration-300 hover:text-ink aria-pressed:text-ink"
+            class="sector-filter cursor-pointer text-ghost uppercase transition-colors duration-300 hover:text-paper aria-pressed:text-paper"
           >
             {sector}<sup aria-hidden="true" class="meta ml-[0.2em] align-super">{countFor(sector)}</sup>
           </button>
@@ -50,59 +52,50 @@ const years = [...new Set(projects.map((p) => p.data.year))].sort((a, b) => b - 
         {projects.length} projects
       </p>
 
-      <div class="flex items-center gap-[32px]">
-        <label class="relative flex items-center">
-          <span class="sr-only">Filter by year</span>
-          <select id="year-filter" class="cursor-pointer appearance-none bg-transparent pr-[22px] text-label uppercase">
-            <option value="All">Year</option>
-            {years.map((year) => <option value={year}>{year}</option>)}
-          </select>
-          <span aria-hidden="true" class="pointer-events-none absolute right-0 text-[9px]">&#9660;</span>
-        </label>
-
-        <div role="group" aria-label="Grid density" class="hidden items-center gap-[14px] text-label lg:flex">
-          <button type="button" data-cols="2" aria-label="2 columns" aria-pressed="false" class="col-toggle cursor-pointer text-ghost hover:text-ink aria-pressed:text-ink">2</button>
-          <button type="button" data-cols="4" aria-label="4 columns" aria-pressed="true" class="col-toggle cursor-pointer text-ghost hover:text-ink aria-pressed:text-ink">4</button>
-        </div>
-      </div>
+      <label class="relative flex items-center">
+        <span class="sr-only">Filter by year</span>
+        <select id="year-filter" class="cursor-pointer appearance-none bg-transparent pr-[22px] text-label uppercase">
+          <option value="All">Year</option>
+          {years.map((year) => <option value={year}>{year}</option>)}
+        </select>
+        <span aria-hidden="true" class="pointer-events-none absolute right-0 text-[9px]">&#9660;</span>
+      </label>
     </div>
     <div class="rule"></div>
   </div>
 
-  <section class="gutter pt-[16px] pb-[120px] md:pb-[200px]">
-    <div id="project-grid" data-cols="4" class="project-grid grid grid-cols-1 gap-x-[16px] gap-y-[40px] sm:grid-cols-2 lg:gap-y-[16px]">
+  <!-- Mosaic: rows of 3–4 tiles on a 24-column grid with a hairline gap.
+       Row heights and column spans come from src/scripts/mosaic.ts as
+       inline custom properties per breakpoint, recomputed over the visible
+       tiles after every filter so rows always close flush. -->
+  <section class="gutter pt-[4px] pb-[120px] md:pb-[200px]">
+    <div id="project-grid" class="project-grid">
       {projects.map((project, i) => (
         <a
           href={`/projects/${project.id}`}
           data-cursor="open"
           data-sector={project.data.sector}
           data-year={project.data.year}
-          class="project-card group block cursor-pointer"
+          style={styles[i]}
+          class="project-card group relative block cursor-pointer overflow-hidden bg-ink"
+          data-reveal
         >
-          <div class="card-media relative overflow-hidden bg-ink">
-            <Picture
-              src={project.data.cover}
-              alt={`${project.data.title} — ${project.data.sector.toLowerCase()} fitout by Elden`}
-              formats={["avif", "webp"]}
-              widths={[500, 800, 1200]}
-              sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-              loading={i < 4 ? "eager" : "lazy"}
-              class="h-full w-full object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:scale-[1.05]"
-            />
-            {/* Hover title, pointer-fine only — a touch device gets the
-                caption below instead, so only one of the two is ever
-                rendered (and read). */}
-            <div class="pointer-events-none absolute inset-0 hidden flex-col items-center justify-end bg-gradient-to-t from-black/75 via-black/15 to-transparent p-[24px] text-center text-paper opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100 pointer-fine:flex">
-              <h2 class="text-title uppercase">{project.data.title}</h2>
-              <p class="meta mt-[10px]">{project.data.location}</p>
+          <Picture
+            src={project.data.cover}
+            alt={`${project.data.title} — ${project.data.sector.toLowerCase()} fitout by Elden`}
+            formats={["avif", "webp"]}
+            widths={[500, 800, 1200, 1600]}
+            sizes="(min-width: 1024px) 45vw, (min-width: 640px) 60vw, 100vw"
+            loading={i < 6 ? "eager" : "lazy"}
+            class="h-full w-full scale-[1.14] object-cover transition-[scale] duration-[1200ms] ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:scale-[1.2]"
+            data-parallax="0.06"
+          />
+          <div class="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-[rgb(6_8_20_/_0.8)] via-[rgb(6_8_20_/_0.1)] via-45% to-transparent p-[12px] transition-colors duration-500 md:p-[16px]">
+            <div class="flex items-end justify-between gap-[12px]">
+              <h2 class="text-[0.8125rem] leading-[1.15] font-medium uppercase md:text-label md:leading-[1.15]">{project.data.title}</h2>
+              <span class="meta hidden shrink-0 text-muted sm:inline">{project.data.year}</span>
             </div>
-          </div>
-          <div class="pointer-fine:hidden">
-            <div class="mt-[12px] flex items-baseline justify-between gap-[12px]">
-              <h2 class="text-label uppercase">{project.data.title}</h2>
-              <span class="meta shrink-0 text-muted">{project.data.year}</span>
-            </div>
-            <p class="meta mt-[6px] text-muted">{project.data.sector} — {project.data.location}</p>
+            <p class="meta mt-[6px] hidden text-muted sm:block">{project.data.sector}</p>
           </div>
         </a>
       ))}
@@ -115,28 +108,44 @@ const years = [...new Set(projects.map((p) => p.data.year))].sort((a, b) => b - 
 </Base>
 
 <style>
-  .card-media {
-    aspect-ratio: 3 / 4;
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(24, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .project-card {
+    grid-column: span var(--span-sm);
+    height: calc(var(--h-sm) * 1vw);
+  }
+
+  @media (width >= 40rem) {
+    .project-card {
+      grid-column: span var(--span-md);
+      height: calc(var(--h-md) * 1vw);
+    }
   }
 
   @media (width >= 64rem) {
-    .project-grid[data-cols="4"] {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-    }
-    .project-grid[data-cols="2"] .card-media {
-      aspect-ratio: 4 / 3;
+    .project-card {
+      grid-column: span var(--span-lg);
+      height: calc(var(--h-lg) * 1vw);
     }
   }
 </style>
 
 <script>
   import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { cellStyles } from "../../scripts/mosaic";
+
+  gsap.registerPlugin(ScrollTrigger);
 
   function initFilters() {
     const buttons = document.querySelectorAll<HTMLButtonElement>(".sector-filter");
     const yearSelect = document.getElementById("year-filter") as HTMLSelectElement | null;
     const grid = document.getElementById("project-grid");
-    const cards = document.querySelectorAll<HTMLAnchorElement>(".project-card");
+    const cards = [...document.querySelectorAll<HTMLAnchorElement>(".project-card")];
     const status = document.getElementById("filter-status");
     const empty = document.getElementById("empty-state");
     if (!buttons.length || !yearSelect || !grid) return;
@@ -148,45 +157,50 @@ const years = [...new Set(projects.map((p) => p.data.year))].sort((a, b) => b - 
       (sector === "All" || card.dataset.sector === sector) &&
       (yearSelect.value === "All" || card.dataset.year === yearSelect.value);
 
-    // Cancellable: a second change before the first animation finishes
-    // kills it and starts clean rather than fighting over `display`.
+    // Show the matches and re-tile them in visible order.
+    const layout = () => {
+      const visible = cards.filter(matches);
+      const styles = cellStyles(visible.length);
+      cards.forEach((card) => (card.style.display = "none"));
+      visible.forEach((card, i) => {
+        card.style.display = "";
+        // Property by property, not cssText — GSAP's inline reveal state lives
+        // in the same style attribute.
+        for (const decl of styles[i].split(";")) {
+          const [prop, value] = decl.split(":");
+          card.style.setProperty(prop, value);
+        }
+      });
+      if (status) status.textContent = `${visible.length} project${visible.length === 1 ? "" : "s"}`;
+      if (empty) empty.hidden = visible.length > 0;
+      // Every tile moved and resized; parallax and reveal triggers re-measure.
+      ScrollTrigger.refresh();
+    };
+
+    // Cancellable: a second change mid-transition kills the first.
     let current: gsap.core.Timeline | null = null;
 
     const applyFilter = () => {
       buttons.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.sector === sector)));
-
-      const showing: HTMLAnchorElement[] = [];
-      const hiding: HTMLAnchorElement[] = [];
-      cards.forEach((card) => {
-        const match = matches(card);
-        const wasHidden = card.style.display === "none";
-        if (match && wasHidden) showing.push(card);
-        else if (!match && !wasHidden) hiding.push(card);
-      });
-
-      const visible = [...cards].filter(matches).length;
-      if (status) status.textContent = `${visible} project${visible === 1 ? "" : "s"}`;
-      if (empty) empty.hidden = visible > 0;
-
       current?.kill();
-      if (reduce || (!showing.length && !hiding.length)) {
-        cards.forEach((card) => {
-          card.style.display = matches(card) ? "" : "none";
-          gsap.set(card, { clearProps: "opacity,scale" });
-        });
+
+      if (reduce) {
+        layout();
         return;
       }
 
-      const tl = gsap.timeline({ onComplete: () => (current = null) });
-      current = tl;
-      if (hiding.length) {
-        tl.to(hiding, { opacity: 0, scale: 0.97, duration: 0.22, ease: "power2.in", stagger: 0.012 });
-      }
-      tl.set(hiding, { display: "none" });
-      tl.set(showing, { display: "", opacity: 0, scale: 0.97 });
-      if (showing.length) {
-        tl.to(showing, { opacity: 1, scale: 1, duration: 0.35, ease: "power2.out", stagger: 0.025 });
-      }
+      // The whole mosaic re-tiles, so move it as one: fade out, re-lay while
+      // invisible, bring the new set in on a quick stagger.
+      current = gsap
+        .timeline({ onComplete: () => (current = null) })
+        .to(grid, { opacity: 0, duration: 0.22, ease: "power2.in" })
+        .add(layout)
+        .set(grid, { opacity: 1 })
+        .fromTo(
+          cards.filter(matches),
+          { opacity: 0, y: 20 },
+          { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: 0.03, clearProps: "opacity,transform" },
+        );
     };
 
     buttons.forEach((btn) => {
@@ -196,13 +210,6 @@ const years = [...new Set(projects.map((p) => p.data.year))].sort((a, b) => b - 
       });
     });
     yearSelect.addEventListener("change", applyFilter);
-
-    document.querySelectorAll<HTMLButtonElement>(".col-toggle").forEach((btn, _, all) => {
-      btn.addEventListener("click", () => {
-        grid.dataset.cols = btn.dataset.cols;
-        all.forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
-      });
-    });
 
     // Deep-link support, e.g. /projects?sector=Fitness
     const requested = new URLSearchParams(location.search).get("sector");

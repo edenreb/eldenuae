@@ -1,8 +1,10 @@
 ---
+import { Picture } from "astro:assets";
 import Button from "./Button.astro";
 import Eyebrow from "./Eyebrow.astro";
 import Logo from "./Logo.astro";
 import SocialLinks from "./SocialLinks.astro";
+import ctaImage from "../assets/holiday-inn/7.jpg";
 
 const year = new Date().getFullYear();
 
@@ -21,29 +23,50 @@ const pages = [
 ];
 ---
 
-<footer class="overflow-hidden bg-ink text-paper">
-  <div class="gutter pt-[120px] md:pt-[200px]">
-    <Eyebrow>Contact</Eyebrow>
-    <h2 class="mt-[28px] text-display uppercase">
-      Have a space<br />in mind? <em class="accent">Let's talk.</em>
-    </h2>
-    <div class="mt-[40px] flex flex-wrap items-center gap-x-[32px] gap-y-[20px] md:mt-[56px]">
-      <Button href="/contact" label="Start a project" tone="paper" reload={isSamePage("/contact")} />
-      <a href="mailto:info@eldenuae.com" class="cursor-pointer text-lead underline-offset-[6px] hover:underline">
-        info@eldenuae.com
-      </a>
-    </div>
+<footer class="overflow-hidden">
+  <!-- Closing CTA on a darkened photograph. The gradient starts and ends at
+       exactly the canvas navy, so the image dissolves out of the section
+       above and into the link columns below with no visible edge. -->
+  <div class="relative isolate flex min-h-[85svh] flex-col items-center justify-center py-[120px] text-center md:min-h-[100svh]">
+    <Picture
+      src={ctaImage}
+      alt=""
+      formats={["avif", "webp"]}
+      widths={[828, 1280, 1624]}
+      sizes="100vw"
+      loading="lazy"
+      class="absolute inset-0 -z-10 h-full w-full object-cover"
+    />
+    <div class="footer-shade absolute inset-0 -z-10" aria-hidden="true"></div>
 
-    <div class="rule mt-[96px] md:mt-[160px]"></div>
+    <div class="gutter flex flex-col items-center">
+      <Eyebrow>Contact</Eyebrow>
+      <h2 class="mt-[28px] text-display uppercase">
+        Have a space<br />in mind? <em class="accent">Let's talk.</em>
+      </h2>
+      <div class="mt-[40px] flex flex-wrap items-center justify-center gap-x-[32px] gap-y-[20px] md:mt-[56px]">
+        <Button href="/contact" label="Start a project" reload={isSamePage("/contact")} />
+        <a href="mailto:info@eldenuae.com" class="cursor-pointer text-lead underline-offset-[6px] hover:underline">
+          info@eldenuae.com
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="gutter">
+    <div class="rule"></div>
 
     <div class="grid grid-cols-2 gap-x-[24px] gap-y-[40px] py-[40px] md:grid-cols-12 md:py-[56px]">
-      <p class="col-span-2 max-w-[30ch] text-body text-mist md:col-span-4">
-        Turnkey interior design and fit-out for the UAE&rsquo;s fitness, F&amp;B, retail, workplace and hospitality
-        brands.
-      </p>
+      <div class="col-span-2 md:col-span-4">
+        <Logo class="h-[32px] w-auto" />
+        <p class="mt-[16px] max-w-[30ch] text-body text-muted">
+          Turnkey interior design and fit-out for the UAE&rsquo;s fitness, F&amp;B, retail, workplace and hospitality
+          brands.
+        </p>
+      </div>
 
       <div class="md:col-span-2 md:col-start-7">
-        <p class="meta text-mist">Pages</p>
+        <p class="meta text-muted">Pages</p>
         <ul class="mt-[16px] flex flex-col gap-[8px]">
           {pages.map((link) => (
             <li>
@@ -60,12 +83,12 @@ const pages = [
       </div>
 
       <div class="md:col-span-2">
-        <p class="meta text-mist">Connect</p>
+        <p class="meta text-muted">Connect</p>
         <SocialLinks class="mt-[16px]" />
       </div>
 
       <div class="col-span-2 md:col-span-2">
-        <p class="meta text-mist">Visit</p>
+        <p class="meta text-muted">Visit</p>
         <ul class="mt-[16px] flex flex-col gap-[8px]">
           <li>Dubai, United Arab Emirates</li>
           <li><a href="tel:+97142276206" class="cursor-pointer underline-offset-4 hover:underline">+971 4 227 6206</a></li>
@@ -74,7 +97,7 @@ const pages = [
       </div>
     </div>
 
-    <div class="meta flex flex-col gap-[8px] pb-[24px] text-mist md:flex-row md:items-center md:justify-between">
+    <div class="meta flex flex-col gap-[8px] pb-[24px] text-muted md:flex-row md:items-center md:justify-between">
       <p>&copy; {year} Elden Interiors LLC</p>
       <p class="flex gap-[20px]">
         <a href="/privacy" data-astro-reload={isSamePage("/privacy") ? true : undefined} class="cursor-pointer hover:text-paper">Privacy</a>
@@ -82,9 +105,14 @@ const pages = [
       </p>
     </div>
   </div>
-
-  <!-- The wordmark at full width, cut off by the page's bottom edge. -->
-  <div class="gutter" aria-hidden="true">
-    <Logo class="block h-auto w-full translate-y-[18%]" />
-  </div>
 </footer>
+
+<style>
+  /* Vignette pooled around the headline, fading to solid canvas navy at
+     the top and bottom edges. */
+  .footer-shade {
+    background:
+      radial-gradient(ellipse 80% 65% at 50% 45%, rgb(9 12 30 / 0.2) 0%, rgb(9 12 30 / 0.42) 55%, rgb(9 12 30 / 0.85) 100%),
+      linear-gradient(to bottom, var(--color-ink) 0%, rgb(9 12 30 / 0) 18%, rgb(9 12 30 / 0) 68%, var(--color-ink) 100%);
+  }
+</style>

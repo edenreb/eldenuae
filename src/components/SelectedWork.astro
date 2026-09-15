@@ -1,69 +1,176 @@
 ---
-// Six featured projects on a staggered 12-column grid — landscape and
-// portrait frames alternating sides, the right-hand frame of each pair
-// dropped below its partner. One layout for every input device: nothing
-// here depends on hover to be understood.
+// Two mechanics for the same six projects, split by pointer capability
+// rather than viewport width — "hover to expand" has no equivalent on a
+// device that can't hover.
+//
+//   pointer: fine        → hover accordion, the hovered/focused panel grows
+//                          (CSS only)
+//   pointer: coarse/none → full-viewport stacked cards, each pinned while
+//                          the next scrolls up over it (GSAP ScrollTrigger)
+//
+// Both render; Tailwind's `pointer-fine:` variant picks which one shows —
+// the same boundary Cursor.astro draws for its hover-only cursor.
 import { getCollection } from "astro:content";
 import { Picture } from "astro:assets";
 import Button from "./Button.astro";
 import Eyebrow from "./Eyebrow.astro";
 
-const all = await getCollection("projects");
-const projects = all
-  .filter((p) => p.data.featured || p.data.tier === "hero")
-  .sort((a, b) => b.data.year - a.data.year)
-  .slice(0, 6);
+// Hand-picked, in display order — edit this list to change the row.
+const FEATURED = ["natureland", "meinhardt-office", "whgym-difc", "anantara-penthouse", "bikanervala", "haldiram"];
 
-// Desktop placement per slot. Pairs share a row: (0,1) (2,3) (4,5).
-const layout = [
-  { col: "md:col-span-7", frame: "md:aspect-[4/3]" },
-  { col: "md:col-span-4 md:col-start-9 md:mt-[200px]", frame: "md:aspect-[3/4]" },
-  { col: "md:col-span-4 md:col-start-2", frame: "md:aspect-[3/4]" },
-  { col: "md:col-span-6 md:col-start-7 md:mt-[260px]", frame: "md:aspect-[4/3]" },
-  { col: "md:col-span-6", frame: "md:aspect-[4/3]" },
-  { col: "md:col-span-4 md:col-start-9 md:mt-[180px]", frame: "md:aspect-[3/4]" },
-];
+const all = await getCollection("projects");
+const projects = FEATURED.map((id) => all.find((p) => p.id === id)).filter((p) => p !== undefined);
 ---
 
-<section class="gutter pb-[120px] md:pb-[200px]">
+<section class="gutter pb-[48px] md:pb-[72px]">
   <div class="flex flex-col gap-[24px] md:flex-row md:items-end md:justify-between">
     <div>
       <Eyebrow>Projects</Eyebrow>
-      <h2 class="mt-[20px] text-heading uppercase" data-reveal-words>Selected work</h2>
+      <h2 class="mt-[20px] text-heading uppercase" data-reveal-words>Featured projects</h2>
     </div>
     <p class="max-w-[34ch] text-body text-muted md:text-right">
       Recent fitouts across the UAE — designed, built and handed over by one team.
     </p>
   </div>
+</section>
 
-  <div class="mt-[56px] grid grid-cols-1 gap-y-[56px] md:mt-[112px] md:grid-cols-12 md:gap-x-[24px] md:gap-y-[128px]">
-    {
-      projects.map((project, i) => (
-        <a href={`/projects/${project.id}`} data-cursor="open" class:list={["group block cursor-pointer", layout[i].col]}>
-          <div class:list={["aspect-[4/3] overflow-hidden bg-ink", layout[i].frame]} data-reveal>
+<!-- Hover accordion. Sized by flex-grow on a basis-0 row, not by
+     transitioning width: with width, only the hovered panel eased while its
+     five siblings snapped around it every frame, which read as stutter.
+     With grow, every panel's width is its share of one sum on the same
+     curve, so the whole row redistributes in lockstep. Siblings must keep
+     the default flex-shrink — shrink-0 leaves the hovered panel nowhere to
+     take space from. -->
+<div class="hidden pointer-fine:block">
+  <div class="gutter">
+    <div class="flex h-[360px] w-full gap-[8px] overflow-x-auto sm:h-[460px] md:h-[560px]">
+      {
+        projects.map((project, i) => (
+          <a
+            href={`/projects/${project.id}`}
+            data-cursor="open"
+            class="group relative h-full grow basis-0 overflow-hidden rounded-lg bg-ink transition-[flex-grow] duration-500 ease-[cubic-bezier(0.44,0,0.56,1)] hover:grow-[6] focus-visible:grow-[6]"
+          >
+            {/* Sized for the worst case: a hovered panel claiming ~55% of the row. */}
             <Picture
               src={project.data.cover}
               alt={`${project.data.title} — ${project.data.sector.toLowerCase()} fitout by Elden`}
               formats={["avif", "webp"]}
-              widths={[600, 900, 1300]}
-              sizes="(min-width: 768px) 55vw, 100vw"
-              loading="lazy"
-              class="h-full w-full object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:scale-[1.04]"
+              widths={[400, 700, 1100, 1600]}
+              sizes="55vw"
+              loading={i < 2 ? "eager" : "lazy"}
+              class="h-full w-full object-cover object-center"
+              data-reveal-media
             />
-          </div>
-          <div class="mt-[16px] flex items-baseline justify-between gap-[16px]">
-            <h3 class="text-title uppercase">{project.data.title}</h3>
-            <span class="meta shrink-0 text-muted">{project.data.year}</span>
-          </div>
-          <p class="meta mt-[8px] text-muted">
-            {project.data.sector} — {project.data.location}
-          </p>
-        </a>
-      ))
-    }
-  </div>
 
-  <div class="mt-[80px] flex justify-center md:mt-[140px]">
-    <Button href="/projects" label={`View all projects (${all.length})`} />
+            <div
+              aria-hidden="true"
+              class="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-[rgb(6_8_20_/_0.88)] to-transparent p-[16px] pt-[56px] opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
+            >
+              <div class="flex items-center justify-between gap-[8px]">
+                <h3 class="truncate text-label uppercase">{project.data.title}</h3>
+                <span class="flex h-[28px] w-[28px] shrink-0 items-center justify-center bg-paper text-ink transition-transform duration-300 group-hover:translate-x-[3px] group-hover:-translate-y-[3px]">
+                  &#8599;
+                </span>
+              </div>
+              <p class="meta mt-[8px] truncate text-muted">
+                {project.data.year} · {project.data.location}
+              </p>
+            </div>
+          </a>
+        ))
+      }
+    </div>
   </div>
-</section>
+</div>
+
+<!-- Card-over-card stack for touch: one 100dvh panel per project; each pins
+     for a screen of scroll while the next covers it. -->
+<div class="pointer-fine:hidden">
+  {
+    projects.map((project) => (
+      <section data-sw-card class="relative h-[100dvh] w-full overflow-hidden bg-ink">
+        <Picture
+          src={project.data.cover}
+          alt={`${project.data.title} — ${project.data.sector.toLowerCase()} fitout by Elden`}
+          formats={["avif", "webp"]}
+          widths={[800, 1400, 2000, 2600]}
+          sizes="100vw"
+          loading="lazy"
+          class="h-full w-full object-cover"
+          data-settle
+        />
+
+        <a
+          href={`/projects/${project.id}`}
+          data-cursor="open"
+          data-rise="31"
+          class="group absolute left-[16px] top-[calc(var(--header-h)+16px)] block w-[363px] max-w-[calc(100%-32px)] bg-[rgb(14_18_42_/_0.75)] p-[16px] backdrop-blur-[5px] md:left-[24px]"
+        >
+          <div class="flex items-center justify-between gap-[12px]">
+            <h3 class="text-title uppercase">{project.data.title}</h3>
+            <span
+              aria-hidden="true"
+              class="flex h-[32px] w-[32px] shrink-0 items-center justify-center bg-paper text-ink transition-transform duration-300 group-hover:translate-x-[3px] group-hover:-translate-y-[3px]"
+            >
+              &#8599;
+            </span>
+          </div>
+          <dl class="mt-[14px] flex flex-col gap-[6px]">
+            <div class="flex items-baseline justify-between gap-[12px]">
+              <dt class="meta text-muted">Year</dt>
+              <dd class="text-body">{project.data.year}</dd>
+            </div>
+            <div class="flex items-baseline justify-between gap-[12px]">
+              <dt class="meta shrink-0 text-muted">Location</dt>
+              <dd class="text-right text-body">{project.data.location}</dd>
+            </div>
+          </dl>
+        </a>
+      </section>
+    ))
+  }
+</div>
+
+<div class="gutter flex justify-center pt-[64px] pb-[120px] md:pt-[96px] md:pb-[200px]">
+  <Button href="/projects" label={`View all projects (${all.length})`} />
+</div>
+
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { whenVisible } from "../scripts/motion";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  function initSelectedWorkStack() {
+    // The stack is display:none under pointer:fine — nothing to pin there.
+    if (window.matchMedia("(pointer: fine)").matches) return;
+
+    const cards = document.querySelectorAll<HTMLElement>("[data-sw-card]");
+    if (!cards.length) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    whenVisible(() => {
+      cards.forEach((card, i) => {
+        // Later cards paint over earlier ones while both are pinned.
+        gsap.set(card, { zIndex: i + 1 });
+
+        // The last card has no next card to be covered by; pinning it would
+        // just freeze it for a screen of nothing.
+        if (i === cards.length - 1) return;
+
+        ScrollTrigger.create({
+          trigger: card,
+          start: "top top",
+          pin: true,
+          // Each card is already 100dvh in flow, so its own box is exactly
+          // the pin distance — a spacer or explicit end would double-count.
+          pinSpacing: false,
+        });
+      });
+    });
+  }
+
+  document.addEventListener("astro:page-load", initSelectedWorkStack);
+</script>

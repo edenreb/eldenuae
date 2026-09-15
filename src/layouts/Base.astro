@@ -143,9 +143,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     </a>
 
     <!-- Fixed header: links split either side of a centred wordmark (desktop),
-         wordmark + Menu (mobile). data-tone is "light" while it sits over a
-         full-bleed [data-hero] photograph and "dark" (ink on a paper wash)
-         everywhere else; the script below flips it as the hero scrolls out,
+         wordmark + Menu (mobile). data-tone is "light" (bare, straight on the
+         photo) while it sits over a full-bleed [data-hero] section and "dark"
+         (a navy wash behind it) everywhere else; the script below flips it,
          and slides the header away on scroll-down. -->
     <header
       id="site-header"
@@ -216,7 +216,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         <ul class="flex flex-col gap-[4px]">
           {links.map((link, i) => (
             <li class="flex items-start gap-[12px]">
-              <span class="meta mt-[0.6em] text-mist" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+              <span class="meta mt-[0.6em] text-muted" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
               <a
                 href={link.href}
                 aria-current={isActive(link.href) ? "page" : undefined}
@@ -232,7 +232,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
           ))}
         </ul>
       </nav>
-      <div class="meta mt-auto flex flex-col gap-[4px] pb-[calc(24px+env(safe-area-inset-bottom))] text-mist">
+      <div class="meta mt-auto flex flex-col gap-[4px] pb-[calc(24px+env(safe-area-inset-bottom))] text-muted">
         <a href="mailto:info@eldenuae.com" class="cursor-pointer normal-case">info@eldenuae.com</a>
         <a href="tel:+97142276206" class="cursor-pointer">+971 4 227 6206</a>
       </div>
@@ -259,18 +259,21 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         const menu = document.getElementById("menu");
         if (!header) return;
 
-        const hero = document.querySelector("[data-hero]");
+        const heroes = document.querySelectorAll("[data-hero]");
         let observer: IntersectionObserver | null = null;
-        if (hero) {
-          // Light while any of the hero is still under the header's own
-          // footprint; dark from the moment it has fully passed beneath.
+        if (heroes.length) {
+          // Light while any full-bleed [data-hero] section sits under the
+          // header. The root is shrunk to the top 5% strip of the viewport,
+          // i.e. roughly where the header is, in % so it survives resizes.
+          const under = new Set<Element>();
           observer = new IntersectionObserver(
-            ([entry]) => {
-              header.dataset.tone = entry.isIntersecting ? "light" : "dark";
+            (entries) => {
+              entries.forEach((e) => (e.isIntersecting ? under.add(e.target) : under.delete(e.target)));
+              header.dataset.tone = under.size ? "light" : "dark";
             },
-            { rootMargin: `-${header.offsetHeight}px 0px 0px 0px` },
+            { rootMargin: "0px 0px -95% 0px" },
           );
-          observer.observe(hero);
+          heroes.forEach((el) => observer!.observe(el));
         }
 
         let last = window.scrollY;
@@ -446,7 +449,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 <style>
   .site-header {
-    color: var(--color-ink);
+    color: var(--color-paper);
     transition:
       transform 0.45s cubic-bezier(0.44, 0, 0.56, 1),
       background-color 0.3s ease,
@@ -454,12 +457,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   }
 
   .site-header[data-tone="dark"] {
-    background: color-mix(in srgb, var(--color-paper) 88%, transparent);
+    background: color-mix(in srgb, var(--color-ink) 85%, transparent);
     backdrop-filter: blur(12px);
-  }
-
-  .site-header[data-tone="light"] {
-    color: var(--color-paper);
   }
 
   /* A keyboard user tabbing into a hidden header must see it. */

@@ -40,10 +40,24 @@ const quotes = [
       quotes.map((q, i) => (
         <blockquote class="flex flex-col">
           <div class="rule" data-reveal-rule></div>
-          <p class="meta mt-[16px] text-muted">({String(i + 1).padStart(2, "0")})</p>
+          <div class="mt-[16px] flex items-center justify-between gap-[16px]">
+            {/* Static 5/5 — no rating was ever collected from these clients;
+                presentation, not sourced data. Confirm before launch or drop it. */}
+            <p class="text-body leading-none tracking-[0.2em] text-[#d9a531]" aria-label="Rated 5 out of 5">
+              <span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            </p>
+            <p class="meta text-muted">({String(i + 1).padStart(2, "0")})</p>
+          </div>
           <p class="mt-[28px] max-w-[26ch] text-lead">&ldquo;{q.body}&rdquo;</p>
           <footer class="mt-[36px] flex items-center gap-[14px] md:mt-auto md:pt-[48px]">
-            <Image src={q.photo} alt="" width={96} height={96} class="h-[48px] w-[48px] shrink-0 object-cover grayscale" />
+            <Image
+              src={q.photo}
+              alt=""
+              width={96}
+              height={96}
+              class="h-[48px] w-[48px] shrink-0 object-cover"
+              style="border-radius: 999px;"
+            />
             <div>
               <p class="text-label uppercase">{q.name}</p>
               <p class="meta mt-[6px] text-muted">{q.role}</p>

@@ -2,8 +2,8 @@
 import Eyebrow from "./Eyebrow.astro";
 
 // 18 client logos in one scrolling row, rendered twice so translateX(-50%)
-// loops seamlessly. The supplied marks are white-on-transparent, which is
-// why this is the one dark band in the middle of the page.
+// loops seamlessly. The supplied marks are white-on-transparent, made for a
+// dark canvas like this one.
 const logos = Array.from({ length: 18 }, (_, i) => i + 1);
 
 const images = import.meta.glob<{ default: ImageMetadata }>("../assets/clients/*.png", { eager: true });
@@ -12,25 +12,25 @@ const getLogo = (n: number) => images[`../assets/clients/${n}.png`]?.default;
 const getHover = (n: number) => images[`../assets/clients/${n}_hover.png`]?.default;
 ---
 
-<section class="overflow-hidden bg-ink py-[96px] text-paper md:py-[144px]">
+<section class="overflow-hidden py-[96px] md:py-[144px]">
   <div class="gutter flex flex-col gap-[24px] md:flex-row md:items-end md:justify-between">
     <div>
       <Eyebrow>Clients</Eyebrow>
       <h2 class="mt-[20px] text-heading uppercase" data-reveal-words>Trusted by</h2>
     </div>
-    <p class="max-w-[34ch] text-body text-mist md:text-right">
+    <p class="max-w-[34ch] text-body text-muted md:text-right">
       Gym, restaurant, retail, office and hospitality brands we've delivered turnkey fitouts for across the UAE.
     </p>
   </div>
 
-  <div class="marquee-row mt-[56px] overflow-hidden border-y border-paper/15 md:mt-[88px]">
+  <div class="marquee-row mt-[56px] overflow-hidden md:mt-[88px]">
     <div class="marquee-track flex w-max items-center">
       {[...logos, ...logos].map((n, i) => {
         const logo = getLogo(n);
         const hover = getHover(n);
         return (
           <div
-            class="group relative flex h-[120px] w-[220px] shrink-0 items-center justify-center border-r border-paper/15 md:h-[160px] md:w-[300px]"
+            class="group relative flex h-[120px] w-[220px] shrink-0 items-center justify-center md:h-[160px] md:w-[300px]"
             aria-hidden={i >= logos.length ? "true" : undefined}
           >
             <img

@@ -69,7 +69,7 @@ const values = [
 
     <ol class="mt-[56px] md:mt-[96px]">
       {values.map((v, i) => (
-        <li class="grid grid-cols-1 gap-y-[14px] border-t border-ink/15 py-[32px] last:border-b md:grid-cols-12 md:gap-x-[24px] md:py-[48px]">
+        <li class="grid grid-cols-1 gap-y-[14px] border-t border-paper/15 py-[32px] last:border-b md:grid-cols-12 md:gap-x-[24px] md:py-[48px]">
           <span class="meta text-muted md:col-span-1">({String(i + 1).padStart(2, "0")})</span>
           <h3 class="text-title uppercase md:col-span-5">{v.title}</h3>
           <p class="max-w-[56ch] text-body text-muted md:col-span-6">{v.copy}</p>

@@ -1,0 +1,194 @@
+---
+// Scroll-scrubbed walkthrough. The video is exported as one WebP per frame
+// (tools/video-to-frames.mjs) and painted onto a full-viewport canvas that
+// sticks while its 400vh track scrolls past; scroll progress picks the
+// frame. An image sequence rather than scrubbing <video>.currentTime:
+// seeking compressed video snaps to keyframes and stutters, worst in Safari.
+import fs from "node:fs";
+import path from "node:path";
+import { getEntry } from "astro:content";
+import Button from "./Button.astro";
+
+const BASE = "/sequences/holiday-inn";
+// Counted at build time, so re-exporting a different-length video needs no edit.
+const frames = fs.readdirSync(path.join(process.cwd(), "public", BASE, "1920")).filter((f) => f.endsWith(".webp")).length;
+const first = (width: number) => `${BASE}/${width}/0001.webp`;
+
+const project = (await getEntry("projects", "holiday-inn"))!;
+// "Holiday Inn - Al Barsha" -> name on the first line, place in the serif accent.
+const [name, place] = project.data.title.split(/\s+[-—]\s+/);
+---
+
+<section
+  id="sequence"
+  data-hero
+  data-frames={frames}
+  data-base={BASE}
+  class="relative h-[400vh] bg-ink text-paper motion-reduce:h-[100svh]"
+  aria-label={`${project.data.title} walkthrough`}
+>
+  <div class="sticky top-0 h-[100svh] w-full overflow-hidden">
+    {/* Poster: first frame, shown until the canvas paints and all that
+        renders under reduced motion or without JS. */}
+    <img
+      src={first(1920)}
+      srcset={`${first(1280)} 1280w, ${first(1920)} 1920w`}
+      sizes="100vw"
+      alt={`Lobby of ${project.data.title}, a ${project.data.sector.toLowerCase()} fitout by Elden`}
+      loading="lazy"
+      decoding="async"
+      class="absolute inset-0 h-full w-full object-cover"
+    />
+    <canvas id="sequence-canvas" aria-hidden="true" class="absolute inset-0 h-full w-full motion-reduce:hidden"></canvas>
+    <div
+      aria-hidden="true"
+      class="pointer-events-none absolute inset-0"
+      style="background: linear-gradient(to bottom, rgb(0 0 0 / 0.4) 0%, rgb(0 0 0 / 0) 22%), linear-gradient(to top, rgb(0 0 0 / 0.6) 0%, rgb(0 0 0 / 0) 38%);"
+    >
+    </div>
+
+    <!-- Title centred on the frame, in its own soft pool of shade. It holds
+         through the opening of the walkthrough, clears for the middle, and
+         returns for the closing frames; the bottom bar stays throughout. -->
+    <div
+      id="sequence-title"
+      class="gutter pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center"
+      style="background: radial-gradient(ellipse 70% 50% at 50% 50%, rgb(0 0 0 / 0.55), rgb(0 0 0 / 0) 72%);"
+    >
+      <p class="meta">Featured project</p>
+      <h2 class="mt-[24px] text-display uppercase">
+        {name}{place && <><br /><em class="accent">{place}</em></>}
+      </h2>
+    </div>
+
+    <div class="gutter absolute inset-x-0 bottom-0 flex items-end justify-between gap-[24px] pb-[20px] md:pb-[28px]">
+      <p class="meta">
+        {project.data.sector} — {project.data.year}<br />{project.data.location}
+      </p>
+      <Button href={`/projects/${project.id}`} label="View project" class="shrink-0" />
+    </div>
+  </div>
+</section>
+
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  let cleanup: (() => void) | null = null;
+
+  function initSequence() {
+    const section = document.getElementById("sequence");
+    const canvas = document.getElementById("sequence-canvas") as HTMLCanvasElement | null;
+    const ctx = canvas?.getContext("2d");
+    if (!section || !canvas || !ctx || section.dataset.init) return;
+    section.dataset.init = "1";
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const total = Number(section.dataset.frames);
+    // Phones get the lighter set (7.9MB vs 13MB for all frames).
+    const width = window.innerWidth < 768 ? 1280 : 1920;
+    const src = (i: number) => `${section.dataset.base}/${width}/${String(i + 1).padStart(4, "0")}.webp`;
+
+    const images: HTMLImageElement[] = [];
+    const ready: boolean[] = [];
+    let target = 0; // frame scroll asks for
+    let shown = -1; // frame actually on the canvas
+
+    // Nearest decoded frame to `i`, so scrolling faster than frames arrive
+    // shows a close neighbour instead of a stale or empty canvas.
+    const nearest = (i: number) => {
+      for (let d = 0; d < total; d++) {
+        if (ready[i - d]) return i - d;
+        if (ready[i + d]) return i + d;
+      }
+      return -1;
+    };
+
+    const draw = () => {
+      const i = nearest(target);
+      if (i < 0 || i === shown) return;
+      const img = images[i];
+      // object-fit: cover, by hand.
+      const scale = Math.max(canvas.width / img.naturalWidth, canvas.height / img.naturalHeight);
+      const w = img.naturalWidth * scale;
+      const h = img.naturalHeight * scale;
+      ctx.drawImage(img, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h);
+      shown = i;
+    };
+
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(canvas.clientWidth * dpr);
+      canvas.height = Math.round(canvas.clientHeight * dpr);
+      shown = -1; // resizing clears the canvas
+      draw();
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    // Coarse to fine: every 8th frame first, then every 4th, 2nd, the rest.
+    // An early fast scrub always has a frame within a few of the right one.
+    const order = [...new Set([8, 4, 2, 1].flatMap((step) => Array.from({ length: Math.ceil(total / step) }, (_, k) => k * step)))];
+
+    // Hold every request until the section is within a screen and a half,
+    // so a visitor who never scrolls this far never downloads it.
+    const loader = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        loader.disconnect();
+        for (const i of order) {
+          const img = new Image();
+          img.src = src(i);
+          images[i] = img;
+          img
+            .decode()
+            .then(() => {
+              ready[i] = true;
+              draw();
+            })
+            .catch(() => {});
+        }
+      },
+      { rootMargin: "150% 0px" },
+    );
+    loader.observe(section);
+
+    const state = { frame: 0 };
+    const tween = gsap.to(state, {
+      frame: total - 1,
+      snap: "frame",
+      ease: "none",
+      onUpdate: () => {
+        target = state.frame;
+        draw();
+      },
+      scrollTrigger: { trigger: section, start: "top top", end: "bottom bottom", scrub: 0.3 },
+    });
+
+    // Title timeline on the same scroll track as the frames. Durations are
+    // shares of the track: hold 40, out 10, clear 35, back in 10, hold 5.
+    const title = document.getElementById("sequence-title");
+    const titleFade = gsap
+      .timeline({ scrollTrigger: { trigger: section, start: "top top", end: "bottom bottom", scrub: 0.3 } })
+      .to(title, { opacity: 0, y: -40, duration: 10, ease: "power1.in" }, 40)
+      .set(title, { y: 40 }, 85)
+      .to(title, { opacity: 1, y: 0, duration: 10, ease: "power1.out" }, 85)
+      .to({}, { duration: 5 });
+
+    cleanup = () => {
+      window.removeEventListener("resize", resize);
+      loader.disconnect();
+      tween.kill();
+      titleFade.kill();
+      cleanup = null;
+    };
+  }
+
+  // Direct call as well as the listener: this module can finish loading after
+  // astro:page-load has already fired on a client-side arrival at "/".
+  initSequence();
+  document.addEventListener("astro:page-load", initSequence);
+  document.addEventListener("astro:before-swap", () => cleanup?.());
+</script>

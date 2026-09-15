@@ -6,24 +6,19 @@
 interface Props {
   href: string;
   label: string;
-  // "ink" on paper surfaces, "paper" over photography and dark bands.
-  tone?: "ink" | "paper";
   class?: string;
   // Caller knows `href` is the current page: reload instead of replaying
   // the page transition.
   reload?: boolean;
 }
-const { href, label, tone = "ink", class: className = "", reload = false } = Astro.props;
+const { href, label, class: className = "", reload = false } = Astro.props;
 ---
 
 <a
   href={href}
   data-astro-reload={reload ? true : undefined}
   class:list={[
-    "group relative inline-flex h-[48px] cursor-pointer items-center border px-[20px] text-label uppercase transition-colors duration-300",
-    tone === "ink"
-      ? "border-ink text-ink hover:bg-ink hover:text-paper"
-      : "border-paper text-paper hover:bg-paper hover:text-ink",
+    "group relative inline-flex h-[48px] cursor-pointer items-center border border-paper px-[20px] text-label uppercase text-paper transition-colors duration-300 hover:bg-paper hover:text-ink",
     className,
   ]}
 >
