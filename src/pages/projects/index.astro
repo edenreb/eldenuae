@@ -27,7 +27,7 @@ const styles = cellStyles(projects.length);
     <div
       role="group"
       aria-label="Filter by sector"
-      class="mx-auto flex max-w-[1280px] flex-wrap items-baseline justify-center gap-x-[0.28em] text-center text-heading uppercase"
+      class="mx-auto flex max-w-[1280px] flex-wrap items-baseline justify-center gap-x-[0.28em] text-center text-heading"
     >
       {sectors.map((sector, i) => (
         <>
@@ -36,7 +36,7 @@ const styles = cellStyles(projects.length);
             type="button"
             data-sector={sector}
             aria-pressed={sector === "All" ? "true" : "false"}
-            class="sector-filter cursor-pointer text-ghost uppercase transition-colors duration-300 hover:text-paper aria-pressed:text-paper"
+            class="sector-filter cursor-pointer text-ghost transition-colors duration-300 hover:text-paper aria-pressed:text-paper"
           >
             {sector}<sup aria-hidden="true" class="meta ml-[0.2em] align-super">{countFor(sector)}</sup>
           </button>
@@ -92,7 +92,7 @@ const styles = cellStyles(projects.length);
           />
           <div class="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-[rgb(6_8_20_/_0.8)] via-[rgb(6_8_20_/_0.1)] via-45% to-transparent p-[12px] transition-colors duration-500 md:p-[16px]">
             <div class="flex items-end justify-between gap-[12px]">
-              <h2 class="text-[0.8125rem] leading-[1.15] font-medium uppercase md:text-label md:leading-[1.15]">{project.data.title}</h2>
+              <h2 class="text-[0.8125rem] leading-[1.15] font-medium md:text-label md:leading-[1.15]">{project.data.title}</h2>
               <span class="meta hidden shrink-0 text-muted sm:inline">{project.data.year}</span>
             </div>
             <p class="meta mt-[6px] hidden text-muted sm:block">{project.data.sector}</p>

@@ -38,7 +38,7 @@ const facts = [
       <a href="/projects" class="meta cursor-pointer underline-offset-4 hover:underline">&larr; All projects</a>
       <p class="meta text-muted">{data.sector} — {data.year}</p>
     </div>
-    <h1 class="mt-[48px] max-w-[14ch] text-display uppercase md:mt-[80px]">{data.title}</h1>
+    <h1 class="mt-[48px] max-w-[14ch] text-display md:mt-[80px]">{data.title}</h1>
   </section>
 
   <section class="gutter mt-[40px] md:mt-[72px]">
@@ -106,7 +106,7 @@ const facts = [
     >
       <div class="md:col-span-8">
         <p class="meta text-muted">Next project &rarr;</p>
-        <p class="mt-[20px] text-display uppercase underline-offset-[0.08em] group-hover:underline">{nextProject.data.title}</p>
+        <p class="mt-[20px] text-display underline-offset-[0.08em] group-hover:underline">{nextProject.data.title}</p>
       </div>
       <div class="aspect-[4/3] overflow-hidden bg-ink md:col-span-4">
         <Picture

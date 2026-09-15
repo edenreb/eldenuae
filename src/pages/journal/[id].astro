@@ -27,7 +27,7 @@ const formatter = new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "sho
           {formatter.format(data.date)} — {data.author}
         </p>
       </div>
-      <h1 class="mt-[48px] max-w-[22ch] text-heading uppercase md:mt-[80px]">{data.title}</h1>
+      <h1 class="mt-[48px] max-w-[22ch] text-heading md:mt-[80px]">{data.title}</h1>
       {data.tags.length > 0 && (
         <ul class="mt-[28px] flex flex-wrap gap-[8px]">
           {data.tags.map((tag: string) => (
@@ -79,7 +79,6 @@ const formatter = new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "sho
     font-size: var(--text-title);
     line-height: 1.05;
     letter-spacing: -0.03em;
-    text-transform: uppercase;
   }
   .prose-body :global(h3) {
     margin-top: 40px;

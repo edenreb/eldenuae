@@ -22,8 +22,8 @@
 
   /* Type scale — editorial, not gradual: body sits at 17px, then the scale
      leaps to statement and display sizes. Tracking tightens as size grows;
-     display lines nearly touch (0.86). Uppercase is applied per call site,
-     not baked in, so the same step serves a sentence-case statement. */
+     display lines sit tight (0.94) with room left for descenders. Headings
+     are set in Title Case in the source; only small UI labels go uppercase. */
   --text-label: 0.9375rem; /* 15px — nav, buttons, filters */
   --text-label--line-height: 1;
   --text-label--letter-spacing: 0em;
@@ -49,13 +49,13 @@
   --text-statement--font-weight: 500;
 
   --text-heading: clamp(2.25rem, 5vw, 4.75rem); /* 36–76px */
-  --text-heading--line-height: 0.9;
-  --text-heading--letter-spacing: -0.045em;
+  --text-heading--line-height: 0.98;
+  --text-heading--letter-spacing: -0.035em;
   --text-heading--font-weight: 600;
 
   --text-display: clamp(2.5rem, 8.4vw, 9.5rem); /* 40–152px */
-  --text-display--line-height: 0.86;
-  --text-display--letter-spacing: -0.055em;
+  --text-display--line-height: 0.94;
+  --text-display--letter-spacing: -0.045em;
   --text-display--font-weight: 600;
 }
 
@@ -94,7 +94,7 @@
   text-transform: uppercase;
 }
 
-/* The italic serif accent word inside an uppercase headline. */
+/* The italic serif accent word inside a headline. */
 @utility accent {
   font-family: var(--font-serif);
   font-style: italic;

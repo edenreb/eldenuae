@@ -6,7 +6,7 @@ import breakImage from "../assets/anantara-penthouse/2.jpg";
 
 const values = [
   {
-    title: "Fit-out Works",
+    title: "Fit-Out Works",
     copy: "We provide all types of interior fit-out works for various sectors such as Retail, Hospitality, Restaurants, Commercial and Leisure.",
   },
   {
@@ -30,8 +30,8 @@ const values = [
 >
   <section class="gutter pt-[48px] md:pt-[88px]">
     <Eyebrow>About Elden</Eyebrow>
-    <h1 class="mt-[28px] max-w-[18ch] text-heading uppercase">
-      The #1 cost-effective Interior Design &amp; Fitout company in the UAE
+    <h1 class="mt-[28px] max-w-[18ch] text-heading">
+      The #1 Cost-Effective Interior Design &amp; Fitout Company in the UAE
     </h1>
     <div class="mt-[48px] grid grid-cols-1 md:mt-[80px] md:grid-cols-12 md:gap-x-[24px]">
       <!-- PLACEHOLDER COPY: replace with Elden's real founding story before launch -->
@@ -60,7 +60,7 @@ const values = [
     <div class="flex flex-col gap-[24px] md:flex-row md:items-end md:justify-between">
       <div>
         <Eyebrow>Services</Eyebrow>
-        <h2 class="mt-[20px] text-heading uppercase" data-reveal-words>What we do</h2>
+        <h2 class="mt-[20px] text-heading" data-reveal-words>What We Do</h2>
       </div>
       <p class="max-w-[34ch] text-body text-muted md:text-right">
         Interior design to handover — one team, one contract.
@@ -71,7 +71,7 @@ const values = [
       {values.map((v, i) => (
         <li class="grid grid-cols-1 gap-y-[14px] border-t border-paper/15 py-[32px] last:border-b md:grid-cols-12 md:gap-x-[24px] md:py-[48px]">
           <span class="meta text-muted md:col-span-1">({String(i + 1).padStart(2, "0")})</span>
-          <h3 class="text-title uppercase md:col-span-5">{v.title}</h3>
+          <h3 class="text-title md:col-span-5">{v.title}</h3>
           <p class="max-w-[56ch] text-body text-muted md:col-span-6">{v.copy}</p>
         </li>
       ))}
