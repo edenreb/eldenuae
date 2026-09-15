@@ -1,159 +1,72 @@
 @import "tailwindcss";
 
 @theme {
-  /* Colors — strictly two, per DESIGN.md, now run inverted (dark canvas,
-     light ink) to match the ARQEN reference exactly. Values measured live
-     via getComputedStyle() on arqen.framer.media, not estimated. The token
-     NAMES still describe the literal colours (cream is still cream-coloured,
-     ink is still ink-coloured) — every call site was swapped to use the
-     other token where the role flipped, so `bg-cream` now means "the warm
-     off-white surface" wherever that surface is used, same as before. */
-  --color-cream: #f0ece6;
-  /* Page canvas — Elden blue, a darkened cut of --color-brand-navy below.
-     Every surface that used to be near-black ink is now this: it IS the
-     site background, set on <html>/<body> and reused by the handful of
-     opaque panels (hero, preloader, project tiles) that must not show
-     imagery through. Measured: cream on this -> 15:1, --color-muted -> 4.9:1
-     --color-muted -> 5.5:1, --color-brand-green -> 5.7:1. */
+  /* Colour — cream type on a deep Elden navy canvas. Names describe the
+     colours, not roles: `ink` is the dark (page canvas, text on cream),
+     `paper` is the light (page text, text on photography). Chromatic
+     content comes from project photography. Contrast measured (WCAG
+     relative luminance), not estimated, all against ink:
+       paper -> 16.5:1
+       muted -> 6.6:1   (secondary text)
+       ghost -> 3.7:1   (LARGE text only — inactive display tabs)
+       brand -> 8.6:1 */
+  --color-paper: #f0ece6;
   --color-ink: #090c1e;
-  /* One step darker than the canvas, same hue — the banding used to set a
-     few sections (StatBand, Selected Projects, Testimonials) apart from the
-     page without introducing a second colour. */
-  --color-ink-deep: #060814;
-  /* Semi-transparent panel colour for the floating nav, footer card, and
-     project caption cards — measured as rgba(20,20,18,0.75). Blur radius
-     varies per surface (5px on project cards, 10px on nav/footer) so it
-     isn't baked into the token — set per component. */
-  --color-glass: rgb(14 18 42 / 0.75);
-  /* Secondary text — labels, captions, legal, meta. Was rgb(138,133,125),
-     taken off the reference back when the canvas was near-black: a WARM
-     grey (R>G>B) that had nothing to sit against once the canvas became
-     the cool navy --color-ink. Against blue it read muddy rather than
-     quiet, and at 5.29:1 it was the lowest-contrast text on the site.
-     Retuned to a cool grey-blue of the same family as the canvas, which
-     buys 6.57:1 as well — still clearly secondary next to cream's 16.48:1,
-     so the hierarchy is unchanged; it just belongs to the palette now.
-     Never darken it past 4.5:1. */
   --color-muted: #8f96ab;
-  /* Divider colour. The reference has ZERO CSS borders — every hairline is
-     a 2px <div> at 10% white. Use the `.rule` utility below instead of
-     `border-*-cream`, which no longer exists anywhere in this codebase. */
-  --color-line: rgb(255 255 255 / 0.1);
-  /* Opaque sibling of --color-glass, for surfaces that shouldn't show
-     through to imagery (form fields). */
-  --color-surface: #0e1228;
+  --color-ghost: #636b85;
+  --color-brand: #38c467;
 
-  /* Brand accents — NOT part of the "strictly two" base palette above, and
-     never a resting/base color: no backgrounds, no body text, no borders.
-     DESIGN.md is explicit that this site's chromatic content comes only
-     from project photography; these two exist for a small, deliberate set
-     of INTERACTIVE-ONLY accents (hover, focus, active) plus the one-time
-     preloader signature and the favicon/social card, which sit outside the
-     page canvas entirely.
+  --font-sans: var(--font-inter-tight), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
 
-     The two are not interchangeable — measured via WCAG relative
-     luminance, not assumed:
-       --color-brand-green on --color-ink   -> 5.7:1  (clears 4.5:1 text)
-       --color-brand-navy  on --color-ink   -> 1.7:1  (fails even 3:1 UI)
-       --color-brand-navy  on --color-cream -> 9.6:1  (excellent)
-     Navy is close enough in darkness to ink that it reads as nearly
-     invisible there. So: green is the accent on the dark canvas, navy is
-     the accent on cream surfaces (buttons, hover-state pills) — never the
-     reverse, or the "accent" is one nobody can actually see. */
-  --color-brand-green: rgb(73 155 86);
-  --color-brand-navy: rgb(42 51 124);
+  /* Type scale — editorial, not gradual: body sits at 17px, then the scale
+     leaps to statement and display sizes. Tracking tightens as size grows;
+     display lines sit tight (0.94) with room left for descenders. Headings
+     are set in Title Case in the source; only small UI labels go uppercase. */
+  --text-label: 0.9375rem; /* 15px — nav, buttons, filters */
+  --text-label--line-height: 1;
+  --text-label--letter-spacing: 0em;
+  --text-label--font-weight: 500;
 
-  /* Typography — one family for the whole site. --font-barlow is defined by Astro's
-     Fonts API (see astro.config.mjs) and already carries the generated
-     metric-matched fallback, so the local stack behind it is only there for
-     the window before that CSS lands. */
-  --font-sans: var(--font-barlow), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --text-body: 1.0625rem; /* 17px */
+  --text-body--line-height: 1.55;
+  --text-body--letter-spacing: -0.005em;
 
-  /* Type scale. Two passes have landed here. The first flattened a scale
-     whose steps ACCELERATED (1.25x, 1.50x, 1.67x, 2.00x, spanning 6.25x
-     end to end) into a near-even ramp, because compounding jumps were what
-     made body copy read small by comparison rather than in absolute terms.
+  --text-lead: clamp(1.25rem, 1.9vw, 1.75rem); /* 20–28px */
+  --text-lead--line-height: 1.25;
+  --text-lead--letter-spacing: -0.02em;
+  --text-lead--font-weight: 500;
 
-     This is the second: every step moved up again, in absolute terms. Two
-     reasons. The ramp was already even, so the remaining complaint — text
-     that is simply hard to read — could only be answered with size. And
-     Barlow replaced Switzer, which is not a like-for-like swap at a given
-     px: Barlow is the narrower face and sets optically smaller, so holding
-     the old numbers would have made the site read smaller than before the
-     typeface changed.
+  --text-title: clamp(1.375rem, 2.2vw, 2rem); /* 22–32px */
+  --text-title--line-height: 1;
+  --text-title--letter-spacing: -0.03em;
+  --text-title--font-weight: 600;
 
-     Body is now 20px, which is also what the journal's long-form column
-     had already settled on independently (.prose-body in journal/[id]) —
-     the two agreeing is the point, not a coincidence to leave in place.
+  --text-statement: clamp(1.75rem, 3.4vw, 3.25rem); /* 28–52px */
+  --text-statement--line-height: 1.08;
+  --text-statement--letter-spacing: -0.035em;
+  --text-statement--font-weight: 500;
 
-     Tracking ramps with size rather than jumping: 0 / -0.01 / -0.02 /
-     -0.03 / -0.04 across the scale. Caption sits at 0 now — tight tracking
-     on small text is the thing that most makes it feel cramped, and
-     captions are where the "too small" read was loudest.
+  --text-heading: clamp(2.25rem, 5vw, 4.75rem); /* 36–76px */
+  --text-heading--line-height: 0.98;
+  --text-heading--letter-spacing: -0.035em;
+  --text-heading--font-weight: 600;
 
-     Every clamp floor is still >= body, so a subheading can never end up
-     smaller than the copy underneath it on a narrow screen. */
-  --text-caption: 1rem; /* 16px */
-  --text-caption--line-height: 1.45;
-  --text-caption--letter-spacing: 0em;
-  --text-caption--font-weight: 600;
-
-  --text-body: 1.25rem; /* 20px — does not scale down */
-  --text-body--line-height: 1.6;
-  --text-body--letter-spacing: -0.01em;
-
-  --text-button: clamp(1rem, 1.2vw, 1.0625rem); /* 16–17px */
-  --text-button--line-height: 1;
-  --text-button--letter-spacing: -0.01em;
-  --text-button--font-weight: 600;
-
-  --text-subheading: clamp(1.25rem, 2.4vw, 1.75rem); /* 20–28px */
-  --text-subheading--line-height: 1.4;
-  --text-subheading--letter-spacing: -0.02em;
-
-  --text-heading: clamp(2rem, 4.5vw, 2.625rem); /* 32–42px */
-  --text-heading--line-height: 1.2;
-  --text-heading--letter-spacing: -0.03em;
-
-  --text-display: clamp(2.75rem, 6.5vw, 4rem); /* 44–64px — hero h1 only */
-  --text-display--line-height: 1.05;
-  --text-display--letter-spacing: -0.04em;
-
-  /* Spacing — the reference's rhythm is a uniform 72px section padding and
-     32px gutter (24px below 810px) everywhere; this replaces the previous
-     irregular 17/25/50/84/101px values. */
-  --space-section: 72px;
-  --gutter: 32px;
-
-  /* The reference's own breakpoint is 810px, 42px past Tailwind's default
-     `md` (768px). Not worth a second breakpoint name and a sitewide
-     find/replace for a 42px difference nothing will visibly catch —
-     staying on `md` everywhere below. */
+  --text-display: clamp(2.5rem, 8.4vw, 9.5rem); /* 40–152px */
+  --text-display--line-height: 0.94;
+  --text-display--letter-spacing: -0.045em;
+  --text-display--font-weight: 600;
 }
 
-/* Explicit stacking order — every fixed layer on the site is named here so
-   nothing reaches for an arbitrary z-index like 9999. */
 :root {
-  /* Footprint of the floating chrome row (24px top offset + 40px logo/pill
-     height). Nothing reserves this as layout space — the logo and nav both
-     float over the page — but sticky elements in the top-left corner still
-     offset by it so they don't sit flush under the wordmark. */
-  --nav-h: 64px;
+  /* Fixed header footprint. Pages without a full-bleed hero pad <main> by
+     this much so their first line clears it. */
+  --header-h: 64px;
 
-  /* Flow height of Base.astro's <header> — pt-[24px] + the 40px logo anchor
-     + pb-[24px]. Unlike --nav-h above, this one IS real layout space: the
-     header sits in normal flow, so everything after it starts 88px down the
-     page. Full-viewport sections that need to sit flush with the top of the
-     window (the hero) cancel it with a negative margin. Keep in step with
-     the header's own padding. */
-  --header-h: 88px;
-
-  /* BELOW the nav on purpose, which is why this sits here and not up with
-     the other overlays. The page-transition scrim washes out everything
-     under the header while the header itself stays put — the nav is the one
-     element common to both pages, and holding it still is what stops a
-     navigation reading as a full page teardown. Above the reveal-animation
-     layers underneath it, so nothing in the page can paint over the wash. */
+  /* The page-transition scrim sits below the header on purpose: the header
+     is the one element common to both pages, and holding it still is what
+     stops a navigation reading as a full teardown. */
   --z-curtain: 55;
   --z-nav: 60;
   --z-skiplink: 70;
@@ -161,11 +74,37 @@
   --z-preloader: 100;
 }
 
+/* Side gutter — edge-to-edge layouts with a tight margin, as on the
+   references. One definition instead of the same pair of classes on every
+   section. */
+@utility gutter {
+  padding-inline: 1rem;
+  @media (width >= 48rem) {
+    padding-inline: 1.5rem;
+  }
+}
+
+/* Mono uppercase meta: labels, years, indices, captions. */
+@utility meta {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  letter-spacing: 0.02em;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+/* The italic serif accent word inside a headline. */
+@utility accent {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: -0.02em;
+}
+
 @layer base {
-  /* DESIGN.md: "Don't apply border-radius to any element; the system is
-     strictly orthogonal." Utilities in the cascade layer below still win if
-     one is ever genuinely needed, but nothing in this codebase should use
-     one. */
+  /* Strictly orthogonal: no radius anywhere. */
   * {
     border-radius: 0;
   }
@@ -173,28 +112,9 @@
   html {
     background: var(--color-ink);
     color-scheme: dark;
-    /* Safety net for fixed/absolute elements near viewport edges (bottom
-       mobile nav, skip link, etc.) on narrow screens — clips any accidental
-       horizontal overflow rather than letting it introduce a page-wide
-       sideways scrollbar. Vertical scroll is untouched; Lenis (motion.ts)
-       only ever drives the y axis.
-
-       `clip`, NOT `hidden`. They look identical here, but `overflow-x:
-       hidden` makes the element a scroll container on BOTH axes (the spec
-       forces the other axis from `visible` to `auto`), and a scroll
-       container ancestor is what `position: sticky` sticks to. With
-       `hidden` on <html>, every sticky descendant on the site silently
-       resolves against a container that is exactly as tall as the content
-       and so never sticks at all — which is what happened to the hero.
-       `clip` clips without establishing a scroll container, so sticky keeps
-       resolving against the viewport. */
+    /* `clip`, not `hidden`: hidden makes <html> a scroll container, which
+       silently breaks every position: sticky descendant. */
     overflow-x: clip;
-
-    /* No visible scrollbar anywhere on the site. Scrolling itself is
-       untouched — this only hides the indicator, so the wheel, trackpad,
-       keyboard, and the sticky hero all behave exactly as before. Firefox
-       and the WebKit/Blink pseudo-element need saying separately; there is
-       still no single property that covers both. */
     scrollbar-width: none;
   }
 
@@ -205,53 +125,33 @@
 
   body {
     background: var(--color-ink);
-    color: var(--color-cream);
+    color: var(--color-paper);
     font-family: var(--font-sans);
-    /* 500, not 400. Inherited from the reference's text presets and kept
-       through the move to Barlow so the page's density didn't change with
-       the typeface. Barlow does have a 400 cut if this ever wants to be
-       lighter — it would need adding to the weights list in astro.config. */
-    font-weight: 500;
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    letter-spacing: var(--text-body--letter-spacing);
+    font-weight: 400;
     -webkit-font-smoothing: antialiased;
-    /* Same reasoning as <html> above — `clip` doesn't break sticky. */
     overflow-x: clip;
   }
 
-  /* Scroll lock while the preloader curtain is up. Without this the wheel
-     still drives the page behind the curtain, so the intro animations play
-     to an audience that has already scrolled past them, and the curtain
-     lifts on the middle of the site. Set by the inline head script in
-     Base.astro before first paint and cleared when the curtain finishes. */
+  /* Scroll lock while the preloader curtain is up. Set by the inline head
+     script in Base.astro before first paint. */
   html[data-preloading],
   html[data-preloading] body {
     overflow: hidden;
   }
 
-  /* Belt-and-suspenders alongside Cursor.astro's own `(pointer: fine)`
-     check: that check is correct and already keeps the custom cursor off
-     touch devices, but it only runs once its script executes. This makes
-     the guarantee a CSS one too, so there's no window where a slow script
-     load could leave the cursor div visible on a coarse-pointer device. */
   @media (pointer: coarse) {
     #cursor {
       display: none !important;
     }
   }
 
-  /* Heading weight/tracking measured on the reference: 600 uniform across
-     h1–h3 and -0.04em tracking uniform at every size.
-     Utility classes on individual headings still win where one sets its
-     own weight or tracking. */
-  /* Kill orphaned words too: balance headline line-lengths, avoid
-     single-word last lines in body copy. */
   h1,
   h2,
   h3 {
     font-weight: 600;
-    /* Matches --text-heading's tracking. Headings carrying an explicit
-       text-* utility still win; this is only the unclassed fallback, and
-       -0.04em left those tracked as tightly as the 60px hero. */
-    letter-spacing: -0.03em;
     text-wrap: balance;
   }
 
@@ -260,65 +160,30 @@
   }
 
   ::selection {
-    /* Softened from a full-strength cream/ink invert — still clearly
-       visible as a highlight, just not another hard-contrast block. */
-    background: rgb(240 236 230 / 0.25);
-    color: var(--color-cream);
+    background: var(--color-paper);
+    color: var(--color-ink);
   }
 
-  /* The one truly site-wide brand touchpoint: every focusable element on
-     every page rings in the brand green instead of plain cream. Ink-side
-     accent (green, not navy — see the token comment) since a focus ring
-     sits against the page's ink canvas almost everywhere, including when
-     it's offset around a cream-surfaced button. */
+  /* currentColor, so the ring always matches the type it surrounds —
+     cream on the canvas and on photography, ink on cream surfaces. */
   :focus-visible {
-    outline: 2px solid var(--color-brand-green);
-    outline-offset: 2px;
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
   }
 
-  /* #main-content is focused programmatically on every route change (see
-     Base.astro) purely so screen readers announce the new page — it's a
-     tabindex="-1" landmark, not something a sighted keyboard user tabs to.
-     Chrome's :focus-visible heuristic can still paint a ring around it
-     regardless: a 2px outline around a FULL-WIDTH element renders as a
-     thin bright horizontal line sitting right at the header/content
-     boundary, persisting until focus moves elsewhere — i.e. exactly the
-     "line under the navbar that goes away on click" reported repeatedly.
-     The programmatic focus itself is still correct and still needed for
-     a11y; only the visual ring on this one non-interactive landmark is
-     suppressed. */
+  /* #main-content is focused programmatically on route change for screen
+     readers; a ring around a full-width landmark reads as a stray line. */
   #main-content:focus-visible {
     outline: none;
   }
 
-  /* Page transitions: the page fades to its own background navy, swaps
-     while hidden behind that, then fades back. The nav rides above the
-     scrim and never moves.
-
-     The native view transition is deliberately a no-op. Astro still drives
-     the swap through startViewTransition, but with no animation on either
-     root pseudo the swap is an instant cut — correct here, since it happens
-     behind an opaque scrim where any crossfade would be invisible work. It
-     would also be a different effect: the root pseudos cross-fade the two
-     pages into each other, which is not a fade to navy. */
+  /* Native view transition is a no-op — the swap happens behind the
+     opaque #curtain scrim, where a crossfade would be invisible work. */
   ::view-transition-old(root),
   ::view-transition-new(root) {
     animation: none;
   }
 
-  /* Sits outside <main> and persists across swaps (transition:persist in
-     Base.astro), so the scrim covering the page is the same DOM node before
-     and after the page changes under it. Without persist the swap replaces
-     the node mid-fade and the replacement renders at its resting opacity 0,
-     uncovering the page early.
-
-     Painted in the page's own background navy, so what the fade reads as is
-     the content dissolving away to bare canvas rather than a coloured sheet
-     dropping over it.
-
-     pointer-events stay off even while opaque: the scrim is up for well
-     under a second, and making it interactive would swallow a click aimed
-     at the page landing underneath. */
   #curtain {
     position: fixed;
     inset: 0;
@@ -338,44 +203,28 @@
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
-
-    /* The root pseudos are already animation:none above. The scrim itself
-       is driven by the Web Animations API, which this block cannot reach —
-       Base.astro checks prefers-reduced-motion directly and skips the fade,
-       navigating instantly instead. */
-    ::view-transition-new(root),
-    ::view-transition-old(root) {
-      animation: none !important;
-    }
   }
 }
 
 @layer utilities {
-  /* Set by Cursor.astro once its custom cursor actually activates. `* {}`
-     is required, not just the html rule — dozens of elements set their own
-     `cursor: pointer` via the `cursor-pointer` utility, which would
-     otherwise win over an inherited `cursor: none` on <html>. */
+  /* Set by Cursor.astro once its custom cursor activates. `*` is required —
+     `cursor-pointer` utilities would otherwise win over the inherited value. */
   html.custom-cursor-active,
   html.custom-cursor-active * {
     cursor: none !important;
   }
 
-  /* Tabular numerals for all stat displays */
   .tabular-nums {
     font-variant-numeric: tabular-nums;
   }
 
-  /* Word-mask wrappers built at runtime by scripts/motion.ts. Plain CSS
-     rather than Tailwind utilities: these elements don't exist in any source
-     file, so the class scanner would never emit utilities for them. */
+  /* Word-mask wrappers built at runtime by scripts/motion.ts — plain CSS
+     because the class scanner never sees these elements. padding/margin
+     leave room for descenders below the mask. */
   .word-mask {
     display: inline-block;
     overflow: hidden;
     vertical-align: bottom;
-    /* Room for descenders (g, y, p, q, j) below the baseline. Without this
-       the mask box clips tight to the line and cuts them off — only visible
-       once real copy with descenders replaced the placeholder text used
-       while building the reveal. */
     padding-bottom: 0.2em;
     margin-bottom: -0.2em;
   }
@@ -385,37 +234,13 @@
     will-change: transform;
   }
 
-  /* Darker banded section (StatBand, Selected Projects, Testimonials).
-     A gradient rather than a flat `background: var(--color-ink-deep)`: the
-     flat version put a hard 1px seam wherever a banded section met the
-     canvas. Solid through the middle, easing out over the section's own
-     top and bottom padding, so the two colours meet as a fade instead of
-     an edge. */
-  .band-deep {
-    background: linear-gradient(
-      to bottom,
-      transparent 0,
-      var(--color-ink-deep) 96px,
-      var(--color-ink-deep) calc(100% - 96px),
-      transparent 100%
-    );
-  }
-
-  /* Divider — replaces every `border-t/border border-cream` hairline.
-     The reference has no CSS borders at all; every rule on the page is a
-     2px div at 10% white. This is that div, as a utility. */
+  /* Hairline divider. currentColor at low opacity, so it follows whatever
+     type colour the section uses. */
   .rule {
-    height: 2px;
+    height: 1px;
     width: 100%;
-    background: var(--color-line);
+    background: currentColor;
+    opacity: 0.16;
     border: none;
-  }
-
-  /* Same rule, brand-green instead of hairline-white — for the handful of
-     section-opening/closing dividers that should read as a real accent
-     moment rather than pure structure (Philosophy's lead-in, Footer's
-     closing rule). Not the default: most rules stay quiet structure. */
-  .rule-accent {
-    background: var(--color-brand-green);
   }
 }

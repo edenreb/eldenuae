@@ -1,33 +1,34 @@
 ---
 const stats = [
   { value: 85, suffix: "+", label: "Projects delivered" },
-  { value: 10, suffix: "+", label: "Years expertise in the UAE" },
-  { value: 140, suffix: "+", label: "Elden engineers working on your project" },
+  { value: 10, suffix: "+", label: "Years of expertise in the UAE" },
+  { value: 140, suffix: "+", label: "Engineers working on your project" },
 ];
 ---
 
-<section class="band-deep px-[24px] py-[144px] md:px-[32px] md:py-[216px]">
-  <div class="mx-auto grid max-w-[1440px] grid-cols-1 gap-[48px] sm:grid-cols-3 sm:gap-[24px]">
-    {stats.map((stat) => (
-      <div class="text-center sm:text-left">
-        <p
-          class="tabular-nums text-display leading-none text-[var(--color-brand-green)]"
-          data-count={stat.value}
-          data-suffix={stat.suffix}
-        >
-          0{stat.suffix}
-        </p>
-        <p class="mt-[12px] text-body text-cream">{stat.label}</p>
-      </div>
-    ))}
+<section class="gutter pb-[120px] md:pb-[200px]">
+  <div class="grid grid-cols-1 md:grid-cols-12 md:gap-x-[24px]">
+    <div class="grid grid-cols-1 gap-y-[40px] sm:grid-cols-3 sm:gap-x-[24px] md:col-span-9 md:col-start-4">
+      {stats.map((stat) => (
+        <div>
+          <div class="rule" data-reveal-rule></div>
+          <p
+            class="mt-[24px] font-mono text-[clamp(3.25rem,6.4vw,6.5rem)] leading-none font-medium tracking-[-0.07em] tabular-nums"
+            data-count={stat.value}
+            data-suffix={stat.suffix}
+          >
+            0{stat.suffix}
+          </p>
+          <p class="mt-[16px] text-body text-muted">{stat.label}</p>
+        </div>
+      ))}
+    </div>
   </div>
 </section>
 
 <script>
-  // The unobserve() below already releases each counter once it has fired,
-  // but a visitor who leaves before scrolling this far leaves the observer
-  // holding stat nodes that never intersected. Tear down on route change so
-  // that case can't accumulate either.
+  // Tear down on route change so nodes that never intersected can't
+  // accumulate in the observer.
   let observer: IntersectionObserver | null = null;
 
   function initStatCounters() {
@@ -46,7 +47,7 @@ const stats = [
         el.textContent = `${target}${suffix}`;
         return;
       }
-      const duration = 1200;
+      const duration = 1400;
       const start = performance.now();
       const tick = (now: number) => {
         const progress = Math.min((now - start) / duration, 1);

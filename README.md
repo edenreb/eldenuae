@@ -12,7 +12,7 @@ src/
 │   └── journal/       # MDX journal posts
 ├── components/        # Hero, Nav, Footer, SelectedWork, Process, ClientWall, Testimonials, …
 ├── layouts/Base.astro # shared shell: nav, footer, skip link, view transitions
-├── pages/             # routes: /, /projects, /projects/[id], /about, /contact, /career, /journal, /journal/[id]
+├── pages/             # routes: /, /projects, /projects/[id], /about, /contact, /careers, /journal, /journal/[id]
 ├── scripts/form.ts    # shared client-side validation for the Contact/Career forms
 └── styles/global.css  # design tokens (@theme) + base layer
 public/fonts/          # self-hosted General Sans woff2 (referenced by url(), stays outside src/assets)

@@ -27,7 +27,7 @@
 //
 // Accessibility contract:
 //   - display:none unless <html data-preloading> is set, so no-JS and
-//     reduced-motion users never see a stuck cream screen
+//     reduced-motion users never see a stuck curtain
 //   - contains nothing focusable, so it cannot trap the keyboard
 //   - aria-hidden: decoration over content that is already in the DOM
 ---
@@ -56,11 +56,10 @@
 
   <div
     id="preloader-foot"
-    class="absolute inset-x-0 bottom-0 px-[24px] pb-[24px] md:px-[32px] md:pb-[32px]"
+    class="gutter absolute inset-x-0 bottom-0 pb-[24px]"
   >
-    <!-- `.rule` is the site's 2px/10%-white hairline utility — the same
-         divider used across the page, reused here as the bar's unfilled
-         track rather than a one-off border. The counter used to sit in
+    <!-- The track is a literal hairline rather than `.rule`: `.rule` sets
+         its own opacity, which would dim the fill and counter inside it. The counter used to sit in
          flow above the track; it's a positioned sibling now so its `left`
          can be driven by the same progress value as the fill, riding the
          fill's own leading edge instead of sitting fixed at the start of
@@ -72,13 +71,13 @@
          scaleY on the track would stretch the counter's digits right
          along with the bar for that beat. Scaling only the inner wrapper
          thickens the fill/rule alone and leaves the counter untouched. -->
-    <div id="preloader-track" class="relative rule">
+    <div id="preloader-track" class="relative h-[2px] w-full bg-paper/15">
       <div id="preloader-bar" class="h-full w-full overflow-hidden">
-        <div id="preloader-fill" class="h-full w-full bg-cream"></div>
+        <div id="preloader-fill" class="h-full w-full bg-paper"></div>
       </div>
       <p
         id="preloader-count"
-        class="absolute bottom-[calc(100%+16px)] left-0 tabular-nums text-heading leading-none text-cream"
+        class="absolute bottom-[calc(100%+16px)] left-0 font-mono text-[clamp(2rem,4vw,3rem)] leading-none tracking-[-0.06em] tabular-nums text-paper"
       >
         00
       </p>
@@ -127,7 +126,7 @@
 
   /* Start empty, and grow from the left. Declared here rather than left to
      GSAP's first frame: the bar is painted before the script runs, and a
-     full-width cream bar flashing for one frame is the whole thing this is
+     full-width paper bar flashing for one frame is the whole thing this is
      built to avoid. */
   #preloader-fill {
     transform: scaleX(0);
@@ -150,8 +149,8 @@
   // numerically lerps between two resolved colors and can't resolve a var()
   // reference itself, only getComputedStyle can — so the token's value is
   // duplicated here rather than referenced. Keep in sync with
-  // --color-brand-green if the brand green ever changes.
-  const BRAND_GREEN = "rgb(73, 155, 86)";
+  // --color-brand (#38c467) if the brand green ever changes.
+  const BRAND_GREEN = "rgb(56, 196, 103)";
 
   function initPreloader() {
     const el = document.getElementById("preloader");
