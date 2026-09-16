@@ -26,3 +26,6 @@ arqen/
 
 # local agent scratch state
 .claude/scheduled_tasks.lock
+
+# wrangler local secrets
+.dev.vars
