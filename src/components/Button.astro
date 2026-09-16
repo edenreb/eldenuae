@@ -2,30 +2,40 @@
 // Outlined square button — a frame, not a block. Hover floods it with its
 // own line colour while the label rolls up and a duplicate rolls in from
 // below. CSS-only; both copies carry the same text so the accessible name
-// never changes mid-transition.
-interface Props {
-  href: string;
+// never changes mid-transition. With no `href` it renders a <button>; a
+// script can relabel it by writing to every [data-label].
+import type { HTMLAttributes } from "astro/types";
+
+type Props = Omit<HTMLAttributes<"button">, "class"> & {
+  href?: string;
   label: string;
   class?: string;
   // Caller knows `href` is the current page: reload instead of replaying
   // the page transition.
   reload?: boolean;
-}
-const { href, label, class: className = "", reload = false } = Astro.props;
+};
+const { href, label, class: className = "", reload = false, type = "button", ...rest } = Astro.props;
+const Tag = href ? "a" : "button";
 ---
 
-<a
+<Tag
   href={href}
+  type={href ? undefined : type}
   data-astro-reload={reload ? true : undefined}
+  {...rest}
   class:list={[
-    "group relative inline-flex h-[48px] cursor-pointer items-center border border-paper px-[20px] text-label uppercase text-paper transition-colors duration-300 hover:bg-paper hover:text-ink",
+    "group relative inline-flex h-[48px] cursor-pointer items-center border border-paper px-[20px] text-label uppercase text-paper transition-colors duration-300 hover:bg-paper hover:text-ink disabled:cursor-wait disabled:opacity-50",
     className,
   ]}
 >
   <span class="relative block overflow-hidden">
-    <span class="block transition-transform duration-300 ease-out group-hover:-translate-y-full">{label}</span>
-    <span aria-hidden="true" class="absolute inset-0 block translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0">
+    <span data-label class="block transition-transform duration-300 ease-out group-hover:-translate-y-full">{label}</span>
+    <span
+      data-label
+      aria-hidden="true"
+      class="absolute inset-0 block translate-y-full transition-transform duration-300 ease-out group-hover:translate-y-0"
+    >
       {label}
     </span>
   </span>
-</a>
+</Tag>

@@ -3,21 +3,62 @@ import Base from "../layouts/Base.astro";
 import Button from "../components/Button.astro";
 import Eyebrow from "../components/Eyebrow.astro";
 import SocialLinks from "../components/SocialLinks.astro";
+import { CV_ACCEPT, CV_REQUIRED, FIELDS, INQUIRIES, PHONE_PATTERN, SCOPES, type Inquiry } from "../scripts/enquiry";
 
-// This page had a contact form that silently discarded every enquiry (no
-// endpoint anywhere in the codebase). Until a real submission target exists
-// it sends people to email, which actually delivers. The old form markup is
-// in git history at 30c548f.
+// Submits to functions/api/contact.ts (a Cloudflare Pages Function), which
+// emails the enquiry through Resend. Field lists live in scripts/enquiry.ts
+// so the form and the server can't drift apart.
 const MAIL = "info@eldenuae.com";
-const MAILTO = `mailto:${MAIL}?subject=${encodeURIComponent("Project enquiry")}&body=${encodeURIComponent(
-  "Tell us about the space — sector, location, approximate size, and timeline.\n\n",
-)}`;
 
 const details = [
-  { label: "General inquiries", value: "info@eldenuae.com", href: "mailto:info@eldenuae.com" },
+  { label: "General inquiries", value: MAIL, href: `mailto:${MAIL}` },
   { label: "Phone", value: "+971 4 227 6206", href: "tel:+97142276206" },
   { label: "Studio", value: "Dubai, United Arab Emirates" },
 ];
+
+const types = Object.entries(INQUIRIES) as [Inquiry, string][];
+const DEFAULT: Inquiry = "project";
+
+const BLURBS: Record<Inquiry, string> = {
+  project: "Design, fitout, MEP or joinery for a space.",
+  careers: "Join the studio, or send a speculative application.",
+  supplier: "Materials, trades and services for our sites.",
+  general: "Press, partnerships or anything else.",
+};
+
+// One short screen per group. "scope" and "cv" are special controls; every
+// other key is looked up in FIELDS.
+const STEPS: Record<Inquiry, [string, string[]][]> = {
+  project: [
+    ["What Do You Need?", ["scope"]],
+    ["Tell Us About the Space.", ["sector", "location", "company"]],
+    ["Scale and Timing.", ["size", "timeline", "budget"]],
+    ["Describe the Project.", ["message"]],
+  ],
+  careers: [
+    ["Which Role?", ["role", "portfolio", "cv"]],
+    ["Tell Us About Yourself.", ["message"]],
+  ],
+  supplier: [
+    ["Your Company.", ["company", "trade", "website"]],
+    ["What Do You Offer?", ["message"]],
+  ],
+  general: [["How Can We Help?", ["message"]]],
+};
+
+const field = (type: Inquiry, key: string) => FIELDS[type].find(([name]) => name === key)!;
+const pad = (n: number) => String(n).padStart(2, "0");
+
+// The site's vocabulary: mono meta labels, hairline rules at paper/15, the
+// Eyebrow's 7px brand square as the "selected" mark, no fills or shadows.
+const LEGEND = "max-w-[16ch] text-heading outline-none";
+const LABEL = "meta block text-muted";
+const INPUT =
+  "mt-[10px] w-full border-b border-paper/15 bg-transparent pb-[14px] pt-[4px] text-lead text-paper transition-colors placeholder:text-ghost hover:border-paper/40 focus:border-paper focus:outline-none aria-invalid:border-paper";
+const ERROR = "meta mt-[10px] text-paper empty:hidden";
+const ROW =
+  "group flex cursor-pointer items-center gap-[16px] border-t border-paper/15 py-[20px] last:border-b has-focus-visible:outline-2 has-focus-visible:outline-offset-4 has-focus-visible:outline-paper md:gap-[24px]";
+const MARK = "h-[7px] w-[7px] shrink-0 bg-brand opacity-0 transition-opacity duration-300 group-has-checked:opacity-100";
 ---
 
 <Base
@@ -28,46 +69,479 @@ const details = [
     <Eyebrow>Contact</Eyebrow>
     <h1 class="mt-[28px] text-display">Let&rsquo;s Build <em class="accent">It.</em></h1>
 
-    <div class="mt-[64px] grid grid-cols-1 gap-y-[72px] md:mt-[120px] md:grid-cols-12 md:gap-x-[24px]">
-      <div class="md:col-span-5">
+    <div class="mt-[64px] grid grid-cols-1 gap-y-[96px] md:mt-[120px] md:grid-cols-12 md:gap-x-[24px]">
+      <div class="md:col-span-4">
         <p class="max-w-[30ch] text-lead">
           Every fitout starts with a conversation. Tell us about the space and we&rsquo;ll come back with next steps
           within one working day.
         </p>
-        <p class="mt-[20px] max-w-[42ch] text-body text-muted">
-          Send us the sector, location, approximate size and timeline.
-        </p>
-        <div class="mt-[36px]">
-          <Button href={MAILTO} label="Email us" />
-        </div>
-        {/* A mailto: does nothing without a mail client — keep the address copyable. */}
-        <p class="meta mt-[20px] text-muted">
-          Or write to <a href={`mailto:${MAIL}`} class="cursor-pointer text-paper normal-case underline underline-offset-4">{MAIL}</a>
-        </p>
-      </div>
 
-      <dl class="md:col-span-6 md:col-start-7">
-        {details.map((d) => (
-          <div class="border-t border-paper/15 py-[24px] md:py-[32px]">
-            <dt class="meta text-muted">{d.label}</dt>
-            <dd class="mt-[12px] text-statement">
-              {d.href ? (
-                <a href={d.href} class="cursor-pointer break-words underline-offset-[0.12em] hover:underline">
-                  {d.value}
-                </a>
-              ) : (
-                d.value
-              )}
+        <dl class="mt-[48px]">
+          {details.map((d) => (
+            <div class="border-t border-paper/15 py-[24px]">
+              <dt class="meta text-muted">{d.label}</dt>
+              <dd class="mt-[12px] text-lead">
+                {d.href ? (
+                  <a href={d.href} class="cursor-pointer break-words underline-offset-[0.12em] hover:underline">
+                    {d.value}
+                  </a>
+                ) : (
+                  d.value
+                )}
+              </dd>
+            </div>
+          ))}
+          <div class="border-y border-paper/15 py-[24px]">
+            <dt class="meta text-muted">Follow along</dt>
+            <dd class="mt-[12px] text-lead">
+              <SocialLinks />
             </dd>
           </div>
-        ))}
-        <div class="border-y border-paper/15 py-[24px] md:py-[32px]">
-          <dt class="meta text-muted">Follow along</dt>
-          <dd class="mt-[12px] text-lead">
-            <SocialLinks />
-          </dd>
+        </dl>
+      </div>
+
+      <div class="md:col-span-7 md:col-start-6">
+        {/* Progress: mono counter and a hairline that fills. The legend
+            carries the same count for screen readers. */}
+        <div class="flex items-center gap-[20px]" aria-hidden="true">
+          <span id="contact-progress" class="meta tabular-nums text-muted">01 / 06</span>
+          <span class="h-px flex-1 bg-paper/15">
+            <span
+              id="contact-bar"
+              class="block h-full origin-left scale-x-[0.167] bg-paper transition-transform duration-700 ease-[cubic-bezier(0.2,0.7,0.2,1)]"
+            ></span>
+          </span>
         </div>
-      </dl>
+
+        <form
+          id="contact-form"
+          action="/api/contact"
+          method="post"
+          enctype="multipart/form-data"
+          novalidate
+          class="mt-[48px] md:mt-[64px]"
+        >
+          {/* Validated one screen at a time, so the form carries novalidate.
+              Steps for other inquiry types are disabled, which also keeps
+              their fields out of the submission. */}
+          <fieldset data-step class="step">
+            <legend tabindex="-1" class={LEGEND}>
+              <span data-count class="sr-only"></span>What&rsquo;s This About?
+            </legend>
+            <div data-field class="mt-[48px]">
+              {types.map(([value, label], i) => (
+                <label class={ROW}>
+                  <input type="radio" name="type" value={value} checked={value === DEFAULT} required class="sr-only" />
+                  <span class="meta w-[3ch] shrink-0 text-muted">({pad(i + 1)})</span>
+                  <span class="flex-1">
+                    <span class="block text-title text-muted transition-colors duration-300 group-hover:text-paper group-has-checked:text-paper">
+                      {label}
+                    </span>
+                    <span class="mt-[8px] block text-body text-muted">{BLURBS[value]}</span>
+                  </span>
+                  <span aria-hidden="true" class={MARK}></span>
+                </label>
+              ))}
+              <p id="type-error" data-error class={ERROR}></p>
+            </div>
+          </fieldset>
+
+          <fieldset data-step hidden class="step">
+            <legend tabindex="-1" class={LEGEND}>
+              <span data-count class="sr-only"></span>How Do We Reach You?
+            </legend>
+            <div class="mt-[48px] grid grid-cols-1 gap-[40px]">
+              <div data-field>
+                <label class={LABEL} for="contact-name">Name</label>
+                <input
+                  id="contact-name"
+                  name="name"
+                  required
+                  autocomplete="name"
+                  maxlength="200"
+                  aria-describedby="contact-name-error"
+                  class={INPUT}
+                />
+                <p id="contact-name-error" data-error class={ERROR}></p>
+              </div>
+              <div data-field>
+                <label class={LABEL} for="contact-email">Email</label>
+                <input
+                  id="contact-email"
+                  name="email"
+                  type="email"
+                  required
+                  autocomplete="email"
+                  aria-describedby="contact-email-error"
+                  class={INPUT}
+                />
+                <p id="contact-email-error" data-error class={ERROR}></p>
+              </div>
+              <div data-field>
+                <label class={LABEL} for="contact-phone">Phone, with country code</label>
+                <input
+                  id="contact-phone"
+                  name="phone"
+                  type="tel"
+                  required
+                  autocomplete="tel"
+                  pattern={PHONE_PATTERN}
+                  title="Include your country code, e.g. +971 50 123 4567."
+                  placeholder="+971 50 123 4567"
+                  aria-describedby="contact-phone-error"
+                  class={INPUT}
+                />
+                <p id="contact-phone-error" data-error class={ERROR}></p>
+              </div>
+            </div>
+          </fieldset>
+
+          {types.flatMap(([type]) =>
+            STEPS[type].map(([title, keys]) => (
+              <fieldset data-step data-inquiry={type} hidden disabled={type !== DEFAULT} class="step">
+                <legend tabindex="-1" class={LEGEND}>
+                  <span data-count class="sr-only"></span>
+                  {title}
+                </legend>
+                <div class="mt-[48px] grid grid-cols-1 gap-[40px]">
+                  {keys.map((key) => {
+                    const id = `${type}-${key}`;
+
+                    if (key === "scope")
+                      return (
+                        <div data-field>
+                          <p class="meta mb-[20px] text-muted">Choose all that apply</p>
+                          {SCOPES.map((s, i) => (
+                            <label class={ROW}>
+                              <input
+                                type="checkbox"
+                                name="scope"
+                                value={s}
+                                aria-describedby={`${id}-error`}
+                                class="sr-only"
+                              />
+                              <span class="meta w-[3ch] shrink-0 text-muted">({pad(i + 1)})</span>
+                              <span class="flex-1 text-title text-muted transition-colors duration-300 group-hover:text-paper group-has-checked:text-paper">
+                                {s}
+                              </span>
+                              <span aria-hidden="true" class={MARK}></span>
+                            </label>
+                          ))}
+                          <p id={`${id}-error`} data-error class={ERROR}></p>
+                        </div>
+                      );
+
+                    if (key === "cv")
+                      return (
+                        <div data-field>
+                          <label class={LABEL} for={id}>
+                            CV, PDF or Word up to 5 MB{!CV_REQUIRED && " (optional)"}
+                          </label>
+                          <input
+                            id={id}
+                            type="file"
+                            name="cv"
+                            accept={CV_ACCEPT}
+                            required={CV_REQUIRED}
+                            aria-describedby={`${id}-error`}
+                            class:list={[
+                              INPUT,
+                              "cursor-pointer pt-[10px] text-body text-muted file:mr-[20px] file:h-[40px] file:cursor-pointer file:border file:border-paper/40 file:bg-transparent file:px-[16px] file:text-label file:uppercase file:text-paper file:transition-colors hover:file:border-paper hover:file:bg-paper hover:file:text-ink",
+                            ]}
+                          />
+                          <p id={`${id}-error`} data-error class={ERROR}></p>
+                        </div>
+                      );
+
+                    const [name, label, required, options] = field(type, key);
+                    const labelText = required ? label : `${label} (optional)`;
+
+                    if (options)
+                      return (
+                        <div data-field>
+                          <span id={`${id}-label`} class={LABEL}>
+                            {labelText}
+                          </span>
+                          {/* Custom dropdown: a <details> panel of real radios, so
+                              arrow keys, validation and FormData all stay native. */}
+                          <details data-select class="group relative">
+                            <summary
+                              aria-labelledby={`${id}-label ${id}-value`}
+                              aria-describedby={`${id}-error`}
+                              class="mt-[10px] flex cursor-pointer list-none items-center justify-between gap-[16px] border-b border-paper/15 pb-[14px] pt-[4px] text-lead transition-colors hover:border-paper/40 group-open:border-paper focus-visible:border-paper focus-visible:outline-none aria-invalid:border-paper [&::-webkit-details-marker]:hidden"
+                            >
+                              <span id={`${id}-value`} data-value class="text-ghost">
+                                Select
+                              </span>
+                              <svg
+                                aria-hidden="true"
+                                viewBox="0 0 12 12"
+                                class="h-[12px] w-[12px] shrink-0 text-muted transition-transform duration-300 group-open:rotate-180"
+                              >
+                                <path d="M2 4.5 6 8.5 10 4.5" fill="none" stroke="currentColor" stroke-width="1.25" />
+                              </svg>
+                            </summary>
+                            <div
+                              role="radiogroup"
+                              aria-labelledby={`${id}-label`}
+                              data-options
+                              class="dropdown absolute inset-x-0 top-full z-20 border-x border-b border-paper/15 bg-ink"
+                            >
+                              {options.map((o) => (
+                                <label class="group/option flex cursor-pointer items-center justify-between gap-[16px] border-t border-paper/10 px-[20px] py-[16px] text-body text-muted transition-colors first:border-t-0 hover:text-paper has-checked:text-paper has-focus-visible:text-paper has-focus-visible:underline">
+                                  <input type="radio" name={name} value={o} required={required} class="sr-only" />
+                                  {o}
+                                  <span
+                                    aria-hidden="true"
+                                    class="h-[7px] w-[7px] shrink-0 bg-brand opacity-0 group-has-checked/option:opacity-100"
+                                  ></span>
+                                </label>
+                              ))}
+                            </div>
+                          </details>
+                          <p id={`${id}-error`} data-error class={ERROR}></p>
+                        </div>
+                      );
+
+                    if (name === "message")
+                      return (
+                        <div data-field>
+                          <label class="sr-only" for={id}>
+                            {label}
+                          </label>
+                          <textarea
+                            id={id}
+                            name={name}
+                            required={required}
+                            rows={5}
+                            maxlength="3000"
+                            placeholder="A few sentences is plenty."
+                            aria-describedby={`${id}-error`}
+                            class:list={[INPUT, "mt-0 resize-y"]}
+                          />
+                          <p id={`${id}-error`} data-error class={ERROR}></p>
+                        </div>
+                      );
+
+                    return (
+                      <div data-field>
+                        <label class={LABEL} for={id}>
+                          {labelText}
+                        </label>
+                        <input
+                          id={id}
+                          name={name}
+                          required={required}
+                          maxlength="300"
+                          aria-describedby={`${id}-error`}
+                          class={INPUT}
+                        />
+                        <p id={`${id}-error`} data-error class={ERROR}></p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </fieldset>
+            )),
+          )}
+
+          {/* Honeypot: hidden from people and assistive tech, filled by bots. */}
+          <input name="nickname" tabindex="-1" autocomplete="off" aria-hidden="true" class="absolute -left-[9999px]" />
+
+          <div class="mt-[64px] flex flex-wrap items-center gap-x-[32px] gap-y-[20px]">
+            <Button type="submit" label="Continue" data-next />
+            <button
+              type="button"
+              data-back
+              hidden
+              class="meta cursor-pointer py-[14px] text-muted transition-colors hover:text-paper"
+            >
+              <span aria-hidden="true">&larr;</span> Back
+            </button>
+            <p id="contact-status" role="status" class="basis-full text-body text-muted empty:hidden"></p>
+          </div>
+        </form>
+
+        <div id="contact-done" hidden tabindex="-1" class="step outline-none">
+          <Eyebrow>Received</Eyebrow>
+          <p class="mt-[20px] max-w-[16ch] text-heading">Thanks, That&rsquo;s In.</p>
+          <p class="mt-[24px] max-w-[40ch] text-body text-muted">
+            We&rsquo;ll reply within one working day. A copy of everything you sent is with the studio now.
+          </p>
+        </div>
+      </div>
     </div>
   </section>
 </Base>
+
+<style is:global>
+  /* Global reduced-motion rule in global.css already shortens these. */
+  @keyframes contact-in {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+  }
+  .step:not([hidden]) {
+    animation: contact-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  details[open] > .dropdown {
+    animation: contact-in 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+</style>
+
+<script>
+  import { CV_MAX_BYTES } from "../scripts/enquiry";
+
+  type Control = HTMLInputElement | HTMLTextAreaElement;
+
+  function initContactForm() {
+    const form = document.getElementById("contact-form") as HTMLFormElement | null;
+    if (!form) return;
+    const done = document.getElementById("contact-done")!;
+    const status = document.getElementById("contact-status")!;
+    const progress = document.getElementById("contact-progress")!;
+    const bar = document.getElementById("contact-bar")!;
+    const next = form.querySelector<HTMLButtonElement>("[data-next]")!;
+    const back = form.querySelector<HTMLButtonElement>("[data-back]")!;
+    const all = [...form.querySelectorAll<HTMLFieldSetElement>("fieldset[data-step]")];
+    const scopes = [...form.querySelectorAll<HTMLInputElement>('input[name="scope"]')];
+    const cv = form.querySelector<HTMLInputElement>('input[name="cv"]');
+    let index = 0;
+
+    const steps = () => {
+      const type = (form.elements.namedItem("type") as RadioNodeList).value;
+      return all.filter((s) => !s.dataset.inquiry || s.dataset.inquiry === type);
+    };
+
+    const render = (focus = true) => {
+      const active = steps();
+      all.forEach((s) => {
+        s.disabled = !active.includes(s);
+        s.hidden = s !== active[index];
+      });
+      const pad = (n: number) => String(n).padStart(2, "0");
+      progress.textContent = `${pad(index + 1)} / ${pad(active.length)}`;
+      active[index].querySelector("[data-count]")!.textContent = `Step ${index + 1} of ${active.length}. `;
+      bar.style.transform = `scaleX(${(index + 1) / active.length})`;
+      back.hidden = index === 0;
+      next.querySelectorAll("[data-label]").forEach((l) => {
+        l.textContent = index === active.length - 1 ? "Send enquiry" : "Continue";
+      });
+      status.textContent = "";
+      if (focus) active[index].querySelector("legend")?.focus();
+    };
+
+    // Rules the browser can't express: at least one service, CV size.
+    const sync = () => {
+      scopes[0]?.setCustomValidity(scopes.some((s) => s.checked) ? "" : "Choose at least one service.");
+      const file = cv?.files?.[0];
+      cv?.setCustomValidity(file && file.size > CV_MAX_BYTES ? "Your CV must be 5 MB or smaller." : "");
+    };
+
+    const messageFor = (el: Control) => {
+      if (el.validity.customError) return el.validationMessage;
+      if (el.validity.valueMissing)
+        return el.type === "radio" ? "Choose one." : el.type === "file" ? "Attach your CV." : "This is required.";
+      if (el.validity.typeMismatch) return "Enter a valid email address.";
+      if (el.validity.patternMismatch) return el.title;
+      return el.validationMessage;
+    };
+
+    // Inline errors under each field instead of the browser's bubbles.
+    const checkField = (field: HTMLElement) => {
+      const controls = [...field.querySelectorAll<Control>("input, textarea")];
+      const bad = controls.find((el) => !el.checkValidity());
+      field.querySelector("[data-error]")!.textContent = bad ? messageFor(bad) : "";
+      [...controls, ...field.querySelectorAll("summary")].forEach((el) =>
+        bad ? el.setAttribute("aria-invalid", "true") : el.removeAttribute("aria-invalid"),
+      );
+      return bad;
+    };
+
+    const stepIsValid = () => {
+      const current = all.find((s) => !s.hidden)!;
+      const bad = [...current.querySelectorAll<HTMLElement>("[data-field]")].map(checkField).filter(Boolean);
+      const first = bad[0];
+      if (first) (first.closest("details")?.querySelector("summary") ?? first).focus();
+      return !first;
+    };
+
+    form.addEventListener("change", sync);
+    // Once a field has shown an error, re-check it as the user fixes it.
+    const recheck = (e: Event) => {
+      const field = (e.target as HTMLElement).closest<HTMLElement>("[data-field]");
+      if (field?.querySelector("[data-error]")?.textContent) checkField(field);
+    };
+    form.addEventListener("input", recheck);
+    form.addEventListener("change", recheck);
+    sync();
+    render(false);
+
+    back.addEventListener("click", () => {
+      index--;
+      render();
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!stepIsValid()) return;
+      if (index < steps().length - 1) {
+        index++;
+        render();
+        return;
+      }
+      next.disabled = true;
+      status.textContent = "Sending…";
+      try {
+        const res = await fetch(form.action, { method: "POST", body: new FormData(form) });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(data.error);
+        form.hidden = true;
+        progress.parentElement!.hidden = true;
+        done.hidden = false;
+        done.focus();
+      } catch (err) {
+        status.textContent = `${(err as Error).message || "Something went wrong."} You can also email info@eldenuae.com.`;
+      } finally {
+        next.disabled = false;
+      }
+    });
+
+    // Custom dropdowns. Picking with the pointer closes the panel; with the
+    // keyboard, arrows pick and Enter or Escape closes it.
+    form.querySelectorAll<HTMLDetailsElement>("details[data-select]").forEach((menu) => {
+      const summary = menu.querySelector("summary")!;
+      const value = menu.querySelector<HTMLElement>("[data-value]")!;
+      let pointer = false;
+      const close = () => {
+        menu.open = false;
+        summary.focus();
+      };
+      menu.querySelector("[data-options]")!.addEventListener("pointerdown", () => (pointer = true));
+      menu.addEventListener("change", (e) => {
+        value.textContent = (e.target as HTMLInputElement).value;
+        value.classList.replace("text-ghost", "text-paper");
+        if (pointer) close();
+        pointer = false;
+      });
+      menu.addEventListener("keydown", (e) => {
+        if (menu.open && (e.key === "Enter" || e.key === "Escape")) {
+          e.preventDefault();
+          close();
+        }
+      });
+      menu.addEventListener("focusout", (e) => {
+        const to = e.relatedTarget as Node | null;
+        if (to && !menu.contains(to)) menu.open = false;
+      });
+    });
+    // On <body> so the listener is swapped out with the page.
+    document.body.addEventListener("pointerdown", (e) => {
+      form.querySelectorAll<HTMLDetailsElement>("details[open]").forEach((d) => {
+        if (!d.contains(e.target as Node)) d.open = false;
+      });
+    });
+  }
+  document.addEventListener("astro:page-load", initContactForm);
+</script>
