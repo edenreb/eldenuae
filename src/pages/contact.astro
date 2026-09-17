@@ -69,43 +69,23 @@ const MARK = "h-[7px] w-[7px] shrink-0 bg-brand opacity-0 transition-opacity dur
     <Eyebrow>Contact</Eyebrow>
     <h1 class="mt-[28px] text-display">Let&rsquo;s Build <em class="accent">It.</em></h1>
 
-    <div class="mt-[64px] grid grid-cols-1 gap-y-[96px] md:mt-[120px] md:grid-cols-12 md:gap-x-[24px]">
-      <div class="md:col-span-4">
-        <p class="max-w-[30ch] text-lead">
-          Every fitout starts with a conversation. Tell us about the space and we&rsquo;ll come back with next steps
-          within one working day.
-        </p>
+    <p class="mt-[28px] max-w-[44ch] text-lead text-muted">
+      Every fitout starts with a conversation. Tell us about the space and we&rsquo;ll come back with next steps
+      within one working day.
+    </p>
 
-        <dl class="mt-[48px]">
-          {details.map((d) => (
-            <div class="border-t border-paper/15 py-[24px]">
-              <dt class="meta text-muted">{d.label}</dt>
-              <dd class="mt-[12px] text-lead">
-                {d.href ? (
-                  <a href={d.href} class="cursor-pointer break-words underline-offset-[0.12em] hover:underline">
-                    {d.value}
-                  </a>
-                ) : (
-                  d.value
-                )}
-              </dd>
-            </div>
-          ))}
-          <div class="border-y border-paper/15 py-[24px]">
-            <dt class="meta text-muted">Follow along</dt>
-            <dd class="mt-[12px] text-lead">
-              <SocialLinks />
-            </dd>
-          </div>
-        </dl>
-      </div>
-
-      <div class="md:col-span-7 md:col-start-6">
+    <div class="mt-[48px] grid grid-cols-1 gap-y-[72px] md:mt-[72px] md:grid-cols-12 md:gap-x-[24px]">
+      {/* The form is the page's one job, so it gets the only framed surface
+          on the site; the direct details beside it stay quiet. */}
+      <div class="-mx-[16px] border-y border-paper/15 bg-paper/[0.03] px-[16px] py-[32px] md:col-span-8 md:mx-0 md:border md:p-[56px] lg:p-[72px]">
         {/* Progress: mono counter and a hairline that fills. The legend
             carries the same count for screen readers. */}
-        <div class="flex items-center gap-[20px]" aria-hidden="true">
-          <span id="contact-progress" class="meta tabular-nums text-muted">01 / 06</span>
-          <span class="h-px flex-1 bg-paper/15">
+        <div class="relative flex items-center gap-[20px]" aria-hidden="true">
+          <span class="meta flex items-center gap-[10px] text-paper">
+            <span class="h-[7px] w-[7px] bg-brand"></span>Start an enquiry
+          </span>
+          <span id="contact-progress" class="meta ml-auto tabular-nums text-muted">01 / 06</span>
+          <span class="absolute inset-x-0 -bottom-[20px] h-px bg-paper/15">
             <span
               id="contact-bar"
               class="block h-full origin-left scale-x-[0.167] bg-paper transition-transform duration-700 ease-[cubic-bezier(0.2,0.7,0.2,1)]"
@@ -119,7 +99,7 @@ const MARK = "h-[7px] w-[7px] shrink-0 bg-brand opacity-0 transition-opacity dur
           method="post"
           enctype="multipart/form-data"
           novalidate
-          class="mt-[48px] md:mt-[64px]"
+          class="mt-[56px] md:mt-[72px]"
         >
           {/* Validated one screen at a time, so the form carries novalidate.
               Steps for other inquiry types are disabled, which also keeps
@@ -134,7 +114,7 @@ const MARK = "h-[7px] w-[7px] shrink-0 bg-brand opacity-0 transition-opacity dur
                   <input type="radio" name="type" value={value} checked={value === DEFAULT} required class="sr-only" />
                   <span class="meta w-[3ch] shrink-0 text-muted">({pad(i + 1)})</span>
                   <span class="flex-1">
-                    <span class="block text-title text-muted transition-colors duration-300 group-hover:text-paper group-has-checked:text-paper">
+                    <span class="block text-title text-paper/70 transition-colors duration-300 group-hover:text-paper group-has-checked:text-paper">
                       {label}
                     </span>
                     <span class="mt-[8px] block text-body text-muted">{BLURBS[value]}</span>
@@ -221,7 +201,7 @@ const MARK = "h-[7px] w-[7px] shrink-0 bg-brand opacity-0 transition-opacity dur
                                 class="sr-only"
                               />
                               <span class="meta w-[3ch] shrink-0 text-muted">({pad(i + 1)})</span>
-                              <span class="flex-1 text-title text-muted transition-colors duration-300 group-hover:text-paper group-has-checked:text-paper">
+                              <span class="flex-1 text-title text-paper/70 transition-colors duration-300 group-hover:text-paper group-has-checked:text-paper">
                                 {s}
                               </span>
                               <span aria-hidden="true" class={MARK}></span>
@@ -349,7 +329,7 @@ const MARK = "h-[7px] w-[7px] shrink-0 bg-brand opacity-0 transition-opacity dur
           <input name="nickname" tabindex="-1" autocomplete="off" aria-hidden="true" class="absolute -left-[9999px]" />
 
           <div class="mt-[64px] flex flex-wrap items-center gap-x-[32px] gap-y-[20px]">
-            <Button type="submit" label="Continue" data-next />
+            <Button type="submit" label="Continue" data-next class="px-[28px] bg-paper! text-ink! hover:bg-transparent! hover:text-paper!" />
             <button
               type="button"
               data-back
@@ -370,6 +350,32 @@ const MARK = "h-[7px] w-[7px] shrink-0 bg-brand opacity-0 transition-opacity dur
           </p>
         </div>
       </div>
+      <aside aria-label="Studio contact details" class="md:col-span-3 md:col-start-10 md:pt-[56px] lg:pt-[72px]">
+        <p class="meta text-muted">Or reach the studio directly</p>
+
+        <dl class="mt-[20px]">
+          {details.map((d) => (
+            <div class="border-t border-paper/15 py-[18px]">
+              <dt class="meta text-muted">{d.label}</dt>
+              <dd class="mt-[8px] text-body">
+                {d.href ? (
+                  <a href={d.href} class="cursor-pointer break-words underline-offset-[0.12em] hover:underline">
+                    {d.value}
+                  </a>
+                ) : (
+                  d.value
+                )}
+              </dd>
+            </div>
+          ))}
+          <div class="border-y border-paper/15 py-[18px]">
+            <dt class="meta text-muted">Follow along</dt>
+            <dd class="mt-[8px] text-body">
+              <SocialLinks />
+            </dd>
+          </div>
+        </dl>
+      </aside>
     </div>
   </section>
 </Base>
