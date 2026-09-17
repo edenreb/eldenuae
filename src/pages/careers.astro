@@ -5,21 +5,16 @@ import Button from "../components/Button.astro";
 import { Picture } from "astro:assets";
 import breakImage from "../assets/_misc/careers.jpg";
 
-// mailto, not a form: there is no submission endpoint in this codebase, and
-// a form that silently discards a CV is worse than a plain address.
+// Applications go through the contact form with "Careers" preselected, so
+// the CV arrives as an attachment; a discipline row also fills in the role.
 const MAIL = "info@eldenuae.com";
 
-const applyTo = (subject: string, body: string) =>
-  `mailto:${MAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-const GENERAL_MAILTO = applyTo(
-  "Application — Elden",
-  "Tell us which discipline you work in, where you are now, and what you'd want to build here.\n\nAttach a CV and a portfolio (PDF, under 10MB).\n\n",
-);
+const APPLY = "/contact?type=careers";
+const applyTo = (role: string) => `${APPLY}&role=${encodeURIComponent(role)}`;
 
 // "Disciplines we hire across", NOT a vacancy list — nothing here records a
 // real open position. Swap in real postings when there are any; each row
-// already takes a title, a scope line and its own mailto.
+// already takes a title, a scope line and its own form link.
 const disciplines = [
   { title: "Interior Design", scope: "Concept through to the detail that survives a site meeting." },
   { title: "Technical Detailing", scope: "Drawing packages a joiner can build from without ringing you." },
@@ -49,15 +44,15 @@ const reasons = [
 ];
 
 const send = [
-  "A CV — one page is plenty.",
-  "A portfolio as a PDF under 10MB, or a link. Built work first; if it's not built yet, say so.",
+  "A CV as a PDF or Word file — one page is plenty.",
+  "A link to your portfolio or LinkedIn. Built work first; if it's not built yet, say so.",
   "One line on what you want to be building in two years.",
 ];
 ---
 
 <Base
   title="Careers"
-  description="Join Elden's Dubai studio. We hire across design, delivery and site — send a portfolio to info@eldenuae.com."
+  description="Join Elden's Dubai studio. We hire across design, delivery and site — send us your CV and portfolio."
 >
   <section class="gutter pt-[48px] md:pt-[88px]">
     <Eyebrow>Careers</Eyebrow>
@@ -72,7 +67,7 @@ const send = [
           to finish.
         </p>
         <div class="mt-[36px]">
-          <Button href={GENERAL_MAILTO} label="Send your portfolio" />
+          <Button href={APPLY} label="Send your portfolio" />
         </div>
       </div>
     </div>
@@ -119,16 +114,13 @@ const send = [
       </p>
     </div>
 
-    <!-- Each row is its own mailto: the prefilled subject is what makes a
-         speculative application filterable on the receiving end. -->
+    <!-- Each row opens the form with its discipline as the role, which is
+         what makes a speculative application filterable on the receiving end. -->
     <ul class="mt-[56px] md:mt-[96px]">
       {disciplines.map((d, i) => (
         <li class="border-t border-paper/15 last:border-b">
           <a
-            href={applyTo(
-              `Application — ${d.title}`,
-              `I'd like to be considered for ${d.title.toLowerCase()} work at Elden.\n\nWhere I am now:\nWhat I've built:\n\nCV and portfolio attached.\n\n`,
-            )}
+            href={applyTo(d.title)}
             class="group grid cursor-pointer grid-cols-[1fr_auto] items-baseline gap-x-[16px] gap-y-[8px] py-[24px] md:grid-cols-12 md:gap-x-[24px] md:py-[28px]"
           >
             <span class="meta hidden text-muted md:col-span-1 md:block">({String(i + 1).padStart(2, "0")})</span>
@@ -167,11 +159,11 @@ const send = [
       <div class="self-start border border-paper/15 p-[28px] md:col-span-6 md:col-start-7 md:p-[48px]">
         <p class="text-heading">Send It to the Studio.</p>
         <p class="mt-[20px] max-w-[42ch] text-body text-muted">
-          One address, straight to the Dubai studio. Applications, internships and speculative introductions all go to
-          the same place.
+          One short form, straight to the Dubai studio. Applications, internships and speculative introductions all go
+          the same way.
         </p>
         <div class="mt-[36px]">
-          <Button href={GENERAL_MAILTO} label="Email your application" />
+          <Button href={APPLY} label="Apply now" />
         </div>
         <p class="meta mt-[20px] text-muted">
           Or write to <a href={`mailto:${MAIL}`} class="cursor-pointer text-paper normal-case underline underline-offset-4">{MAIL}</a>

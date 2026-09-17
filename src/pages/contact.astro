@@ -3,7 +3,17 @@ import Base from "../layouts/Base.astro";
 import Button from "../components/Button.astro";
 import Eyebrow from "../components/Eyebrow.astro";
 import SocialLinks from "../components/SocialLinks.astro";
-import { CV_ACCEPT, CV_REQUIRED, FIELDS, INQUIRIES, PHONE_PATTERN, SCOPES, type Inquiry } from "../scripts/enquiry";
+import {
+  COUNTRY_CODES,
+  CV_ACCEPT,
+  CV_REQUIRED,
+  DEFAULT_COUNTRY,
+  FIELDS,
+  INQUIRIES,
+  PHONE_PATTERN,
+  SCOPES,
+  type Inquiry,
+} from "../scripts/enquiry";
 
 // Submits to /api/contact, handled by worker.ts (a Cloudflare Worker), which
 // emails the enquiry through Resend. Field lists live in scripts/enquiry.ts
@@ -17,6 +27,12 @@ const details = [
 ];
 
 const types = Object.entries(INQUIRIES) as [Inquiry, string][];
+
+// Names resolved at build time, so the list ships as plain HTML.
+const regionName = new Intl.DisplayNames(["en"], { type: "region" });
+const countries = Object.entries(COUNTRY_CODES)
+  .map(([region, dial]) => ({ region, dial, name: regionName.of(region) ?? region }))
+  .sort((a, b) => a.name.localeCompare(b.name));
 const DEFAULT: Inquiry = "project";
 
 const BLURBS: Record<Inquiry, string> = {
@@ -57,8 +73,14 @@ const INPUT =
   "mt-[10px] w-full border-b border-paper/15 bg-transparent pb-[14px] pt-[4px] text-lead text-paper transition-colors placeholder:text-ghost hover:border-paper/40 focus:border-paper focus:outline-none aria-invalid:border-paper";
 const ERROR = "meta mt-[10px] text-paper empty:hidden";
 const ROW =
-  "group flex cursor-pointer items-center gap-[16px] border-t border-paper/15 py-[20px] last:border-b has-focus-visible:outline-2 has-focus-visible:outline-offset-4 has-focus-visible:outline-paper md:gap-[24px]";
-const MARK = "h-[7px] w-[7px] shrink-0 bg-brand opacity-0 transition-opacity duration-300 group-has-checked:opacity-100";
+  "choice group relative flex cursor-pointer items-center gap-[16px] border-t border-paper/15 py-[20px] last:border-b has-focus-visible:outline-2 has-focus-visible:outline-offset-4 has-focus-visible:outline-paper md:gap-[24px]";
+const SUMMARY =
+  "mt-[10px] flex cursor-pointer list-none items-center justify-between gap-[16px] border-b border-paper/15 pb-[14px] pt-[4px] text-lead transition-colors hover:border-paper/40 group-open:border-paper focus-visible:border-paper focus-visible:outline-none aria-invalid:border-paper [&::-webkit-details-marker]:hidden";
+const CHEVRON = "h-[12px] w-[12px] shrink-0 text-muted transition-transform duration-300 group-open:rotate-180";
+const OPTION =
+  "group/option flex cursor-pointer items-center justify-between gap-[16px] border-t border-paper/10 px-[20px] py-[16px] text-body text-muted transition-colors first:border-t-0 hover:text-paper has-checked:text-paper has-focus-visible:text-paper has-focus-visible:underline";
+const OPTION_MARK = "h-[7px] w-[7px] shrink-0 bg-brand";
+const MARK = "h-[7px] w-[7px] shrink-0 bg-brand";
 ---
 
 <Base
@@ -112,14 +134,14 @@ const MARK = "h-[7px] w-[7px] shrink-0 bg-brand opacity-0 transition-opacity dur
               {types.map(([value, label], i) => (
                 <label class={ROW}>
                   <input type="radio" name="type" value={value} checked={value === DEFAULT} required class="sr-only" />
-                  <span class="meta w-[3ch] shrink-0 text-muted">({pad(i + 1)})</span>
-                  <span class="flex-1">
+                  <span data-index class="meta w-[3ch] shrink-0 text-muted transition-colors duration-300">({pad(i + 1)})</span>
+                  <span data-shift class="flex-1">
                     <span class="block text-title text-paper/70 transition-colors duration-300 group-hover:text-paper group-has-checked:text-paper">
                       {label}
                     </span>
                     <span class="mt-[8px] block text-body text-muted">{BLURBS[value]}</span>
                   </span>
-                  <span aria-hidden="true" class={MARK}></span>
+                  <span aria-hidden="true" data-mark class={MARK}></span>
                 </label>
               ))}
               <p id="type-error" data-error class={ERROR}></p>
@@ -158,19 +180,73 @@ const MARK = "h-[7px] w-[7px] shrink-0 bg-brand opacity-0 transition-opacity dur
                 <p id="contact-email-error" data-error class={ERROR}></p>
               </div>
               <div data-field>
-                <label class={LABEL} for="contact-phone">Phone, with country code</label>
-                <input
-                  id="contact-phone"
-                  name="phone"
-                  type="tel"
-                  required
-                  autocomplete="tel"
-                  pattern={PHONE_PATTERN}
-                  title="Include your country code, e.g. +971 50 123 4567."
-                  placeholder="+971 50 123 4567"
-                  aria-describedby="contact-phone-error"
-                  class={INPUT}
-                />
+                <label class={LABEL} for="contact-phone">Phone</label>
+                <span id="contact-country-label" class="sr-only">Country code</span>
+                <div class="flex items-start gap-[16px] md:gap-[24px]">
+                  {/* Same <details> + radios dropdown as the step fields, plus a
+                      filter: ~230 countries is too many to scroll. */}
+                  <details data-select class="group relative w-[112px] shrink-0 md:w-[136px]">
+                    <summary
+                      aria-labelledby={`contact-country-label contact-country-value`}
+                      class={SUMMARY}
+                    >
+                      <span id="contact-country-value" data-value class="truncate text-paper">
+                        {COUNTRY_CODES[DEFAULT_COUNTRY]}
+                      </span>
+                      <svg aria-hidden="true" viewBox="0 0 12 12" class={CHEVRON}>
+                        <path d="M2 4.5 6 8.5 10 4.5" fill="none" stroke="currentColor" stroke-width="1.25" />
+                      </svg>
+                    </summary>
+                    <div
+                      data-options
+                      class="dropdown absolute left-0 top-full z-20 w-[min(360px,calc(100vw-32px))] border-x border-b border-paper/15 bg-ink"
+                    >
+                      <input
+                        type="search"
+                        data-filter
+                        aria-label="Search countries"
+                        placeholder="Search country or code"
+                        autocomplete="off"
+                        class="w-full border-b border-paper/15 bg-transparent px-[20px] py-[16px] text-body text-paper placeholder:text-ghost focus:outline-none"
+                      />
+                      <div
+                        role="radiogroup"
+                        aria-labelledby="contact-country-label"
+                        data-lenis-prevent
+                        class="max-h-[320px] overflow-y-auto overscroll-contain"
+                      >
+                        {countries.map((c) => (
+                          <label data-search={`${c.name} ${c.dial} ${c.dial.replace(/\s/g, "")}`.toLowerCase()} class:list={[OPTION, "relative"]}>
+                            <input
+                              type="radio"
+                              name="country"
+                              value={c.region}
+                              data-label={c.dial}
+                              checked={c.region === DEFAULT_COUNTRY}
+                              class="sr-only"
+                            />
+                            <span class="flex-1 truncate">{c.name}</span>
+                            <span class="meta shrink-0 tabular-nums">{c.dial}</span>
+                            <span aria-hidden="true" data-mark class={OPTION_MARK}></span>
+                          </label>
+                        ))}
+                        <p data-empty hidden class="meta px-[20px] py-[16px] text-muted">No matches</p>
+                      </div>
+                    </div>
+                  </details>
+                  <input
+                    id="contact-phone"
+                    name="phone"
+                    type="tel"
+                    required
+                    autocomplete="tel-national"
+                    pattern={PHONE_PATTERN}
+                    title="Enter the number without the country code, e.g. 50 123 4567."
+                    placeholder="50 123 4567"
+                    aria-describedby="contact-phone-error"
+                    class:list={[INPUT, "min-w-0 flex-1"]}
+                  />
+                </div>
                 <p id="contact-phone-error" data-error class={ERROR}></p>
               </div>
             </div>
@@ -200,11 +276,11 @@ const MARK = "h-[7px] w-[7px] shrink-0 bg-brand opacity-0 transition-opacity dur
                                 aria-describedby={`${id}-error`}
                                 class="sr-only"
                               />
-                              <span class="meta w-[3ch] shrink-0 text-muted">({pad(i + 1)})</span>
-                              <span class="flex-1 text-title text-paper/70 transition-colors duration-300 group-hover:text-paper group-has-checked:text-paper">
+                              <span data-index class="meta w-[3ch] shrink-0 text-muted transition-colors duration-300">({pad(i + 1)})</span>
+                              <span data-shift class="flex-1 text-title text-paper/70 transition-colors duration-300 group-hover:text-paper group-has-checked:text-paper">
                                 {s}
                               </span>
-                              <span aria-hidden="true" class={MARK}></span>
+                              <span aria-hidden="true" data-mark class={MARK}></span>
                             </label>
                           ))}
                           <p id={`${id}-error`} data-error class={ERROR}></p>
@@ -248,7 +324,7 @@ const MARK = "h-[7px] w-[7px] shrink-0 bg-brand opacity-0 transition-opacity dur
                             <summary
                               aria-labelledby={`${id}-label ${id}-value`}
                               aria-describedby={`${id}-error`}
-                              class="mt-[10px] flex cursor-pointer list-none items-center justify-between gap-[16px] border-b border-paper/15 pb-[14px] pt-[4px] text-lead transition-colors hover:border-paper/40 group-open:border-paper focus-visible:border-paper focus-visible:outline-none aria-invalid:border-paper [&::-webkit-details-marker]:hidden"
+                              class={SUMMARY}
                             >
                               <span id={`${id}-value`} data-value class="text-ghost">
                                 Select
@@ -256,7 +332,7 @@ const MARK = "h-[7px] w-[7px] shrink-0 bg-brand opacity-0 transition-opacity dur
                               <svg
                                 aria-hidden="true"
                                 viewBox="0 0 12 12"
-                                class="h-[12px] w-[12px] shrink-0 text-muted transition-transform duration-300 group-open:rotate-180"
+                                class={CHEVRON}
                               >
                                 <path d="M2 4.5 6 8.5 10 4.5" fill="none" stroke="currentColor" stroke-width="1.25" />
                               </svg>
@@ -268,12 +344,13 @@ const MARK = "h-[7px] w-[7px] shrink-0 bg-brand opacity-0 transition-opacity dur
                               class="dropdown absolute inset-x-0 top-full z-20 border-x border-b border-paper/15 bg-ink"
                             >
                               {options.map((o) => (
-                                <label class="group/option flex cursor-pointer items-center justify-between gap-[16px] border-t border-paper/10 px-[20px] py-[16px] text-body text-muted transition-colors first:border-t-0 hover:text-paper has-checked:text-paper has-focus-visible:text-paper has-focus-visible:underline">
+                                <label class={OPTION}>
                                   <input type="radio" name={name} value={o} required={required} class="sr-only" />
                                   {o}
                                   <span
                                     aria-hidden="true"
-                                    class="h-[7px] w-[7px] shrink-0 bg-brand opacity-0 group-has-checked/option:opacity-100"
+                                    data-mark
+                                    class={OPTION_MARK}
                                   ></span>
                                 </label>
                               ))}
@@ -391,13 +468,59 @@ const MARK = "h-[7px] w-[7px] shrink-0 bg-brand opacity-0 transition-opacity dur
   .step:not([hidden]) {
     animation: contact-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
   }
-  details[open] > .dropdown {
-    animation: contact-in 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+  /* Picking a row: a wash sweeps in from the left, the top hairline draws
+     across in paper, the label steps right and the brand square springs in.
+     Unpicking runs the same in reverse, a little faster. */
+  .choice {
+    isolation: isolate;
+  }
+  .choice::before,
+  .choice::after {
+    content: "";
+    position: absolute;
+    left: -12px;
+    right: -12px;
+    transform: scaleX(0);
+    transform-origin: left;
+    pointer-events: none;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 1, 1);
+  }
+  .choice::before {
+    inset-block: 0;
+    z-index: -1;
+    background: color-mix(in srgb, var(--color-paper) 5%, transparent);
+  }
+  .choice::after {
+    top: -1px;
+    height: 1px;
+    background: var(--color-paper);
+  }
+  .choice:has(input:checked)::before,
+  .choice:has(input:checked)::after {
+    transform: scaleX(1);
+    transition: transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .choice:has(input:checked)::after {
+    transition-delay: 0.08s;
+  }
+  .choice [data-shift] {
+    transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .choice:has(input:checked) [data-shift] {
+    transform: translateX(12px);
+  }
+  .choice:active [data-shift] {
+    transform: translateX(6px);
+    transition-duration: 0.15s;
+  }
+  .choice:has(input:checked) [data-index] {
+    color: var(--color-paper);
   }
 </style>
 
 <script>
   import { CV_MAX_BYTES } from "../scripts/enquiry";
+  import { initDropdowns } from "../scripts/dropdown";
 
   type Control = HTMLInputElement | HTMLTextAreaElement;
 
@@ -429,7 +552,9 @@ const MARK = "h-[7px] w-[7px] shrink-0 bg-brand opacity-0 transition-opacity dur
       const pad = (n: number) => String(n).padStart(2, "0");
       progress.textContent = `${pad(index + 1)} / ${pad(active.length)}`;
       active[index].querySelector("[data-count]")!.textContent = `Step ${index + 1} of ${active.length}. `;
-      bar.style.transform = `scaleX(${(index + 1) / active.length})`;
+      // Tailwind v4 scale-x-* sets the `scale` property, not `transform`, so
+      // write the same property or the class value multiplies with ours.
+      bar.style.scale = `${(index + 1) / active.length} 1`;
       back.hidden = index === 0;
       next.querySelectorAll("[data-label]").forEach((l) => {
         l.textContent = index === active.length - 1 ? "Send enquiry" : "Continue";
@@ -481,6 +606,15 @@ const MARK = "h-[7px] w-[7px] shrink-0 bg-brand opacity-0 transition-opacity dur
     };
     form.addEventListener("input", recheck);
     form.addEventListener("change", recheck);
+    // Deep links, e.g. /contact?type=careers&role=Site%20Supervision from the
+    // careers page. Unknown values are ignored.
+    const params = new URLSearchParams(location.search);
+    const preset = form.querySelector<HTMLInputElement>(`input[name="type"][value="${CSS.escape(params.get("type") ?? "")}"]`);
+    if (preset) preset.checked = true;
+    const role = params.get("role");
+    const roleInput = form.querySelector<HTMLInputElement>('input[name="role"]');
+    if (role && roleInput) roleInput.value = role.slice(0, 300);
+
     sync();
     render(false);
 
@@ -514,40 +648,7 @@ const MARK = "h-[7px] w-[7px] shrink-0 bg-brand opacity-0 transition-opacity dur
       }
     });
 
-    // Custom dropdowns. Picking with the pointer closes the panel; with the
-    // keyboard, arrows pick and Enter or Escape closes it.
-    form.querySelectorAll<HTMLDetailsElement>("details[data-select]").forEach((menu) => {
-      const summary = menu.querySelector("summary")!;
-      const value = menu.querySelector<HTMLElement>("[data-value]")!;
-      let pointer = false;
-      const close = () => {
-        menu.open = false;
-        summary.focus();
-      };
-      menu.querySelector("[data-options]")!.addEventListener("pointerdown", () => (pointer = true));
-      menu.addEventListener("change", (e) => {
-        value.textContent = (e.target as HTMLInputElement).value;
-        value.classList.replace("text-ghost", "text-paper");
-        if (pointer) close();
-        pointer = false;
-      });
-      menu.addEventListener("keydown", (e) => {
-        if (menu.open && (e.key === "Enter" || e.key === "Escape")) {
-          e.preventDefault();
-          close();
-        }
-      });
-      menu.addEventListener("focusout", (e) => {
-        const to = e.relatedTarget as Node | null;
-        if (to && !menu.contains(to)) menu.open = false;
-      });
-    });
-    // On <body> so the listener is swapped out with the page.
-    document.body.addEventListener("pointerdown", (e) => {
-      form.querySelectorAll<HTMLDetailsElement>("details[open]").forEach((d) => {
-        if (!d.contains(e.target as Node)) d.open = false;
-      });
-    });
+    initDropdowns(form);
   }
   document.addEventListener("astro:page-load", initContactForm);
 </script>

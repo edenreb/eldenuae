@@ -244,3 +244,40 @@
     border: none;
   }
 }
+
+/* Custom dropdowns (scripts/dropdown.ts) and radio rows. The brand square
+   springs in on the picked option; a dropdown's value rises into place on
+   each pick; the panel settles in when opened. */
+[data-mark] {
+  opacity: 0;
+  transform: scale(0) rotate(-90deg);
+  transition:
+    transform 0.25s cubic-bezier(0.4, 0, 1, 1),
+    opacity 0.2s;
+}
+label:has(input:checked) [data-mark] {
+  opacity: 1;
+  transform: none;
+  transition:
+    transform 0.55s cubic-bezier(0.34, 1.8, 0.64, 1),
+    opacity 0.15s;
+}
+@keyframes choice-swap {
+  from {
+    opacity: 0;
+    transform: translateY(60%);
+  }
+}
+[data-value].swap {
+  display: inline-block;
+  animation: choice-swap 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+@keyframes dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+details[open] > .dropdown {
+  animation: dropdown-in 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
