@@ -1,19 +1,29 @@
-// POST /api/contact — a Cloudflare Pages Function (a Worker deployed with the
-// site). Validates the contact form and emails it through Resend.
+// Cloudflare Worker entry (see wrangler.jsonc). Every request goes to the
+// static build in dist/ except POST /api/contact, which validates the contact
+// form and emails it through Resend.
 //
-// Set in Pages → Settings → Variables and Secrets:
+// Worker → Settings → Variables and Secrets:
 //   RESEND_API_KEY  (secret)  from resend.com, domain eldenuae.com verified
-//   CONTACT_TO      optional, defaults to inquiry@eldenuae.com
+//   CONTACT_TO      in wrangler.jsonc, defaults to inquiry@eldenuae.com
 //   CONTACT_FROM    optional, defaults to "Elden website <website@eldenuae.com>"
-import { buildEnquiry } from "../../src/scripts/enquiry";
+import { buildEnquiry } from "./src/scripts/enquiry";
 
 interface Env {
+  ASSETS: { fetch(request: Request): Promise<Response> };
   RESEND_API_KEY: string;
   CONTACT_TO?: string;
   CONTACT_FROM?: string;
 }
 
-export async function onRequestPost({ request, env }: { request: Request; env: Env }) {
+export default {
+  async fetch(request: Request, env: Env) {
+    if (new URL(request.url).pathname !== "/api/contact") return env.ASSETS.fetch(request);
+    if (request.method !== "POST") return new Response("Method Not Allowed", { status: 405, headers: { Allow: "POST" } });
+    return contact(request, env);
+  },
+};
+
+async function contact(request: Request, env: Env) {
   let form: FormData;
   try {
     form = await request.formData();

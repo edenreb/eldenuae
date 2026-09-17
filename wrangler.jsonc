@@ -1,0 +1,21 @@
+// Cloudflare Worker: serves the static Astro build from dist/ and handles
+// POST /api/contact in worker.ts. Having this file stops `wrangler deploy`
+// from auto-configuring the project (it would add the Astro Cloudflare
+// adapter, which this static site doesn't use).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "eldenuae",
+  "main": "worker.ts",
+  "compatibility_date": "2026-08-01",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*"]
+  },
+  // Not secret. RESEND_API_KEY is a secret set in the dashboard, never here.
+  "vars": {
+    "CONTACT_TO": "vignesh@eldenuae.com"
+  },
+  "observability": { "enabled": true }
+}

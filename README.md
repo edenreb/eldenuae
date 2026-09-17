@@ -1,6 +1,6 @@
 # Elden
 
-Turnkey fitout marketing site — Astro 7 + Tailwind v4 + GSAP, static output for Cloudflare Pages.
+Turnkey fitout marketing site — Astro 7 + Tailwind v4 + GSAP, static output served by a Cloudflare Worker.
 
 ## Structure
 
@@ -27,15 +27,14 @@ public/fonts/          # self-hosted General Sans woff2 (referenced by url(), st
 | `npm run build`       | Build to `./dist/` (static)                   |
 | `npm run preview`      | Serve the production build locally            |
 
-## Deploying to Cloudflare Pages
+## Deploying to Cloudflare Workers
 
-Static output, no adapter needed. In the Pages project settings:
+The repo is connected to a Cloudflare Worker (Workers Builds). `wrangler.jsonc` serves `dist/` as static assets and routes `POST /api/contact` to `worker.ts`, which emails enquiries through Resend.
 
 - **Build command:** `npm run build`
-- **Build output directory:** `dist`
-- **Root directory:** `/` (repo root)
-
-No `wrangler.toml` is required for a static Pages deploy — connect the repo and set the two build values above.
+- **Deploy command:** `npx wrangler deploy`
+- **Build variable:** `NODE_VERSION` = `22`
+- **Secret (Settings → Variables and Secrets):** `RESEND_API_KEY`
 
 ## Content
 
