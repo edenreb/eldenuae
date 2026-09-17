@@ -29,3 +29,4 @@ arqen/
 
 # wrangler local secrets
 .dev.vars
+.wrangler/

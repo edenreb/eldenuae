@@ -1,5 +1,5 @@
 // One source of truth for the contact form: the page renders its options
-// from these lists and functions/api/contact.ts validates against them.
+// from these lists and worker.ts validates against them.
 
 export const INQUIRIES = {
   project: "New project",
