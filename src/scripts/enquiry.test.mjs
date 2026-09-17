@@ -7,7 +7,7 @@ const form = (fields) => {
   for (const [k, v] of Object.entries(fields)) [v].flat().forEach((x) => f.append(k, x));
   return f;
 };
-const base = { name: "Sara\r\nBcc: x", email: "sara@example.com", phone: "+971 50 123 4567" };
+const base = { name: "Sara\r\nBcc: x", email: "sara@example.com", country: "AE", phone: "50 123 4567" };
 const project = {
   ...base,
   type: "project",
@@ -23,7 +23,10 @@ assert.equal(ok.subject, "New project — Sara Bcc: x", "newlines stripped from 
 assert.match(ok.text, /Services: Design, Joinery/);
 assert.equal(ok.replyTo, "sara@example.com");
 
-assert("error" in buildEnquiry(form({ ...project, phone: "050 123 4567" })), "phone needs country code");
+assert.match(ok.text, /Phone: \+971 50 123 4567/, "country code joined to the number");
+assert.match(buildEnquiry(form({ ...project, country: "AG" })).text, /Phone: \+1 268 50 123 4567/, "NANP area code");
+assert("error" in buildEnquiry(form({ ...project, country: "ZZ" })), "unknown country");
+assert("error" in buildEnquiry(form({ ...project, phone: "+971 50 123 4567" })), "number excludes the code");
 assert("error" in buildEnquiry(form({ ...project, scope: [] })), "project needs a service");
 assert("error" in buildEnquiry(form({ ...project, scope: ["Hacking"] })), "unknown services ignored");
 assert("error" in buildEnquiry(form({ ...project, sector: "Nope" })), "sector must be from the list");

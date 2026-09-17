@@ -2,6 +2,7 @@
 import Base from "../../layouts/Base.astro";
 import { getCollection, render } from "astro:content";
 import { Picture } from "astro:assets";
+import Eyebrow from "../../components/Eyebrow.astro";
 
 export async function getStaticPaths() {
   const projects = await getCollection("projects");
@@ -16,7 +17,9 @@ const { data } = project;
 const { Content } = await render(project);
 
 const currentIndex = allProjects.findIndex((p) => p.id === project.id);
-const nextProject = allProjects[(currentIndex + 1) % allProjects.length];
+const nextIndex = (currentIndex + 1) % allProjects.length;
+const nextProject = allProjects[nextIndex];
+const pad = (n: number) => String(n).padStart(2, "0");
 
 const restOfGallery = data.gallery.slice(1);
 const last = restOfGallery.length - 1;
@@ -98,25 +101,49 @@ const facts = [
     </section>
   )}
 
-  <section class="border-t border-paper/15">
+  <!-- Next project: a compact index card, not a second hero. The cover sits
+       inset in its frame and opens to full bleed on hover while the title
+       nudges and the arrow tile slides out — one gesture, three responses. -->
+  <section class="gutter pb-[72px] md:pb-[120px]">
+    <div class="flex items-center justify-between gap-[16px]">
+      <Eyebrow>Next project</Eyebrow>
+      <p class="meta text-muted">{pad(nextIndex + 1)} / {pad(allProjects.length)}</p>
+    </div>
+    <div class="rule mt-[16px]" data-reveal-rule></div>
+
     <a
       href={`/projects/${nextProject.id}`}
       data-cursor="open"
-      class="gutter group grid cursor-pointer grid-cols-1 items-end gap-[32px] py-[72px] md:grid-cols-12 md:gap-x-[24px] md:py-[120px]"
+      class="group mt-[24px] grid cursor-pointer grid-cols-1 gap-[20px] md:mt-[32px] md:grid-cols-12 md:items-stretch md:gap-x-[24px]"
     >
-      <div class="md:col-span-8">
-        <p class="meta text-muted">Next project &rarr;</p>
-        <p class="mt-[20px] text-display underline-offset-[0.08em] group-hover:underline">{nextProject.data.title}</p>
+      <div class="flex flex-col justify-between gap-[24px] md:col-span-4">
+        <div>
+          <p class="meta text-muted">{nextProject.data.sector}</p>
+          <p class="mt-[12px] max-w-[18ch] text-lead transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] md:group-hover:translate-x-[8px]">
+            {nextProject.data.title}
+          </p>
+        </div>
+        <div class="flex items-end justify-between gap-[16px]">
+          <p class="meta text-muted">{nextProject.data.location} · {nextProject.data.year}</p>
+          <span
+            aria-hidden="true"
+            class="relative flex h-[44px] w-[44px] shrink-0 items-center justify-center overflow-hidden border border-paper/25 transition-colors duration-300 group-hover:border-paper group-hover:bg-paper group-hover:text-ink"
+          >
+            <span class="transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:translate-x-[44px]">&rarr;</span>
+            <span class="absolute -translate-x-[44px] transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:translate-x-0">&rarr;</span>
+          </span>
+        </div>
       </div>
-      <div class="aspect-[4/3] overflow-hidden bg-ink md:col-span-4">
+
+      <div class="aspect-[16/9] overflow-hidden bg-ink [clip-path:inset(0)] md:col-span-8 md:aspect-[21/9] md:[clip-path:inset(6%_4%)] md:transition-[clip-path] md:duration-[900ms] md:ease-[cubic-bezier(0.2,0.7,0.2,1)] md:group-hover:[clip-path:inset(0)]">
         <Picture
           src={nextProject.data.cover}
           alt=""
           formats={["avif", "webp"]}
-          widths={[500, 900]}
-          sizes="(min-width: 768px) 33vw, 100vw"
+          widths={[600, 1000, 1600]}
+          sizes="(min-width: 768px) 66vw, 100vw"
           loading="lazy"
-          class="h-full w-full object-cover transition-transform duration-[1200ms] ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:scale-[1.05]"
+          class="h-full w-full object-cover md:scale-[1.08] md:transition-transform md:duration-[900ms] md:ease-[cubic-bezier(0.2,0.7,0.2,1)] md:group-hover:scale-100"
         />
       </div>
     </a>

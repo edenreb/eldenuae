@@ -11,6 +11,32 @@ const countFor = (sector: string) =>
   sector === "All" ? projects.length : projects.filter((p) => p.data.sector === sector).length;
 // Only years that actually have a project.
 const years = [...new Set(projects.map((p) => p.data.year))].sort((a, b) => b - a);
+
+// Scope strings in the content vary ("MEP" / "MEP Works", four spellings of
+// fitout), so the filter groups them into the services the studio sells.
+// A project can sit under several.
+const SCOPE_GROUPS = [
+  ["Design", /design/i],
+  ["Fitout", /fit-?out/i],
+  ["MEP", /\bmep\b/i],
+  ["Joinery", /joinery/i],
+  ["FF&E", /ff&e/i],
+] as const;
+const scopesOf = (scope: string[]): string[] =>
+  SCOPE_GROUPS.filter(([, re]) => scope.some((s) => re.test(s))).map(([name]) => name);
+const scopes = SCOPE_GROUPS.map(([name]) => name).filter((name) =>
+  projects.some((p) => scopesOf(p.data.scope).includes(name)),
+);
+
+// Filter bar dropdowns: the site's custom <details> + radios dropdown
+// (scripts/dropdown.ts), one "All" option first.
+const filters = [
+  { name: "scope", label: "Scope", all: "All scopes", options: scopes.map((s) => ({ value: s, label: s })) },
+  { name: "year", label: "Year", all: "All years", options: years.map((y) => ({ value: String(y), label: String(y) })) },
+];
+const countWhere = (name: string, value: string) =>
+  projects.filter((p) => (name === "year" ? String(p.data.year) === value : scopesOf(p.data.scope).includes(value)))
+    .length;
 const styles = cellStyles(projects.length);
 ---
 
@@ -45,21 +71,58 @@ const styles = cellStyles(projects.length);
     </div>
   </section>
 
-  <div class="gutter">
+  <div id="filter-bar" class="gutter">
     <div class="rule"></div>
     <div class="flex items-center justify-between gap-[16px] py-[14px]">
       <p id="filter-status" class="meta text-muted" role="status" aria-live="polite">
         {projects.length} projects
       </p>
 
-      <label class="relative flex items-center">
-        <span class="sr-only">Filter by year</span>
-        <select id="year-filter" class="cursor-pointer appearance-none bg-transparent pr-[22px] text-label uppercase">
-          <option value="All">Year</option>
-          {years.map((year) => <option value={year}>{year}</option>)}
-        </select>
-        <span aria-hidden="true" class="pointer-events-none absolute right-0 text-[9px]">&#9660;</span>
-      </label>
+      <div class="flex items-center gap-[24px] md:gap-[40px]">
+        {filters.map((f) => (
+          <details data-select class="group relative">
+            <summary
+              aria-label={`Filter by ${f.name}`}
+              class="flex cursor-pointer list-none items-center gap-[10px] py-[6px] text-label uppercase transition-colors hover:text-paper [&::-webkit-details-marker]:hidden"
+            >
+              <span class="overflow-hidden">
+                <span data-value class="block">{f.label}</span>
+              </span>
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 12 12"
+                class="h-[10px] w-[10px] shrink-0 text-muted transition-transform duration-300 group-open:rotate-180"
+              >
+                <path d="M2 4.5 6 8.5 10 4.5" fill="none" stroke="currentColor" stroke-width="1.25" />
+              </svg>
+            </summary>
+            <div
+              data-options
+              role="radiogroup"
+              aria-label={`Filter by ${f.name}`}
+              class="dropdown absolute right-0 top-[calc(100%+15px)] z-30 w-[240px] border border-paper/15 bg-ink"
+            >
+              {[{ value: "All", label: f.all }, ...f.options].map((o, i) => (
+                <label class="flex cursor-pointer items-center gap-[16px] border-t border-paper/10 px-[20px] py-[14px] text-body text-muted transition-colors first:border-t-0 hover:text-paper has-checked:text-paper has-focus-visible:text-paper has-focus-visible:underline">
+                  <input
+                    type="radio"
+                    name={f.name}
+                    value={o.value}
+                    checked={i === 0}
+                    data-label={i === 0 ? f.label : o.label}
+                    class="sr-only"
+                  />
+                  <span class="flex-1">{o.label}</span>
+                  <span class="meta tabular-nums text-ghost">
+                    {i === 0 ? projects.length : countWhere(f.name, o.value)}
+                  </span>
+                  <span aria-hidden="true" data-mark class="h-[7px] w-[7px] shrink-0 bg-brand"></span>
+                </label>
+              ))}
+            </div>
+          </details>
+        ))}
+      </div>
     </div>
     <div class="rule"></div>
   </div>
@@ -76,6 +139,7 @@ const styles = cellStyles(projects.length);
           data-cursor="open"
           data-sector={project.data.sector}
           data-year={project.data.year}
+          data-scopes={scopesOf(project.data.scope).join("|")}
           style={styles[i]}
           class="project-card group relative block cursor-pointer overflow-hidden bg-ink"
         >
@@ -101,7 +165,7 @@ const styles = cellStyles(projects.length);
     </div>
 
     <p id="empty-state" hidden class="py-[120px] text-center text-lead text-muted">
-      No projects match that sector and year.
+      No projects match those filters.
     </p>
   </section>
 </Base>
@@ -144,17 +208,20 @@ const styles = cellStyles(projects.length);
   import gsap from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
   import { cellStyles } from "../../scripts/mosaic";
+  import { initDropdowns } from "../../scripts/dropdown";
 
   gsap.registerPlugin(ScrollTrigger);
 
   function initFilters() {
     const buttons = document.querySelectorAll<HTMLButtonElement>(".sector-filter");
-    const yearSelect = document.getElementById("year-filter") as HTMLSelectElement | null;
+    const bar = document.getElementById("filter-bar");
     const grid = document.getElementById("project-grid");
     const cards = [...document.querySelectorAll<HTMLAnchorElement>(".project-card")];
     const status = document.getElementById("filter-status");
     const empty = document.getElementById("empty-state");
-    if (!buttons.length || !yearSelect || !grid) return;
+    if (!buttons.length || !bar || !grid) return;
+    initDropdowns(bar);
+    const picked = (name: string) => bar.querySelector<HTMLInputElement>(`input[name="${name}"]:checked`)?.value ?? "All";
 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -176,9 +243,15 @@ const styles = cellStyles(projects.length);
     }
 
     let sector = "All";
-    const matches = (card: HTMLAnchorElement) =>
-      (sector === "All" || card.dataset.sector === sector) &&
-      (yearSelect.value === "All" || card.dataset.year === yearSelect.value);
+    const matches = (card: HTMLAnchorElement) => {
+      const year = picked("year");
+      const scope = picked("scope");
+      return (
+        (sector === "All" || card.dataset.sector === sector) &&
+        (year === "All" || card.dataset.year === year) &&
+        (scope === "All" || card.dataset.scopes!.split("|").includes(scope))
+      );
+    };
 
     // Show the matches and re-tile them in visible order.
     const layout = () => {
@@ -229,7 +302,7 @@ const styles = cellStyles(projects.length);
         applyFilter();
       });
     });
-    yearSelect.addEventListener("change", applyFilter);
+    bar.addEventListener("change", applyFilter);
 
     // Deep-link support, e.g. /projects?sector=Fitness
     const requested = new URLSearchParams(location.search).get("sector");
