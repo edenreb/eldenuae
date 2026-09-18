@@ -68,6 +68,11 @@
      is the one element common to both pages, and holding it still is what
      stops a navigation reading as a full teardown. */
   --z-curtain: 55;
+  /* Grain sits over the page and the header, under the menu and cursor. */
+  --z-grain: 59;
+  /* Above the scrim like the header, so it holds still across page
+     transitions; below the nav so the mobile menu covers it. */
+  --z-whatsapp: 58;
   --z-nav: 60;
   --z-skiplink: 70;
   --z-cursor: 80;
@@ -280,4 +285,41 @@ label:has(input:checked) [data-mark] {
 }
 details[open] > .dropdown {
   animation: dropdown-in 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* Film grain over the whole site (#grain in layouts/Base.astro), running
+   like film through a gate: the noise layer jumps between ten offsets about
+   ten times a second — stepped, never gliding, which is what reads as grain
+   rather than a moving texture. The layer is twice the viewport so no offset
+   ever shows an edge, and it moves by transform only, so the browser shifts
+   one composited layer instead of repainting noise every frame. Decorative
+   and never interactive; the reduced-motion rule in the base layer freezes
+   it on its last frame. */
+#grain {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-grain);
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0.07;
+}
+#grain::before {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 1s steps(1) infinite;
+  will-change: transform;
+}
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  10% { transform: translate(-5%, -10%); }
+  20% { transform: translate(-15%, 5%); }
+  30% { transform: translate(7%, -25%); }
+  40% { transform: translate(-5%, 25%); }
+  50% { transform: translate(-15%, 10%); }
+  60% { transform: translate(15%, 0%); }
+  70% { transform: translate(0%, 15%); }
+  80% { transform: translate(3%, 35%); }
+  90% { transform: translate(-10%, 10%); }
 }

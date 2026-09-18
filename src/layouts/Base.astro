@@ -4,6 +4,7 @@ import { Font } from "astro:assets";
 import Footer from "../components/Footer.astro";
 import Preloader from "../components/Preloader.astro";
 import Cursor from "../components/Cursor.astro";
+import WhatsApp from "../components/WhatsApp.astro";
 import Logo from "../components/Logo.astro";
 import "../styles/global.css";
 
@@ -134,6 +135,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
          page early. Empty and aria-hidden — decorative only. -->
     <div id="curtain" aria-hidden="true" transition:persist></div>
 
+    <!-- Film grain over everything. Persisted so it doesn't flicker on a
+         page swap; pointer-events: none so it never eats a click. -->
+    <div id="grain" aria-hidden="true" transition:persist></div>
+
     <a
       href="#main-content"
       class="meta fixed left-[16px] top-[12px] -translate-y-24 bg-ink px-[16px] py-[10px] text-paper transition-transform focus:translate-y-0"
@@ -243,6 +248,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     </main>
 
     <Footer />
+    <WhatsApp transition:persist />
 
     <script>
       import "../scripts/motion";

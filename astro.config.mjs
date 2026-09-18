@@ -13,6 +13,8 @@ export default defineConfig({
   // The old /career page was an orphaned duplicate of /careers.
   redirects: {
     '/career': '/careers',
+    // Retired listicle; send old links and search results to the journal.
+    '/journal/best-interior-fitout-companies-dubai': '/journal',
   },
   // Three faces, each with one job: Inter Tight carries display and UI,
   // Instrument Serif is the single italic accent word in a headline, Geist

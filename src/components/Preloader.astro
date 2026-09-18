@@ -201,12 +201,12 @@
     const value = { n: 0 };
 
     // Insurance: whatever happens to the timeline (tab backgrounded mid-run,
-    // GSAP stalling), the preloader is gone and the page usable after 8s.
+    // GSAP stalling), the preloader is gone and the page usable after 5s.
     const watchdog = setTimeout(() => {
       announce();
       unlock();
       el.remove();
-    }, 8000);
+    }, 5000);
 
     if (!paths.length) {
       // Defensive: nothing to draw. Behave like the no-preload path above
@@ -261,7 +261,7 @@
     const DRAW_TOTAL = (paths.length - 1) * STAGGER_S + DRAW_S;
     const FILL_S = 0.7;
 
-    gsap
+    const intro = gsap
       .timeline()
       // Draw, count, and fill the bar together — three readings of one
       // progress value, not three animations that happen to agree. The
@@ -335,6 +335,10 @@
         },
         "-=0.45",
       );
+    // The choreography above is authored at a comfortable ~6s; play the
+    // whole thing, fade included, in PRELOADER_S.
+    const PRELOADER_S = 3;
+    intro.timeScale(intro.duration() / PRELOADER_S);
   }
 
   document.addEventListener("astro:page-load", initPreloader);

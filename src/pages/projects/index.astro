@@ -1,5 +1,6 @@
 ---
 import Base from "../../layouts/Base.astro";
+import { PROJECTS } from "../../facts";
 import { getCollection } from "astro:content";
 import { Picture } from "astro:assets";
 import { cellStyles } from "../../scripts/mosaic";
@@ -42,7 +43,7 @@ const styles = cellStyles(projects.length);
 
 <Base
   title="Projects"
-  description="87+ turnkey fitout projects across the UAE — fitness, F&B, retail, workplace, and hospitality."
+  description={`${PROJECTS} turnkey fitout projects across the UAE — fitness, F&B, retail, workplace, and hospitality.`}
 >
   <h1 class="sr-only">Projects</h1>
 

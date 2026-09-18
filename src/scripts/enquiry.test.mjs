@@ -30,6 +30,8 @@ assert("error" in buildEnquiry(form({ ...project, phone: "+971 50 123 4567" })),
 assert("error" in buildEnquiry(form({ ...project, scope: [] })), "project needs a service");
 assert("error" in buildEnquiry(form({ ...project, scope: ["Hacking"] })), "unknown services ignored");
 assert("error" in buildEnquiry(form({ ...project, sector: "Nope" })), "sector must be from the list");
+assert.match(buildEnquiry(form({ ...project, size: "1,000–3,000", budget: "2M–5M" })).text, /Size \(sq ft\): 1,000–3,000\nTimeline: 3–6 months\nBudget \(AED\): 2M–5M/, "size and budget ranges");
+assert("error" in buildEnquiry(form({ ...project, budget: "12 million" })), "budget must be from the list");
 assert("error" in buildEnquiry(form({ ...project, type: "bogus" })), "unknown type");
 assert("error" in buildEnquiry(form({ ...base, type: "supplier", message: "Tiles" })), "supplier needs company");
 assert("spam" in buildEnquiry(form({ ...project, nickname: "bot" })), "honeypot");
