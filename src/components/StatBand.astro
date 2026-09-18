@@ -1,8 +1,10 @@
 ---
+import { ENGINEERS, PROJECTS, YEARS } from "../facts";
+
 const stats = [
-  { value: 85, suffix: "+", label: "Projects delivered" },
-  { value: 10, suffix: "+", label: "Years of expertise in the UAE" },
-  { value: 140, suffix: "+", label: "Engineers working on your project" },
+  { value: parseInt(PROJECTS), suffix: "+", label: "Projects delivered" },
+  { value: YEARS, suffix: "", label: "Years of expertise in the UAE" },
+  { value: parseInt(ENGINEERS), suffix: "+", label: "Engineers working on your project" },
 ];
 ---
 

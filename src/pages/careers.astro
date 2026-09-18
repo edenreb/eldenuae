@@ -4,6 +4,7 @@ import Eyebrow from "../components/Eyebrow.astro";
 import Button from "../components/Button.astro";
 import { Picture } from "astro:assets";
 import breakImage from "../assets/_misc/careers.jpg";
+import { PROJECTS, YEARS } from "../facts";
 
 // Applications go through the contact form with "Careers" preselected, so
 // the CV arrives as an attachment; a discipline row also fills in the role.
@@ -35,7 +36,7 @@ const reasons = [
   },
   {
     title: "Small Enough to Be Heard.",
-    copy: "Nine years, 87+ projects, one team. There is no layer of account management between the person who solved a problem and the person who briefs the client on it.",
+    copy: `${YEARS} years, ${PROJECTS} projects, one team. There is no layer of account management between the person who solved a problem and the person who briefs the client on it.`,
   },
   {
     title: "Real Deadlines.",

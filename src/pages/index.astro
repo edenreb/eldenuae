@@ -1,5 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
+import { PROJECTS } from "../facts";
 import Hero from "../components/Hero.astro";
 import Positioning from "../components/Positioning.astro";
 import StatBand from "../components/StatBand.astro";
@@ -11,7 +12,7 @@ import Testimonials from "../components/Testimonials.astro";
 import JournalTeaser from "../components/JournalTeaser.astro";
 ---
 
-<Base title="Elden" description="Turnkey fitout, from design to handover. 87+ projects across the UAE." heroOverlay>
+<Base title="Elden" description={`Turnkey fitout, from design to handover. ${PROJECTS} projects across the UAE.`} heroOverlay>
   <Hero />
   <Positioning />
   <StatBand />
