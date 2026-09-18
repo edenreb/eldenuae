@@ -288,40 +288,58 @@ details[open] > .dropdown {
 }
 
 /* Film grain over the whole site (#grain in layouts/Base.astro), running
-   like film through a gate: the noise layer jumps between ten offsets about
-   ten times a second — stepped, never gliding, which is what reads as grain
-   rather than a moving texture. The layer is three viewports wide and tall
-   (one viewport of overhang on every side, a third of its own size) and no
-   offset moves it more than 15% of itself, so an edge can never come into
-   view. It moves by transform only, so the browser shifts
-   one composited layer instead of repainting noise every frame. Decorative
-   and never interactive; the reduced-motion rule in the base layer freezes
-   it on its last frame. */
+   like film through a gate: the noise jumps between ten offsets about ten
+   times a second — stepped, never gliding, which is what reads as grain
+   rather than a moving texture.
+
+   How it moves matters, and two earlier versions flashed:
+   - An oversized layer (3x the viewport) moved by transform. At Retina
+     sizes that is bigger than the browser keeps drawn, so newly exposed
+     parts were blank for a frame.
+   - A viewport-sized layer stepping background-position. That repaints the
+     whole screen ten times a second, and Safari can re-render the SVG noise
+     filter on every repaint.
+   What works everywhere: a layer only one noise tile (180px) bigger than
+   the viewport on each side, moved by transform, never further than 150px.
+   The noise is rasterised once, the layer stays small enough to stay
+   fully drawn, nothing repaints, and no edge can come into view.
+
+   The noise is sparse white specks on transparent, not a full tile of grey
+   noise: grey noise averages mid-grey, so over the near-black ink it acts
+   as a veil and lifts the whole page toward grey long before the texture
+   shows. The feColorMatrix makes every pixel white and turns only the top
+   of the noise range into alpha (alpha = 20 x noise - 13.2), so most of the
+   tile is clear. At 8% it is a faint texture that barely lifts the ink.
+
+   Decorative and never interactive; the reduced-motion rule in the base
+   layer freezes it on its last frame. */
 #grain {
   position: fixed;
   inset: 0;
   z-index: var(--z-grain);
   pointer-events: none;
   overflow: hidden;
-  opacity: 0.07;
+  opacity: 0.08;
 }
 #grain::before {
   content: "";
   position: absolute;
-  inset: -100%;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  inset: -180px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27180%27 height=%27180%27%3E%3Cfilter id=%27n%27%3E%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%27.85%27 numOctaves=%273%27 stitchTiles=%27stitch%27/%3E%3CfeColorMatrix values=%270 0 0 0 1  0 0 0 0 1  0 0 0 0 1  20 0 0 0 -13.2%27/%3E%3C/filter%3E%3Crect width=%27100%25%27 height=%27100%25%27 filter=%27url%28%23n%29%27/%3E%3C/svg%3E");
   animation: grain 1s steps(1) infinite;
   will-change: transform;
 }
+/* Offsets under the 180px overhang, spread so consecutive frames never land
+   near each other. */
 @keyframes grain {
   0% { transform: translate(0, 0); }
-  10% { transform: translate(-5%, -10%); }
-  20% { transform: translate(-15%, 5%); }
-  30% { transform: translate(7%, -15%); }
-  40% { transform: translate(-5%, 15%); }
-  50% { transform: translate(-15%, 10%); }
-  60% { transform: translate(15%, 0%); }
-  70% { transform: translate(0%, 15%); }
-  80% { transform: translate(3%, 12%); }
-  90% { transform: translate(-10%, 10%); }
+  10% { transform: translate(-63px, 97px); }
+  20% { transform: translate(121px, -38px); }
+  30% { transform: translate(-142px, -115px); }
+  40% { transform: translate(54px, 150px); }
+  50% { transform: translate(-29px, -71px); }
+  60% { transform: translate(150px, 44px); }
+  70% { transform: translate(-104px, 23px); }
+  80% { transform: translate(87px, -133px); }
+  90% { transform: translate(-9px, 118px); }
 }
