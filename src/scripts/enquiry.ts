@@ -12,6 +12,8 @@ export type Inquiry = keyof typeof INQUIRIES;
 export const SCOPES = ["Design", "Fitout", "MEP works", "Joinery", "Full interior fitout"];
 export const SECTORS = ["Fitness", "F&B", "Retail", "Workplace", "Hospitality", "Other"];
 export const TIMELINES = ["As soon as possible", "Within 3 months", "3–6 months", "6+ months", "Just exploring"];
+export const SIZES = ["500–1,000", "1,000–3,000", "3,000–5,000", "5,000+"];
+export const BUDGETS = ["150K–500K", "500K–1M", "1M–2M", "2M–5M", "5M+"];
 
 // Extra fields per inquiry, in the order they appear in the email.
 // [name, label, required, allowed values]
@@ -21,9 +23,9 @@ export const FIELDS: Record<Inquiry, Field[]> = {
     ["company", "Company", false],
     ["sector", "Sector", true, SECTORS],
     ["location", "Project location", true],
-    ["size", "Size (sq ft)", false],
+    ["size", "Size (sq ft)", false, SIZES],
     ["timeline", "Timeline", true, TIMELINES],
-    ["budget", "Budget (AED)", false],
+    ["budget", "Budget (AED)", false, BUDGETS],
     ["message", "About the project", true],
   ],
   careers: [

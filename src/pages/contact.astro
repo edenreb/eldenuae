@@ -62,6 +62,9 @@ const STEPS: Record<Inquiry, [string, string[]][]> = {
   general: [["How Can We Help?", ["message"]]],
 };
 
+// Short, ordered ranges read better as a row of buttons than a dropdown.
+const CHIPS = ["size", "budget"];
+
 const field = (type: Inquiry, key: string) => FIELDS[type].find(([name]) => name === key)!;
 const pad = (n: number) => String(n).padStart(2, "0");
 
@@ -312,6 +315,32 @@ const MARK = "h-[7px] w-[7px] shrink-0 bg-brand";
                     const [name, label, required, options] = field(type, key);
                     const labelText = required ? label : `${label} (optional)`;
 
+                    if (options && CHIPS.includes(key))
+                      return (
+                        <div data-field>
+                          <span id={`${id}-label`} class={LABEL}>
+                            {labelText}
+                          </span>
+                          {/* Real radios again. Optional, so clicking the picked
+                              button clears it (script below). */}
+                          <div
+                            role="radiogroup"
+                            aria-labelledby={`${id}-label`}
+                            aria-describedby={`${id}-error`}
+                            data-chips
+                            class="mt-[16px] flex flex-wrap gap-[8px]"
+                          >
+                            {options.map((o) => (
+                              <label class="chip relative flex h-[48px] cursor-pointer items-center border border-paper/20 px-[18px] text-label tabular-nums text-paper/70 transition-[color,border-color,scale] duration-300 hover:border-paper/60 hover:text-paper active:scale-[0.97] has-checked:border-paper has-checked:text-ink has-focus-visible:outline-2 has-focus-visible:outline-offset-4 has-focus-visible:outline-paper">
+                                <input type="radio" name={name} value={o} required={required} class="sr-only" />
+                                {o}
+                              </label>
+                            ))}
+                          </div>
+                          <p id={`${id}-error`} data-error class={ERROR}></p>
+                        </div>
+                      );
+
                     if (options)
                       return (
                         <div data-field>
@@ -473,6 +502,24 @@ const MARK = "h-[7px] w-[7px] shrink-0 bg-brand";
      Unpicking runs the same in reverse, a little faster. */
   .choice {
     isolation: isolate;
+  }
+  /* Range buttons: paper floods in from the left on pick, drains on unpick. */
+  .chip {
+    isolation: isolate;
+  }
+  .chip::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--color-paper);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 1, 1);
+  }
+  .chip:has(input:checked)::before {
+    transform: scaleX(1);
+    transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
   }
   .choice::before,
   .choice::after {
@@ -649,6 +696,22 @@ const MARK = "h-[7px] w-[7px] shrink-0 bg-brand";
     });
 
     initDropdowns(form);
+
+    // Optional range buttons: clicking the picked one clears the field.
+    form.querySelectorAll<HTMLElement>("[data-chips]").forEach((group) => {
+      let wasChecked: HTMLInputElement | null = null;
+      group.addEventListener("pointerdown", (e) => {
+        const input = (e.target as HTMLElement).closest("label")?.querySelector("input");
+        wasChecked = input?.checked ? input : null;
+      });
+      group.addEventListener("click", (e) => {
+        const input = e.target as HTMLInputElement;
+        if (input.tagName !== "INPUT" || input !== wasChecked) return;
+        input.checked = false;
+        wasChecked = null;
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+      });
+    });
   }
   document.addEventListener("astro:page-load", initContactForm);
 </script>
