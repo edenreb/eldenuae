@@ -68,8 +68,6 @@
      is the one element common to both pages, and holding it still is what
      stops a navigation reading as a full teardown. */
   --z-curtain: 55;
-  /* Grain sits over the page and the header, under the menu and cursor. */
-  --z-grain: 59;
   /* Above the scrim like the header, so it holds still across page
      transitions; below the nav so the mobile menu covers it. */
   --z-whatsapp: 58;
@@ -128,8 +126,9 @@
     display: none;
   }
 
+  /* No background on body: <html> paints the ink, and an opaque body
+     would cover #grain, which sits between the two (see #grain below). */
   body {
-    background: var(--color-ink);
     color: var(--color-paper);
     font-family: var(--font-sans);
     font-size: var(--text-body);
@@ -311,12 +310,17 @@ details[open] > .dropdown {
    of the noise range into alpha (alpha = 20 x noise - 13.2), so most of the
    tile is clear. At 8% it is a faint texture that barely lifts the ink.
 
+   It sits behind everything: z-index -1 paints it just above <html>'s ink
+   background and below all page content, so it textures the empty
+   background only. Text, photos and any solid surface cover it; see the
+   note on body in the base layer.
+
    Decorative and never interactive; the reduced-motion rule in the base
    layer freezes it on its last frame. */
 #grain {
   position: fixed;
   inset: 0;
-  z-index: var(--z-grain);
+  z-index: -1;
   pointer-events: none;
   overflow: hidden;
   opacity: 0.08;
