@@ -13,31 +13,12 @@ const countFor = (sector: string) =>
 // Only years that actually have a project.
 const years = [...new Set(projects.map((p) => p.data.year))].sort((a, b) => b - a);
 
-// Scope strings in the content vary ("MEP" / "MEP Works", four spellings of
-// fitout), so the filter groups them into the services the studio sells.
-// A project can sit under several.
-const SCOPE_GROUPS = [
-  ["Design", /design/i],
-  ["Fitout", /fit-?out/i],
-  ["MEP", /\bmep\b/i],
-  ["Joinery", /joinery/i],
-  ["FF&E", /ff&e/i],
-] as const;
-const scopesOf = (scope: string[]): string[] =>
-  SCOPE_GROUPS.filter(([, re]) => scope.some((s) => re.test(s))).map(([name]) => name);
-const scopes = SCOPE_GROUPS.map(([name]) => name).filter((name) =>
-  projects.some((p) => scopesOf(p.data.scope).includes(name)),
-);
-
-// Filter bar dropdowns: the site's custom <details> + radios dropdown
+// Filter bar dropdown: the site's custom <details> + radios dropdown
 // (scripts/dropdown.ts), one "All" option first.
 const filters = [
-  { name: "scope", label: "Scope", all: "All scopes", options: scopes.map((s) => ({ value: s, label: s })) },
   { name: "year", label: "Year", all: "All years", options: years.map((y) => ({ value: String(y), label: String(y) })) },
 ];
-const countWhere = (name: string, value: string) =>
-  projects.filter((p) => (name === "year" ? String(p.data.year) === value : scopesOf(p.data.scope).includes(value)))
-    .length;
+const countForYear = (year: string) => projects.filter((p) => String(p.data.year) === year).length;
 const styles = cellStyles(projects.length);
 ---
 
@@ -115,7 +96,7 @@ const styles = cellStyles(projects.length);
                   />
                   <span class="flex-1">{o.label}</span>
                   <span class="meta tabular-nums text-ghost">
-                    {i === 0 ? projects.length : countWhere(f.name, o.value)}
+                    {i === 0 ? projects.length : countForYear(o.value)}
                   </span>
                   <span aria-hidden="true" data-mark class="h-[7px] w-[7px] shrink-0 bg-brand"></span>
                 </label>
@@ -140,7 +121,6 @@ const styles = cellStyles(projects.length);
           data-cursor="open"
           data-sector={project.data.sector}
           data-year={project.data.year}
-          data-scopes={scopesOf(project.data.scope).join("|")}
           style={styles[i]}
           class="project-card group relative block cursor-pointer overflow-hidden bg-ink"
         >
@@ -166,7 +146,7 @@ const styles = cellStyles(projects.length);
     </div>
 
     <p id="empty-state" hidden class="py-[120px] text-center text-lead text-muted">
-      No projects match those filters.
+      No projects match that sector and year.
     </p>
   </section>
 </Base>
@@ -246,12 +226,7 @@ const styles = cellStyles(projects.length);
     let sector = "All";
     const matches = (card: HTMLAnchorElement) => {
       const year = picked("year");
-      const scope = picked("scope");
-      return (
-        (sector === "All" || card.dataset.sector === sector) &&
-        (year === "All" || card.dataset.year === year) &&
-        (scope === "All" || card.dataset.scopes!.split("|").includes(scope))
-      );
+      return (sector === "All" || card.dataset.sector === sector) && (year === "All" || card.dataset.year === year);
     };
 
     // Show the matches and re-tile them in visible order.
