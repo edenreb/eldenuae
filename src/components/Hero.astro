@@ -3,14 +3,14 @@
 // the photograph carries the page, the type sits on it.
 import { Picture } from "astro:assets";
 import Button from "./Button.astro";
-import heroImage from "../assets/holiday-inn/hero-1.jpg";
+import heroImage from "../assets/voco-by-ihg/hero-1.jpg";
 ---
 
 <section id="hero" data-hero class="relative h-[100svh] min-h-[560px] w-full overflow-hidden bg-ink text-paper">
   <div id="hero-media" class="absolute inset-0">
     <Picture
       src={heroImage}
-      alt="Guest corridor overlooking the atrium at Holiday Inn Al Barsha, a hospitality fitout by Elden"
+      alt="Guest corridor overlooking the atrium at Voco by IHG Al Barsha, a hospitality fitout by Elden"
       formats={["avif", "webp"]}
       widths={[828, 1280, 1920, 2560, 3200]}
       sizes="100vw"
@@ -33,8 +33,8 @@ import heroImage from "../assets/holiday-inn/hero-1.jpg";
     </div>
 
     <div id="hero-foot" class="meta grid grid-cols-2 items-end gap-[16px] pb-[20px] md:grid-cols-3">
-      <a href="/projects/holiday-inn" class="cursor-pointer justify-self-start underline-offset-4 hover:underline">
-        (01) Holiday Inn — Al Barsha
+      <a href="/projects/voco-by-ihg" class="cursor-pointer justify-self-start underline-offset-4 hover:underline">
+        (01) Voco by IHG — Al Barsha
       </a>
       <span class="hidden justify-self-center md:block" aria-hidden="true">Scroll ↓</span>
       <span class="justify-self-end text-right">Est. 2014 — Dubai, UAE</span>
@@ -61,6 +61,11 @@ import heroImage from "../assets/holiday-inn/hero-1.jpg";
     overflow: hidden;
     padding-bottom: 0.18em;
     margin-bottom: -0.18em;
+    /* Same trick sideways: a line that fills its container had the last
+       letter's edge shaved off by the mask (the "s" of Places, the italic
+       "Spaces."). Pad the mask and pull the padding back off the layout. */
+    padding-inline: 0.12em;
+    margin-inline: -0.12em;
   }
 
   .hero-line-inner {

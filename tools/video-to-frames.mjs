@@ -1,7 +1,7 @@
 // Turns a video into a scroll-scrub frame sequence for FrameSequence.astro:
 // every frame as WebP, once per width, named 0001.webp, 0002.webp, ...
 //
-//   node tools/video-to-frames.mjs src/assets/holiday-inn/featured.mov public/sequences/holiday-inn
+//   node tools/video-to-frames.mjs src/assets/voco-by-ihg/featured.mov public/sequences/voco-by-ihg
 //
 // macOS only: decoding goes through decode-frames.swift (AVFoundation), so
 // it needs Xcode's `swift` but not ffmpeg. Encoding uses sharp, which Astro
