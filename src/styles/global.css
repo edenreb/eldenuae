@@ -9,12 +9,14 @@
        paper -> 16.5:1
        muted -> 6.6:1   (secondary text)
        ghost -> 3.7:1   (LARGE text only — inactive display tabs)
-       brand -> 8.6:1 */
+       brand -> 8.6:1
+       danger -> 7.0:1  (form validation messages) */
   --color-paper: #f0ece6;
   --color-ink: #090c1e;
   --color-muted: #8f96ab;
   --color-ghost: #636b85;
   --color-brand: #38c467;
+  --color-danger: #ff6b6b;
 
   --font-sans: var(--font-inter-tight), ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;

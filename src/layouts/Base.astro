@@ -191,6 +191,25 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
               </a>
             </li>
           ))}
+          {/* Needs ~1100px of row. At 1024 the three grid columns pack to
+              exactly the content width and the wordmark's N touches Careers,
+              so the pill only appears from xl. Below that Contact carries it,
+              and the mobile menu has its own full-width copy. */}
+          <li class="hidden xl:block">
+            <a
+              href="/contact"
+              data-astro-reload={isSamePage("/contact") ? true : undefined}
+              class="nav-cta group inline-flex h-[38px] cursor-pointer items-center gap-[8px] whitespace-nowrap rounded-full border border-paper bg-paper pl-[18px] pr-[16px] text-label uppercase text-ink transition-colors duration-300 hover:bg-transparent hover:text-paper"
+            >
+              Start Project
+              <span
+                aria-hidden="true"
+                class="transition-transform duration-300 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:translate-x-[3px]"
+              >
+                &rarr;
+              </span>
+            </a>
+          </li>
         </ul>
 
         <button type="button" popovertarget="menu" class="nav-link inline-flex h-[40px] items-center text-label uppercase md:hidden">
@@ -234,6 +253,20 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
           ))}
         </ul>
       </nav>
+      <a
+        href="/contact"
+        data-astro-reload={isSamePage("/contact") ? true : undefined}
+        class="group mt-[6vh] inline-flex h-[52px] w-full cursor-pointer items-center justify-center gap-[10px] rounded-full border border-paper bg-paper text-label uppercase text-ink transition-colors duration-300 hover:bg-transparent hover:text-paper"
+      >
+        Start Project
+        <span
+          aria-hidden="true"
+          class="transition-transform duration-300 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:translate-x-[3px]"
+        >
+          &rarr;
+        </span>
+      </a>
+
       <div class="meta mt-auto flex flex-col gap-[4px] pb-[calc(24px+env(safe-area-inset-bottom))] text-muted">
         <a href="mailto:info@eldenuae.com" class="cursor-pointer normal-case">info@eldenuae.com</a>
         <a href="tel:+97142276206" class="cursor-pointer">+971 4 227 6206</a>
