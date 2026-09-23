@@ -2,7 +2,7 @@
 title: "Natureland Supermarket"
 client: "Natureland"
 sector: "Retail"
-year: 2023
+year: 2022
 location: "EMAAR Springs Souq, Dubai"
 scope: ["Fitout", "MEP"]
 tier: "hero"

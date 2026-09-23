@@ -2,7 +2,7 @@
 title: "The Warehouse Gym — Jumeirah Park"
 client: "The Warehouse Gym"
 sector: "Fitness"
-year: 2022
+year: 2021
 location: "Jumeirah Park, Dubai"
 scope: ["Interior Fitout works"]
 tier: "standard"

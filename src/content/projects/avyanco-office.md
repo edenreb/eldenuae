@@ -4,7 +4,7 @@ client: "Avyanco"
 sector: "Workplace"
 year: 2022
 location: "Burj Al Salam, World Trade Center, Dubai"
-scope: ["Fitout", "MEP"]
+scope: ["Joinery"]
 tier: "standard"
 featured: false
 cover: "../../assets/avyanco-office/1.jpg"

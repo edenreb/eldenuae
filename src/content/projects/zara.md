@@ -2,7 +2,7 @@
 title: "Zara - Marina Mall"
 client: "Zara"
 sector: "Retail"
-year: 2021
+year: 2018
 location: "Marina Mall, Abu Dhabi"
 scope: ["Interior Fitout", "MEP"]
 tier: "compact"

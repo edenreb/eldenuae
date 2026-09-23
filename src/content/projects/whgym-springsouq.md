@@ -2,7 +2,7 @@
 title: "The Warehouse Gym — Springs Souq"
 client: "The Warehouse Gym"
 sector: "Fitness"
-year: 2021
+year: 2018
 location: "The Springs Souq, Dubai"
 scope: ["MEP Works"]
 tier: "standard"

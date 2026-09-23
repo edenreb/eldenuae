@@ -2,7 +2,7 @@
 title: "The Warehouse Gym — DIFC"
 client: "The Warehouse Gym"
 sector: "Fitness"
-year: 2024
+year: 2020
 location: "Gate Avenue, DIFC, Dubai"
 scope: ["Interior Fitout", "MEP"]
 tier: "hero"

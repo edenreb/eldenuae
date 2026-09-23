@@ -4,7 +4,7 @@ client: "Seven Tides"
 sector: "Hospitality"
 year: 2023
 location: "Palm Jumeirah, Dubai"
-scope: ["Fitout", "MEP"]
+scope: ["MEP"]
 tier: "hero"
 featured: true
 cover: "../../assets/anantara-penthouse/1.jpg"

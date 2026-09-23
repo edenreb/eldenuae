@@ -2,7 +2,7 @@
 title: "The Warehouse Gym — Al Quoz"
 client: "The Warehouse Gym"
 sector: "Fitness"
-year: 2023
+year: 2020
 location: "Al Quoz 4, Dubai"
 scope: ["Complete Interior Fitout works"]
 tier: "hero"

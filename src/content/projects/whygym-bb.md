@@ -2,7 +2,7 @@
 title: "The Warehouse Gym — Business Bay"
 client: "The Warehouse Gym"
 sector: "Fitness"
-year: 2022
+year: 2019
 location: "O14 Tower, Business Bay, Dubai"
 scope: ["MEP Works"]
 tier: "standard"

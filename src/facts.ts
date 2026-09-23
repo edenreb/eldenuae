@@ -1,8 +1,8 @@
 // Company numbers quoted across the site. Change them here, not in page copy.
 export const FOUNDED = 2014;
 export const YEARS = new Date().getFullYear() - FOUNDED; // at build time
-export const PROJECTS = "87+";
-export const ENGINEERS = "140+";
+export const PROJECTS = "110+";
+export const ENGINEERS = "100+";
 
 // Sales line on WhatsApp: digits only for wa.me, spaced for display.
 export const SALES_WHATSAPP = "971525870485";
