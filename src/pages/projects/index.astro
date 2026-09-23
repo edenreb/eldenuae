@@ -5,20 +5,29 @@ import { getCollection } from "astro:content";
 import { Picture } from "astro:assets";
 import { cellStyles } from "../../scripts/mosaic";
 
-const projects = (await getCollection("projects")).sort((a, b) => b.data.year - a.data.year);
+// Ordered by how much of the job was ours, widest first, then newest first
+// inside each band. The scope strings in the content vary in wording
+// ("MEP" / "MEP Works", four spellings of fitout), so match on keywords.
+const SCOPE_BANDS = [
+  // Turnkey: the whole interior, or design and build together.
+  (s: string) => /complete|full/.test(s) || (/design/.test(s) && /fit-?out/.test(s)),
+  (s: string) => /fit-?out/.test(s) && /\bmep\b/.test(s),
+  (s: string) => /fit-?out/.test(s),
+  (s: string) => /joinery/.test(s),
+];
+const band = (scope: string[]) => {
+  const s = scope.join(" ").toLowerCase();
+  const i = SCOPE_BANDS.findIndex((match) => match(s));
+  return i === -1 ? SCOPE_BANDS.length : i; // services only (MEP) last
+};
+
+const projects = (await getCollection("projects")).sort(
+  (a, b) => band(a.data.scope) - band(b.data.scope) || b.data.year - a.data.year,
+);
 
 const sectors = ["All", ...new Set(projects.map((p) => p.data.sector))];
 const countFor = (sector: string) =>
   sector === "All" ? projects.length : projects.filter((p) => p.data.sector === sector).length;
-// Only years that actually have a project.
-const years = [...new Set(projects.map((p) => p.data.year))].sort((a, b) => b - a);
-
-// Filter bar dropdown: the site's custom <details> + radios dropdown
-// (scripts/dropdown.ts), one "All" option first.
-const filters = [
-  { name: "year", label: "Year", all: "All years", options: years.map((y) => ({ value: String(y), label: String(y) })) },
-];
-const countForYear = (year: string) => projects.filter((p) => String(p.data.year) === year).length;
 const styles = cellStyles(projects.length);
 ---
 
@@ -53,62 +62,6 @@ const styles = cellStyles(projects.length);
     </div>
   </section>
 
-  <div id="filter-bar" class="gutter">
-    <div class="rule"></div>
-    <div class="flex items-center justify-between gap-[16px] py-[14px]">
-      <p id="filter-status" class="meta text-muted" role="status" aria-live="polite">
-        {projects.length} projects
-      </p>
-
-      <div class="flex items-center gap-[24px] md:gap-[40px]">
-        {filters.map((f) => (
-          <details data-select class="group relative">
-            <summary
-              aria-label={`Filter by ${f.name}`}
-              class="flex cursor-pointer list-none items-center gap-[10px] py-[6px] text-label uppercase transition-colors hover:text-paper [&::-webkit-details-marker]:hidden"
-            >
-              <span class="overflow-hidden">
-                <span data-value class="block">{f.label}</span>
-              </span>
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 12 12"
-                class="h-[10px] w-[10px] shrink-0 text-muted transition-transform duration-300 group-open:rotate-180"
-              >
-                <path d="M2 4.5 6 8.5 10 4.5" fill="none" stroke="currentColor" stroke-width="1.25" />
-              </svg>
-            </summary>
-            <div
-              data-options
-              role="radiogroup"
-              aria-label={`Filter by ${f.name}`}
-              class="dropdown absolute right-0 top-[calc(100%+15px)] z-30 w-[240px] border border-paper/15 bg-ink"
-            >
-              {[{ value: "All", label: f.all }, ...f.options].map((o, i) => (
-                <label class="flex cursor-pointer items-center gap-[16px] border-t border-paper/10 px-[20px] py-[14px] text-body text-muted transition-colors first:border-t-0 hover:text-paper has-checked:text-paper has-focus-visible:text-paper has-focus-visible:underline">
-                  <input
-                    type="radio"
-                    name={f.name}
-                    value={o.value}
-                    checked={i === 0}
-                    data-label={i === 0 ? f.label : o.label}
-                    class="sr-only"
-                  />
-                  <span class="flex-1">{o.label}</span>
-                  <span class="meta tabular-nums text-ghost">
-                    {i === 0 ? projects.length : countForYear(o.value)}
-                  </span>
-                  <span aria-hidden="true" data-mark class="h-[7px] w-[7px] shrink-0 bg-brand"></span>
-                </label>
-              ))}
-            </div>
-          </details>
-        ))}
-      </div>
-    </div>
-    <div class="rule"></div>
-  </div>
-
   <!-- Mosaic: rows of 3–4 tiles on a 24-column grid with a thin frame gap.
        Row heights and column spans come from src/scripts/mosaic.ts as
        inline custom properties per breakpoint, recomputed over the visible
@@ -134,20 +87,13 @@ const styles = cellStyles(projects.length);
             class="h-full w-full scale-[1.14] object-cover transition-[scale] duration-[1200ms] ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:scale-[1.2]"
             data-parallax="0.06"
           />
-          <div class="pointer-events-none absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-[rgb(6_8_20_/_0.8)] via-[rgb(6_8_20_/_0.1)] via-45% to-transparent p-[12px] transition-colors duration-500 md:p-[16px]">
-            <div class="flex items-end justify-between gap-[12px]">
-              <h2 class="text-[0.8125rem] leading-[1.15] font-medium md:text-label md:leading-[1.15]">{project.data.title}</h2>
-              <span class="meta hidden shrink-0 text-muted sm:inline">{project.data.year}</span>
-            </div>
-            <p class="meta mt-[6px] hidden text-muted sm:block">{project.data.sector}</p>
+          <div class="card-label pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-[10px] bg-[rgb(6_8_20_/_0.30)] p-[12px] text-center transition-opacity duration-500 md:p-[16px] pointer-fine:bg-[rgb(6_8_20_/_0.26)] pointer-fine:opacity-0 pointer-fine:group-hover:opacity-100 pointer-fine:group-focus-visible:opacity-100">
+            <h2 class="text-balance text-[clamp(0.95rem,8.5cqw,2.75rem)] font-bold leading-[1.05] tracking-[-0.02em]">{project.data.title}</h2>
+            <p class="meta text-paper">{project.data.sector} — {project.data.year}</p>
           </div>
         </a>
       ))}
     </div>
-
-    <p id="empty-state" hidden class="py-[120px] text-center text-lead text-muted">
-      No projects match that sector and year.
-    </p>
   </section>
 </Base>
 
@@ -155,17 +101,23 @@ const styles = cellStyles(projects.length);
   .project-grid {
     display: grid;
     grid-template-columns: repeat(24, minmax(0, 1fr));
-    /* Photobooth-strip margin: enough to read as a frame edge, not a gutter. */
-    gap: 12px;
+    /* Hairline: reads as a frame edge, not a gutter. Flat across breakpoints
+       — a "minimal" gap that grows with the viewport stops being minimal. */
+    gap: 4px;
   }
 
-  @media (width >= 64rem) {
-    .project-grid {
-      gap: 20px;
-    }
+  /* Legibility without a heavy wash. The halo rides on the glyphs, so the
+     photo keeps its brightness and colour while the text still clears a
+     white wall. Three stops: a tight edge, a soft lift, a wide pool. */
+  .card-label {
+    text-shadow:
+      0 1px 2px rgb(6 8 20 / 0.92),
+      0 2px 10px rgb(6 8 20 / 0.8),
+      0 0 30px rgb(6 8 20 / 0.6);
   }
 
   .project-card {
+    container-type: inline-size;
     grid-column: span var(--span-sm);
     height: calc(var(--h-sm) * 1vw);
   }
@@ -189,20 +141,14 @@ const styles = cellStyles(projects.length);
   import gsap from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
   import { cellStyles } from "../../scripts/mosaic";
-  import { initDropdowns } from "../../scripts/dropdown";
 
   gsap.registerPlugin(ScrollTrigger);
 
   function initFilters() {
     const buttons = document.querySelectorAll<HTMLButtonElement>(".sector-filter");
-    const bar = document.getElementById("filter-bar");
     const grid = document.getElementById("project-grid");
     const cards = [...document.querySelectorAll<HTMLAnchorElement>(".project-card")];
-    const status = document.getElementById("filter-status");
-    const empty = document.getElementById("empty-state");
-    if (!buttons.length || !bar || !grid) return;
-    initDropdowns(bar);
-    const picked = (name: string) => bar.querySelector<HTMLInputElement>(`input[name="${name}"]:checked`)?.value ?? "All";
+    if (!buttons.length || !grid) return;
 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -224,10 +170,7 @@ const styles = cellStyles(projects.length);
     }
 
     let sector = "All";
-    const matches = (card: HTMLAnchorElement) => {
-      const year = picked("year");
-      return (sector === "All" || card.dataset.sector === sector) && (year === "All" || card.dataset.year === year);
-    };
+    const matches = (card: HTMLAnchorElement) => sector === "All" || card.dataset.sector === sector;
 
     // Show the matches and re-tile them in visible order.
     const layout = () => {
@@ -243,8 +186,6 @@ const styles = cellStyles(projects.length);
           card.style.setProperty(prop, value);
         }
       });
-      if (status) status.textContent = `${visible.length} project${visible.length === 1 ? "" : "s"}`;
-      if (empty) empty.hidden = visible.length > 0;
       // Every tile moved and resized; parallax and reveal triggers re-measure.
       ScrollTrigger.refresh();
     };
@@ -278,7 +219,6 @@ const styles = cellStyles(projects.length);
         applyFilter();
       });
     });
-    bar.addEventListener("change", applyFilter);
 
     // Deep-link support, e.g. /projects?sector=Fitness
     const requested = new URLSearchParams(location.search).get("sector");
