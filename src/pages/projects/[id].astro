@@ -45,7 +45,7 @@ const facts = [
   </section>
 
   <section class="gutter mt-[40px] md:mt-[72px]">
-    <div class="aspect-[4/3] overflow-hidden bg-ink md:aspect-[21/9]">
+    <div class="aspect-[4/3] overflow-hidden bg-ink md:aspect-[21/9]" data-fade>
       <Picture
         src={data.cover}
         alt={`${data.title} — ${data.sector.toLowerCase()} fitout by Elden`}
@@ -55,7 +55,6 @@ const facts = [
         loading="eager"
         fetchpriority="high"
         class="h-full w-full object-cover"
-        data-settle
       />
     </div>
   </section>
@@ -85,7 +84,7 @@ const facts = [
     <section class="gutter pb-[120px] md:pb-[200px]">
       <div class="grid grid-cols-1 gap-[16px] md:grid-cols-2">
         {restOfGallery.map((img, i) => (
-          <div class:list={["overflow-hidden bg-ink", isFull(i) ? "aspect-[4/3] md:col-span-2 md:aspect-[16/9]" : "aspect-[4/3]"]} data-reveal>
+          <div class:list={["overflow-hidden bg-ink", isFull(i) ? "aspect-[4/3] md:col-span-2 md:aspect-[16/9]" : "aspect-[4/3]"]} data-fade>
             <Picture
               src={img}
               alt={`${data.title} — interior detail`}
@@ -156,4 +155,35 @@ const facts = [
   .prose-body :global(p + p) {
     margin-top: 16px;
   }
+
+  /* :global(img) — <Picture> renders the <img> from its own module.
+     The transition lives on the settled state, and is-loading kills it, so
+     a photo animates 0 -> 1 when the class comes off and never animates
+     into hiding. */
+  [data-fade] :global(img) {
+    transition: opacity 600ms ease;
+  }
+  [data-fade].is-loading :global(img) {
+    opacity: 0;
+    transition: none;
+  }
 </style>
+
+<script>
+  // Fade in only what the browser hasn't got yet. An image already in cache
+  // reports complete before this runs — including one far below the fold —
+  // so it is left alone and simply paints. Anything still in flight starts
+  // hidden and fades once it lands.
+  function fadePhotosOnLoad() {
+    for (const frame of document.querySelectorAll<HTMLElement>("[data-fade]")) {
+      const img = frame.querySelector("img");
+      if (!img || img.complete) continue;
+      frame.classList.add("is-loading");
+      const settle = () => frame.classList.remove("is-loading");
+      img.addEventListener("load", settle, { once: true });
+      img.addEventListener("error", settle, { once: true });
+    }
+  }
+
+  document.addEventListener("astro:page-load", fadePhotosOnLoad);
+</script>

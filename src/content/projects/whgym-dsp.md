@@ -2,7 +2,7 @@
 title: "The Warehouse Gym — Dubai Science Park"
 client: "The Warehouse Gym"
 sector: "Fitness"
-year: 2020
+year: 2025
 location: "Dubai Science Park, Dubai"
 scope: ["Fitout", "MEP"]
 tier: "standard"

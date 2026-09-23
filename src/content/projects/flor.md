@@ -17,11 +17,11 @@ gallery:
   - "../../assets/flor/6.jpg"
   - "../../assets/flor/7.jpg"
   - "../../assets/flor/8.jpg"
-summary: "An intimate fine-dining room built around a live piano corner, lit for evening service rather than daytime cover."
+summary: "A Mediterranean dining room at the Ritz-Carlton DIFC, built around a bespoke onyx bar counter and a lighting rig where every fixture runs its own dimmer circuit."
 ---
 
-<!-- PLACEHOLDER COPY: replace with verified project facts before launch -->
+Mediterranean, and dark by design. Bespoke onyx marble raises the bar counter clear of the rest of the material palette — the one piece of theatre in a room that otherwise stays deliberately low and warm.
 
-A low-cover, high-touch dining room where the lighting design mattered more than the floor plan — every fixture was set on its own dimmer circuit so the room could shift from early dinner to late-night ambience without re-lamping.
+The lighting is the real specification. Every fixture sits on its own dimmer circuit, so the room moves from early dinner through to late-night on the control board alone — no re-lamping between services, no fittings swapped as the covers change. The piano corner and the table candles carry the rest of it.
 
-Design and fitout delivered as one contract, including bespoke lighting control.
+Design and fitout delivered as one contract, including the lighting control.

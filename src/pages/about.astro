@@ -3,22 +3,30 @@ import Base from "../layouts/Base.astro";
 import Eyebrow from "../components/Eyebrow.astro";
 import { Picture } from "astro:assets";
 import breakImage from "../assets/anantara-penthouse/2.jpg";
+import fitoutImage from "../assets/fitout.jpg";
+import joineryImage from "../assets/joinery.jpg";
+import civilImage from "../assets/civil.jpg";
+import mepImage from "../assets/mep.jpg";
 import { PROJECTS, YEARS } from "../facts";
 
 const values = [
   {
+    image: fitoutImage,
     title: "Fit-Out Works",
     copy: "We provide all types of interior fit-out works for various sectors such as Retail, Hospitality, Restaurants, Commercial and Leisure.",
   },
   {
+    image: joineryImage,
     title: "Joinery Works",
     copy: "Our Joinery Division is spread across our headquarters in Al Quoz and our joinery facility in Ajman, supported by a skilled team that includes a Head of Joinery along with production supervisors, technicians, painters, carpenters and helpers",
   },
   {
+    image: civilImage,
     title: "Civil Works",
     copy: "We offer complete solutions for civil works by undertaking waterproofing, tiling, screeding, block works with plastering and more. We also provide gypsum partition / dry wall systems, glass partition, acoustic partition/ decorative wall cladding in terms of design and build.",
   },
   {
+    image: mepImage,
     title: "MEP",
     copy: "Additional to interior fit-out, we also undertake all MEP related works such as design, supply and installation of HVAC, Electrical Works, Plumbing Works, Safety & Fire Installations.",
   },
@@ -70,12 +78,117 @@ const values = [
 
     <ol class="mt-[56px] md:mt-[96px]">
       {values.map((v, i) => (
-        <li class="grid grid-cols-1 gap-y-[14px] border-t border-paper/15 py-[32px] last:border-b md:grid-cols-12 md:gap-x-[24px] md:py-[48px]">
-          <span class="meta text-muted md:col-span-1">({String(i + 1).padStart(2, "0")})</span>
-          <h3 class="text-title md:col-span-5">{v.title}</h3>
+        <li
+          data-service={i}
+          class="group grid grid-cols-1 gap-y-[14px] border-t border-paper/15 py-[32px] last:border-b md:grid-cols-12 md:gap-x-[24px] md:py-[48px]"
+        >
+          <span class="meta text-muted transition-colors duration-300 group-hover:text-paper md:col-span-1">
+            ({String(i + 1).padStart(2, "0")})
+          </span>
+          <h3 class="text-title transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] md:col-span-5 pointer-fine:group-hover:translate-x-[10px]">
+            {v.title}
+          </h3>
           <p class="max-w-[56ch] text-body text-muted md:col-span-6">{v.copy}</p>
+          {/* Touch devices get the photo inline — there is no hover to reveal it. */}
+          <div class="aspect-[4/3] overflow-hidden rounded-2xl bg-ink pointer-fine:hidden">
+            <Picture
+              src={v.image}
+              alt={`${v.title} by Elden`}
+              formats={["avif", "webp"]}
+              widths={[400, 700]}
+              sizes="100vw"
+              loading="lazy"
+              class="h-full w-full object-cover"
+            />
+          </div>
         </li>
       ))}
     </ol>
+
+    {/* Hover preview: one panel that trails the cursor and crossfades to the
+        hovered row's photo. Pointer-fine only — a device that cannot hover
+        shows the photos inline above instead. */}
+    <div
+      id="service-preview"
+      aria-hidden="true"
+      class="service-preview pointer-events-none fixed left-0 top-0 hidden h-[330px] w-[440px] overflow-hidden rounded-2xl will-change-transform pointer-fine:block"
+      style="z-index: 40"
+    >
+      {values.map((v, i) => (
+        <Picture
+          src={v.image}
+          alt=""
+          formats={["avif", "webp"]}
+          widths={[440, 880]}
+          sizes="440px"
+          loading="lazy"
+          data-preview={i}
+          class="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-300"
+        />
+      ))}
+    </div>
   </section>
+  <style>
+    /* The hover panel's fade and settle. Kept in CSS so the pointer script
+       only ever writes x/y. */
+    .service-preview {
+      opacity: 0;
+      scale: 0.94;
+      transition:
+        opacity 0.3s ease,
+        scale 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+    .service-preview.is-on {
+      opacity: 1;
+      scale: 1;
+    }
+  </style>
 </Base>
+
+<script>
+  import gsap from "gsap";
+
+  function initServicePreview() {
+    const panel = document.getElementById("service-preview");
+    const rows = [...document.querySelectorAll<HTMLElement>("li[data-service]")];
+    if (!panel || !rows.length) return;
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+
+    const images = [...panel.querySelectorAll<HTMLElement>("[data-preview]")];
+    // quickTo, not a tween per mousemove: one interpolator the pointer feeds,
+    // which is what gives the panel its lag behind the cursor.
+    const toX = gsap.quickTo(panel, "x", { duration: 0.5, ease: "power3" });
+    const toY = gsap.quickTo(panel, "y", { duration: 0.5, ease: "power3" });
+    const place = (e: PointerEvent) => {
+      // Offset from the cursor, clamped so the panel never leaves the window.
+      const w = panel.offsetWidth, h = panel.offsetHeight;
+      toX(Math.min(Math.max(e.clientX + 28, 8), window.innerWidth - w - 8));
+      toY(Math.min(Math.max(e.clientY - h / 2, 8), window.innerHeight - h - 8));
+    };
+
+    // Opacity and scale are CSS (see the style block): GSAP owns x/y only,
+    // so a fade cannot end up fighting a half-finished tween of its own.
+    let active: number | null = null;
+    const show = (i: number, e: PointerEvent) => {
+      if (active === null) {
+        // First entry: jump to the cursor rather than flying in from 0,0.
+        gsap.set(panel, { x: Math.min(e.clientX + 28, window.innerWidth - panel.offsetWidth - 8), y: e.clientY - panel.offsetHeight / 2 });
+      }
+      active = i;
+      panel.classList.add("is-on");
+      images.forEach((img, n) => (img.style.opacity = n === i ? "1" : "0"));
+    };
+    const hide = () => {
+      active = null;
+      panel.classList.remove("is-on");
+    };
+
+    rows.forEach((row, i) => {
+      row.addEventListener("pointerenter", (e) => show(i, e as PointerEvent));
+      row.addEventListener("pointermove", place);
+      row.addEventListener("pointerleave", hide);
+    });
+  }
+
+  document.addEventListener("astro:page-load", initServicePreview);
+</script>

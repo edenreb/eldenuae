@@ -2,7 +2,7 @@
 title: "Haldiram's Restaurant"
 client: "Haldiram's"
 sector: "F&B"
-year: 2023
+year: 2024
 location: "Al Raffa, Dubai"
 scope: ["Fitout", "MEP"]
 tier: "hero"

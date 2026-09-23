@@ -2,7 +2,7 @@
 title: "The Warehouse Gym — Al Khawaneej"
 client: "The Warehouse Gym"
 sector: "Fitness"
-year: 2021
+year: 2020
 location: "Al Khawaneej Mall, Dubai"
 scope: ["Interior Fitout", "MEP"]
 tier: "standard"

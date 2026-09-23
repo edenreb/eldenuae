@@ -2,7 +2,7 @@
 title: "Baraka Office"
 client: "Baraka"
 sector: "Workplace"
-year: 2023
+year: 2024
 location: "DIFC Innovation Hub, Dubai"
 scope: ["Fitout", "MEP"]
 tier: "standard"

@@ -9,13 +9,13 @@ import path from "node:path";
 import { getEntry } from "astro:content";
 import Button from "./Button.astro";
 
-const BASE = "/sequences/holiday-inn";
+const BASE = "/sequences/voco-by-ihg";
 // Counted at build time, so re-exporting a different-length video needs no edit.
 const frames = fs.readdirSync(path.join(process.cwd(), "public", BASE, "1920")).filter((f) => f.endsWith(".webp")).length;
 const first = (width: number) => `${BASE}/${width}/0001.webp`;
 
-const project = (await getEntry("projects", "holiday-inn"))!;
-// "Holiday Inn - Al Barsha" -> name on the first line, place in the serif accent.
+const project = (await getEntry("projects", "voco-by-ihg"))!;
+// "Voco by IHG - Al Barsha" -> name on the first line, place in the serif accent.
 const [name, place] = project.data.title.split(/\s+[-—]\s+/);
 ---
 
