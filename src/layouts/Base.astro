@@ -135,10 +135,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
          page early. Empty and aria-hidden — decorative only. -->
     <div id="curtain" aria-hidden="true" transition:persist></div>
 
-    <!-- Film grain over everything. Persisted so it doesn't flicker on a
-         page swap; pointer-events: none so it never eats a click. -->
-    <div id="grain" aria-hidden="true" transition:persist></div>
-
     <a
       href="#main-content"
       class="meta fixed left-[16px] top-[12px] -translate-y-24 bg-ink px-[16px] py-[10px] text-paper transition-transform focus:translate-y-0"
