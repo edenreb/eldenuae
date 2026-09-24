@@ -6,7 +6,6 @@ year: 2022
 location: "Burj Al Salam, World Trade Center, Dubai"
 scope: ["Joinery"]
 tier: "standard"
-featured: false
 cover: "../../assets/avyanco-office/1.jpg"
 gallery:
   - "../../assets/avyanco-office/1.jpg"

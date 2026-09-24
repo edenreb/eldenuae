@@ -21,7 +21,6 @@ const projects = defineCollection({
       // hero = full-bleed feature-grade imagery, standard = solid supporting work,
       // compact = smaller card only, source quality doesn't support full-bleed use.
       tier: z.enum(["hero", "standard", "compact"]),
-      featured: z.boolean().default(false),
       cover: image(),
       gallery: z.array(image()),
     }),

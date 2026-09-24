@@ -6,7 +6,6 @@ year: 2024
 location: "Circle Mall, Jumeirah Village Circle"
 scope: ["Complete Interior Fitout works"]
 tier: "standard"
-featured: false
 cover: "../../assets/trouvaille/1.jpg"
 gallery:
   - "../../assets/trouvaille/1.jpg"

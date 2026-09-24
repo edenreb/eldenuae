@@ -7,7 +7,7 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://elden.ae',
+  site: 'https://eldenuae.com',
   output: 'static',
   integrations: [mdx(), sitemap()],
   // The old /career page was an orphaned duplicate of /careers.

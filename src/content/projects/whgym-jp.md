@@ -6,7 +6,6 @@ year: 2021
 location: "Jumeirah Park, Dubai"
 scope: ["Interior Fitout works"]
 tier: "standard"
-featured: false
 cover: "../../assets/whgym-jp/1.jpg"
 gallery:
   - "../../assets/whgym-jp/1.jpg"

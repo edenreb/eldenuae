@@ -6,7 +6,6 @@ year: 2020
 location: "Al Quoz 4, Dubai"
 scope: ["Complete Interior Fitout works"]
 tier: "hero"
-featured: true
 cover: "../../assets/whgym-alquoz/1.jpg"
 gallery:
   - "../../assets/whgym-alquoz/1.jpg"

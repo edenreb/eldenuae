@@ -6,7 +6,6 @@ year: 2024
 location: "Sheikh Zayed Road, Dubai"
 scope: ["MEP Works"]
 tier: "hero"
-featured: true
 cover: "../../assets/beiruti/1.jpg"
 gallery:
   - "../../assets/beiruti/1.jpg"

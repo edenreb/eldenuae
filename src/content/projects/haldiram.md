@@ -6,7 +6,6 @@ year: 2024
 location: "Al Raffa, Dubai"
 scope: ["Fitout", "MEP"]
 tier: "hero"
-featured: false
 cover: "../../assets/haldiram/1.jpeg"
 gallery:
   - "../../assets/haldiram/1.jpeg"

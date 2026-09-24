@@ -6,7 +6,6 @@ year: 2018
 location: "The Springs Souq, Dubai"
 scope: ["MEP Works"]
 tier: "standard"
-featured: false
 cover: "../../assets/whgym-springsouq/1.jpg"
 gallery:
   - "../../assets/whgym-springsouq/1.jpg"

@@ -6,7 +6,6 @@ year: 2018
 location: "Marina Mall, Abu Dhabi"
 scope: ["Interior Fitout", "MEP"]
 tier: "compact"
-featured: false
 cover: "../../assets/zara/1.jpg"
 gallery:
   - "../../assets/zara/1.jpg"

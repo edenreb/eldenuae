@@ -8,14 +8,16 @@ Turnkey fitout marketing site — Astro 7 + Tailwind v4 + GSAP, static output se
 src/
 ├── assets/            # project photography + client logos (processed by Astro's image pipeline)
 ├── content/
-│   ├── projects/      # 24 project entries (frontmatter schema in content.config.ts)
+│   ├── projects/      # project entries (frontmatter schema in content.config.ts)
 │   └── journal/       # MDX journal posts
-├── components/        # Hero, Nav, Footer, SelectedWork, Process, ClientWall, Testimonials, …
-├── layouts/Base.astro # shared shell: nav, footer, skip link, view transitions
+├── components/        # Hero, FrameSequence, SelectedWork, ClientWall, Testimonials, Footer, …
+├── layouts/Base.astro # shared shell: header, mobile menu, footer, preloader, page transitions
 ├── pages/             # routes: /, /projects, /projects/[id], /about, /contact, /careers, /journal, /journal/[id]
-├── scripts/form.ts    # shared client-side validation for the Contact/Career forms
-└── styles/global.css  # design tokens (@theme) + base layer
-public/fonts/          # self-hosted General Sans woff2 (referenced by url(), stays outside src/assets)
+├── scripts/           # motion.ts (GSAP/Lenis), enquiry.ts (contact form, shared with worker.ts), dropdown.ts, mosaic.ts
+├── styles/global.css  # design tokens (@theme) + base layer
+└── facts.ts           # company numbers quoted across the site
+public/sequences/      # scroll-scrub frames for FrameSequence (tools/video-to-frames.mjs)
+worker.ts              # Cloudflare Worker: static assets + POST /api/contact via Resend
 ```
 
 ## Commands

@@ -6,7 +6,6 @@ year: 2021
 location: "Ibn Battuta Mall, Dubai"
 scope: ["MEP Works"]
 tier: "hero"
-featured: false
 cover: "../../assets/nandos-ibn-batutta/1.jpg"
 gallery:
   - "../../assets/nandos-ibn-batutta/1.jpg"

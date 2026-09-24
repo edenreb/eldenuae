@@ -6,7 +6,6 @@ year: 2020
 location: "Gate Avenue, DIFC, Dubai"
 scope: ["Interior Fitout", "MEP"]
 tier: "hero"
-featured: false
 cover: "../../assets/whgym-difc/1.jpg"
 gallery:
   - "../../assets/whgym-difc/1.jpg"

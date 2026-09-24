@@ -6,7 +6,6 @@ year: 2023
 location: "Eastern Mangroves, Abu Dhabi"
 scope: ["Joinery Works"]
 tier: "standard"
-featured: false
 cover: "../../assets/amano/1.jpg"
 gallery:
   - "../../assets/amano/1.jpg"

@@ -4,6 +4,7 @@ import Button from "./Button.astro";
 import Eyebrow from "./Eyebrow.astro";
 import Logo from "./Logo.astro";
 import SocialLinks from "./SocialLinks.astro";
+import { PHONE, PHONE_DISPLAY } from "../facts";
 import ctaImage from "../assets/voco-by-ihg/7.jpg";
 
 const year = new Date().getFullYear();
@@ -91,7 +92,7 @@ const pages = [
         <p class="meta text-muted">Visit</p>
         <ul class="mt-[16px] flex flex-col gap-[8px]">
           <li>Dubai, United Arab Emirates</li>
-          <li><a href="tel:+97142276206" class="cursor-pointer underline-offset-4 hover:underline">+971 4 227 6206</a></li>
+          <li><a href={`tel:${PHONE}`} class="cursor-pointer underline-offset-4 hover:underline">{PHONE_DISPLAY}</a></li>
           <li><a href="mailto:info@eldenuae.com" class="cursor-pointer underline-offset-4 hover:underline">info@eldenuae.com</a></li>
         </ul>
       </div>

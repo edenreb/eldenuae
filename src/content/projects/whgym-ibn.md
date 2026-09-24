@@ -6,7 +6,6 @@ year: 2021
 location: "Ibn Battuta Mall, Dubai"
 scope: ["Complete Interior Fitout works"]
 tier: "hero"
-featured: false
 cover: "../../assets/whgym-ibn/1.jpg"
 gallery:
   - "../../assets/whgym-ibn/1.jpg"

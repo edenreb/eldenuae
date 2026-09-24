@@ -3,6 +3,7 @@
 // the photograph carries the page, the type sits on it.
 import { Picture } from "astro:assets";
 import Button from "./Button.astro";
+import { FOUNDED } from "../facts";
 import heroImage from "../assets/voco-by-ihg/hero-1.jpg";
 ---
 
@@ -37,7 +38,7 @@ import heroImage from "../assets/voco-by-ihg/hero-1.jpg";
         (01) Voco by IHG — Al Barsha
       </a>
       <span class="hidden justify-self-center md:block" aria-hidden="true">Scroll ↓</span>
-      <span class="justify-self-end text-right">Est. 2014 — Dubai, UAE</span>
+      <span class="justify-self-end text-right">Est. {FOUNDED} — Dubai, UAE</span>
     </div>
   </div>
 </section>

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://elden.ae/sitemap-index.xml
+Sitemap: https://eldenuae.com/sitemap-index.xml

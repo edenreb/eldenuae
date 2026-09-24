@@ -202,12 +202,12 @@ const label = "Open";
     // pointermove — reset explicitly, or exiting fast over a card leaves
     // the pill stuck open with no further move event to correct it.
     const onLeave = () => setMode("none");
-    document.addEventListener("pointerleave", onLeave);
+    document.documentElement.addEventListener("pointerleave", onLeave);
 
     cleanup = () => {
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("scroll", onScroll);
-      document.removeEventListener("pointerleave", onLeave);
+      document.documentElement.removeEventListener("pointerleave", onLeave);
     };
   }
 
