@@ -9,19 +9,19 @@ import amit from "../assets/testimonials/amit-choubey.jpg";
 
 const quotes = [
   {
-    body: "The professionalism with which the work was Elden engineers is worth mentioning often.",
+    body: "The professionalism with which the work was executed by <strong>Elden</strong> engineers is worth mentioning often.",
     name: "Pankaj Agarwal",
     role: "Managing Director, Bikanervala Chain of Restaurants",
     photo: pankaj,
   },
   {
-    body: "Elden's attentional to detail is what keeps them above the rest.",
+    body: "<strong>Elden's</strong> attention to detail is what keeps them above the rest.",
     name: "Kevin Teixeira",
     role: "Managing Director, Warehouse Gym",
     photo: kevin,
   },
   {
-    body: "The design drawings and specifications were followed with precision. Would love to collaborate again in the future.",
+    body: "The design drawings and specifications were followed with precision. <strong>Would love to collaborate again in the future.</strong>",
     name: "Amit Choubey",
     role: "Head of Projects, SRG Properties LLC",
     photo: amit,
@@ -48,7 +48,7 @@ const quotes = [
             </p>
             <p class="meta text-muted">({String(i + 1).padStart(2, "0")})</p>
           </div>
-          <p class="mt-[28px] max-w-[26ch] text-lead">&ldquo;{q.body}&rdquo;</p>
+          <p class="mt-[28px] max-w-[26ch] text-lead font-normal [&_strong]:font-semibold">&ldquo;<Fragment set:html={q.body} />&rdquo;</p>
           <footer class="mt-[36px] flex items-center gap-[14px] md:mt-auto md:pt-[48px]">
             <Image
               src={q.photo}

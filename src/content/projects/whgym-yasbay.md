@@ -6,7 +6,6 @@ year: 2022
 location: "Yas Bay, Abu Dhabi"
 scope: ["Complete Interior Fitout works"]
 tier: "hero"
-featured: false
 cover: "../../assets/whgym-yasbay/1.jpg"
 gallery:
   - "../../assets/whgym-yasbay/1.jpg"

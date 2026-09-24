@@ -6,7 +6,6 @@ year: 2024
 location: "Gate Avenue, DIFC"
 scope: ["Fitout", "MEP"]
 tier: "standard"
-featured: false
 cover: "../../assets/my-london-skin-clinic/1.jpg"
 gallery:
   - "../../assets/my-london-skin-clinic/1.jpg"

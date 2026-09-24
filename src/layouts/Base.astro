@@ -6,6 +6,7 @@ import Preloader from "../components/Preloader.astro";
 import Cursor from "../components/Cursor.astro";
 import WhatsApp from "../components/WhatsApp.astro";
 import Logo from "../components/Logo.astro";
+import { PHONE, PHONE_DISPLAY } from "../facts";
 import "../styles/global.css";
 
 const links = [
@@ -104,7 +105,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
           !sessionStorage.getItem("elden:preloaded")
         ) {
           document.documentElement.dataset.preloading = "1";
-          // Last-resort backstop. Preloader.astro has its own 8s watchdog,
+          // Last-resort backstop. Preloader.astro has its own 5s watchdog,
           // but that watchdog lives INSIDE the module it is insuring — if
           // that chunk never executes (404 after a bad deploy, a throw while
           // importing gsap), nothing ever clears this flag, and the flag
@@ -112,7 +113,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
           // (see global.css). The page would stay black and unscrollable
           // forever. This timer is armed in the same inline script that
           // creates the risk, so it cannot fail to load. 9s > the module's
-          // own 8s watchdog, so in the normal case that one always wins and
+          // own 5s watchdog, so in the normal case that one always wins and
           // this never fires.
           setTimeout(function () {
             delete document.documentElement.dataset.preloading;
@@ -269,7 +270,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
       <div class="meta mt-auto flex flex-col gap-[4px] pb-[calc(24px+env(safe-area-inset-bottom))] text-muted">
         <a href="mailto:info@eldenuae.com" class="cursor-pointer normal-case">info@eldenuae.com</a>
-        <a href="tel:+97142276206" class="cursor-pointer">+971 4 227 6206</a>
+        <a href={`tel:${PHONE}`} class="cursor-pointer">{PHONE_DISPLAY}</a>
       </div>
     </div>
 

@@ -6,7 +6,6 @@ year: 2022
 location: "Mall of the Emirates, Dubai"
 scope: ["Fitout", "MEP"]
 tier: "compact"
-featured: false
 cover: "../../assets/golden-goose/1.jpg"
 gallery:
   - "../../assets/golden-goose/1.jpg"

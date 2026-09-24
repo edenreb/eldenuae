@@ -6,7 +6,6 @@ year: 2019
 location: "O14 Tower, Business Bay, Dubai"
 scope: ["MEP Works"]
 tier: "standard"
-featured: false
 cover: "../../assets/whygym-bb/1.jpg"
 gallery:
   - "../../assets/whygym-bb/1.jpg"

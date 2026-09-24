@@ -4,7 +4,7 @@
 //
 // Worker → Settings → Variables and Secrets:
 //   RESEND_API_KEY  (secret)  from resend.com, domain eldenuae.com verified
-//   CONTACT_TO      in wrangler.jsonc, defaults to inquiry@eldenuae.com
+//   CONTACT_TO      in wrangler.jsonc, defaults to info@eldenuae.com
 //   CONTACT_FROM    optional, defaults to "Elden website <website@eldenuae.com>"
 import { buildEnquiry } from "./src/scripts/enquiry";
 
@@ -41,7 +41,7 @@ async function contact(request: Request, env: Env) {
     headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
     body: JSON.stringify({
       from: env.CONTACT_FROM || "Elden website <website@eldenuae.com>",
-      to: env.CONTACT_TO || "inquiry@eldenuae.com",
+      to: env.CONTACT_TO || "info@eldenuae.com",
       reply_to: enquiry.replyTo,
       subject: enquiry.subject,
       text: enquiry.text,

@@ -6,7 +6,6 @@ year: 2023
 location: "Multiple sites, Dubai and Abu Dhabi"
 scope: ["Complete Fitout"]
 tier: "standard"
-featured: false
 cover: "../../assets/du-revive-kiosk/1.jpg"
 gallery:
   - "../../assets/du-revive-kiosk/1.jpg"

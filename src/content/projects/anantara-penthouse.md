@@ -6,7 +6,6 @@ year: 2023
 location: "Palm Jumeirah, Dubai"
 scope: ["MEP"]
 tier: "hero"
-featured: true
 cover: "../../assets/anantara-penthouse/1.jpg"
 gallery:
   - "../../assets/anantara-penthouse/1.jpg"

@@ -6,7 +6,6 @@ year: 2025
 location: "Dubai Science Park, Dubai"
 scope: ["Fitout", "MEP"]
 tier: "standard"
-featured: false
 cover: "../../assets/whgym-dsp/1.jpg"
 gallery:
   - "../../assets/whgym-dsp/1.jpg"

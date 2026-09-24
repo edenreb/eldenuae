@@ -6,7 +6,6 @@ year: 2026
 location: "Al Barsha 1, Dubai"
 scope: ["Fitout", "MEP"]
 tier: "hero"
-featured: false
 cover: "../../assets/voco-by-ihg/1.jpg"
 gallery:
   - "../../assets/voco-by-ihg/1.jpg"

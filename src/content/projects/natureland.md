@@ -6,7 +6,6 @@ year: 2022
 location: "EMAAR Springs Souq, Dubai"
 scope: ["Fitout", "MEP"]
 tier: "hero"
-featured: true
 cover: "../../assets/natureland/1.jpg"
 gallery:
   - "../../assets/natureland/1.jpg"

@@ -6,7 +6,6 @@ year: 2024
 location: "Al Manara Center, Sheikh Zayed Road, Dubai"
 scope: ["Fitout", "MEP"]
 tier: "standard"
-featured: false
 cover: "../../assets/al-manara-trustee-office/1.jpg"
 gallery:
   - "../../assets/al-manara-trustee-office/1.jpg"

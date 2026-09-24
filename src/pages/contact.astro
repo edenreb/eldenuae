@@ -3,6 +3,7 @@ import Base from "../layouts/Base.astro";
 import Button from "../components/Button.astro";
 import Eyebrow from "../components/Eyebrow.astro";
 import SocialLinks from "../components/SocialLinks.astro";
+import { PHONE, PHONE_DISPLAY } from "../facts";
 import {
   COUNTRY_CODES,
   CV_ACCEPT,
@@ -22,7 +23,7 @@ const MAIL = "info@eldenuae.com";
 
 const details = [
   { label: "General inquiries", value: MAIL, href: `mailto:${MAIL}` },
-  { label: "Phone", value: "+971 4 227 6206", href: "tel:+97142276206" },
+  { label: "Phone", value: PHONE_DISPLAY, href: `tel:${PHONE}` },
   { label: "Studio", value: "Dubai, United Arab Emirates" },
 ];
 

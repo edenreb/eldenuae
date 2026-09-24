@@ -6,7 +6,6 @@ year: 2024
 location: "The Ritz Carlton, DIFC"
 scope: ["Design", "Fitout"]
 tier: "standard"
-featured: false
 cover: "../../assets/flor/1.jpg"
 gallery:
   - "../../assets/flor/1.jpg"

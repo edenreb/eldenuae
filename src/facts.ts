@@ -7,3 +7,7 @@ export const ENGINEERS = "100+";
 // Sales line on WhatsApp: digits only for wa.me, spaced for display.
 export const SALES_WHATSAPP = "971525870485";
 export const SALES_WHATSAPP_DISPLAY = "+971 52 587 0485";
+
+// Office landline: tel: href and display form.
+export const PHONE = "+97142276206";
+export const PHONE_DISPLAY = "+971 4 227 6206";

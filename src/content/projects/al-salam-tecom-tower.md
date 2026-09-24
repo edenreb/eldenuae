@@ -6,7 +6,6 @@ year: 2023
 location: "Al Salam Tower, Dubai Internet City"
 scope: ["Fitout", "MEP"]
 tier: "hero"
-featured: false
 cover: "../../assets/al-salam-tecom-tower/1.jpg"
 gallery:
   - "../../assets/al-salam-tecom-tower/1.jpg"

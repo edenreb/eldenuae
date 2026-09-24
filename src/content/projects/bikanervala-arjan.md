@@ -6,7 +6,6 @@ year: 2023
 location: "Arjan, Dubai"
 scope: ["Complete Interior Fitout works"]
 tier: "standard"
-featured: false
 cover: "../../assets/bikanervala-arjan/1.jpg"
 gallery:
   - "../../assets/bikanervala-arjan/1.jpg"

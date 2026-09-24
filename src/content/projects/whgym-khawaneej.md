@@ -6,7 +6,6 @@ year: 2020
 location: "Al Khawaneej Mall, Dubai"
 scope: ["Interior Fitout", "MEP"]
 tier: "standard"
-featured: false
 cover: "../../assets/whgym-khawaneej/1.jpg"
 gallery:
   - "../../assets/whgym-khawaneej/1.jpg"

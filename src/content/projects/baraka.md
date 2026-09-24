@@ -6,7 +6,6 @@ year: 2024
 location: "DIFC Innovation Hub, Dubai"
 scope: ["Fitout", "MEP"]
 tier: "standard"
-featured: false
 cover: "../../assets/baraka/1.jpg"
 gallery:
   - "../../assets/baraka/1.jpg"

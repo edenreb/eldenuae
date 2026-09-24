@@ -6,7 +6,6 @@ year: 2023
 location: "Al Salam Tower, Dubai Internet City"
 scope: ["Complete Interior Fitout works"]
 tier: "standard"
-featured: false
 cover: "../../assets/octagon/1.jpg"
 gallery:
   - "../../assets/octagon/1.jpg"
