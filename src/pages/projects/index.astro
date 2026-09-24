@@ -5,9 +5,10 @@ import { getCollection } from "astro:content";
 import { Picture } from "astro:assets";
 import { cellStyles } from "../../scripts/mosaic";
 
-// Ordered by how much of the job was ours, widest first, then newest first
-// inside each band. The scope strings in the content vary in wording
-// ("MEP" / "MEP Works", four spellings of fitout), so match on keywords.
+// Ordered by how much of the job was ours, widest first; inside each band
+// the strongest photography leads (by tier), then newest first. The scope
+// strings in the content vary in wording ("MEP" / "MEP Works", four
+// spellings of fitout), so match on keywords.
 const SCOPE_BANDS = [
   // Turnkey: the whole interior, or design and build together.
   (s: string) => /complete|full/.test(s) || (/design/.test(s) && /fit-?out/.test(s)),
@@ -21,8 +22,14 @@ const band = (scope: string[]) => {
   return i === -1 ? SCOPE_BANDS.length : i; // services only (MEP) last
 };
 
+const TIERS = ["hero", "standard", "compact"];
+const tier = (t: string) => TIERS.indexOf(t);
+
 const projects = (await getCollection("projects")).sort(
-  (a, b) => band(a.data.scope) - band(b.data.scope) || b.data.year - a.data.year,
+  (a, b) =>
+    band(a.data.scope) - band(b.data.scope) ||
+    tier(a.data.tier) - tier(b.data.tier) ||
+    b.data.year - a.data.year,
 );
 
 const sectors = ["All", ...new Set(projects.map((p) => p.data.sector))];
