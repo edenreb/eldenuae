@@ -16,7 +16,7 @@ import Button from "./Button.astro";
 import Eyebrow from "./Eyebrow.astro";
 
 // Hand-picked, in display order — edit this list to change the row.
-const FEATURED = ["natureland", "meinhardt-office", "whgym-difc", "anantara-penthouse", "bikanervala", "haldiram"];
+const FEATURED = ["natureland", "whgym-yasbay", "whgym-difc", "golden-goose", "bikanervala", "haldiram"];
 
 const all = await getCollection("projects");
 const projects = FEATURED.map((id) => all.find((p) => p.id === id)).filter((p) => p !== undefined);
