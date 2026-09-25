@@ -1,8 +1,70 @@
 ---
-// PLACEHOLDER LEGAL COPY — not reviewed by a lawyer and not compliant advice.
-// Exists so the footer's terms link resolves to something real rather than a
-// dead "#". Replace the entire body before launch.
+// Terms for use of the website only. Project work is governed by the signed
+// contract for that project, never by this page.
 import Base from "../layouts/Base.astro";
+
+const UPDATED = "26 September 2026";
+const MAIL = "info@eldenuae.com";
+
+const sections = [
+  {
+    title: "About These Terms",
+    body: [
+      "This website is operated by Elden Interiors LLC, based in Dubai, United Arab Emirates. By using it you agree to these terms. If you do not agree, please do not use the site.",
+    ],
+  },
+  {
+    title: "Use of This Site",
+    body: [
+      "The site is provided to inform you about Elden's services and work. You may browse it and share links to it for personal or business reference. You must not misuse it: that includes attempting to gain unauthorised access, interfering with how it runs, submitting false or malicious information through its forms, or copying its content at scale.",
+    ],
+  },
+  {
+    title: "Content and Accuracy",
+    body: [
+      "We keep the information on this site accurate and up to date, but it is general information only. Project descriptions, timelines and figures describe past work and are not a promise of the same outcome, cost or schedule on your project. Content may change without notice.",
+    ],
+  },
+  {
+    title: "Intellectual Property",
+    body: [
+      "The Elden name, logo, text, design and photography on this site belong to Elden Interiors LLC or to the clients and photographers who have allowed us to use them. Client names and logos are the property of their respective owners and appear to show work we have delivered. None of it may be reproduced, republished or used commercially without our written permission.",
+    ],
+  },
+  {
+    title: "Enquiries and Quotations",
+    body: [
+      "Submitting an enquiry does not create a contract or oblige either of us to proceed. Nothing on this site is a binding offer or quotation. Scope, cost and programme for any project are agreed only in a signed contract, and that contract governs the work.",
+      "Job applications and supplier introductions are welcome, but sending one does not guarantee a response, an interview or an engagement.",
+    ],
+  },
+  {
+    title: "Links to Other Sites",
+    body: [
+      "The site links to services we do not control, such as WhatsApp, Instagram and LinkedIn. We are not responsible for their content or how they handle your data.",
+    ],
+  },
+  {
+    title: "Liability",
+    body: [
+      "The site is provided as is. We do not guarantee it will always be available or free of errors. To the extent the law allows, Elden is not liable for any loss arising from your use of the site or reliance on its content. Nothing in these terms limits liability that cannot be limited under UAE law.",
+    ],
+  },
+  {
+    title: "Privacy",
+    body: ['How we handle the personal data you send us is set out in our <a href="/privacy" class="cursor-pointer underline underline-offset-4">Privacy Policy</a>.'],
+  },
+  {
+    title: "Governing Law",
+    body: [
+      "These terms are governed by the laws of the Emirate of Dubai and the federal laws of the United Arab Emirates. Any dispute relating to them falls under the jurisdiction of the courts of Dubai.",
+    ],
+  },
+  {
+    title: "Changes",
+    body: ["We may update these terms from time to time. The current version is always the one on this page, with the date below."],
+  },
+];
 ---
 
 <Base title="Terms of use" description="The terms that apply to use of the Elden website.">
@@ -12,34 +74,19 @@ import Base from "../layouts/Base.astro";
 
   <section class="gutter py-[72px] md:py-[120px]">
     <div class="mx-auto max-w-[680px] text-body md:ml-[calc(100%/12*5)]">
-      <p class="border border-paper/20 p-[20px] text-muted">
-        <strong>Placeholder.</strong> This page is a structural placeholder so the site has no dead links.
-        It is not legal advice and has not been reviewed. Replace it with terms prepared for the UAE
-        before launch.
-      </p>
+      <p class="meta text-muted">Last updated {UPDATED}</p>
 
-      <h2 class="mt-[48px] text-title">Use of This Site</h2>
-      <p class="mt-[12px]">
-        This website is provided for information about Elden&rsquo;s services. Content may change without
-        notice.
-      </p>
+      {sections.map((s) => (
+        <>
+          <h2 class="mt-[48px] text-title">{s.title}</h2>
+          {/* set:html so a paragraph can carry a link; the copy is our own, not user input. */}
+          {s.body.map((p) => <p class="mt-[12px]" set:html={p} />)}
+        </>
+      ))}
 
-      <h2 class="mt-[48px] text-title">Project Imagery</h2>
-      <p class="mt-[12px]">
-        Photographs of completed projects remain the property of Elden or the respective client and may
-        not be reproduced without permission.
-      </p>
-
-      <h2 class="mt-[48px] text-title">Enquiries and Quotations</h2>
-      <p class="mt-[12px]">
-        Nothing on this site constitutes a binding quotation. Scope, cost, and programme are confirmed in
-        a signed contract.
-      </p>
-
-      <h2 class="mt-[48px] text-title">Contact</h2>
-      <p class="mt-[12px]">
-        Questions about these terms can be sent to
-        <a href="mailto:info@eldenuae.com" class="cursor-pointer underline underline-offset-4">info@eldenuae.com</a>.
+      <p class="mt-[48px]">
+        Questions about these terms:
+        <a href={`mailto:${MAIL}`} class="cursor-pointer underline underline-offset-4">{MAIL}</a>.
       </p>
     </div>
   </section>

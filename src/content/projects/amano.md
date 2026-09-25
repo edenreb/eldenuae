@@ -15,5 +15,5 @@ gallery:
   - "../../assets/amano/5.jpg"
   - "../../assets/amano/6.jpg"
   - "../../assets/amano/7.jpg"
-summary: "An Italian kitchen fitout on the JBR beachfront, with a street-facing terrace built into the wider walk."
+summary: "An Italian kitchen at Eastern Mangroves in Abu Dhabi, with a street-facing terrace opening onto the promenade."
 ---
