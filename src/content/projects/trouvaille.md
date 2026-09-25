@@ -4,7 +4,7 @@ client: "Trouvaille"
 sector: "F&B"
 year: 2024
 location: "Circle Mall, Jumeirah Village Circle"
-scope: ["Complete Interior Fitout works"]
+scope: ["Complete Interior Fitout Works"]
 tier: "standard"
 cover: "../../assets/trouvaille/1.jpg"
 gallery:

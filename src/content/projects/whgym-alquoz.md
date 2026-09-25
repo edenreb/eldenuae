@@ -4,7 +4,7 @@ client: "The Warehouse Gym"
 sector: "Fitness"
 year: 2020
 location: "Al Quoz 4, Dubai"
-scope: ["Complete Interior Fitout works"]
+scope: ["Complete Interior Fitout Works"]
 tier: "hero"
 cover: "../../assets/whgym-alquoz/1.jpg"
 gallery:

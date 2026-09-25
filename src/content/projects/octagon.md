@@ -1,10 +1,10 @@
 ---
-title: "Octagon - Management Consultancies"
+title: "Octagon — Management Consultancies"
 client: "Octagon Management Consultancies"
 sector: "Workplace"
 year: 2023
 location: "Al Salam Tower, Dubai Internet City"
-scope: ["Complete Interior Fitout works"]
+scope: ["Complete Interior Fitout Works"]
 tier: "standard"
 cover: "../../assets/octagon/1.jpg"
 gallery:

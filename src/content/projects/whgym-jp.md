@@ -4,7 +4,7 @@ client: "The Warehouse Gym"
 sector: "Fitness"
 year: 2021
 location: "Jumeirah Park, Dubai"
-scope: ["Interior Fitout works"]
+scope: ["Interior Fitout Works"]
 tier: "standard"
 cover: "../../assets/whgym-jp/1.jpg"
 gallery:

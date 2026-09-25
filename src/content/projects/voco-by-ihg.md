@@ -1,5 +1,5 @@
 ---
-title: "Voco by IHG - Al Barsha"
+title: "Voco by IHG — Al Barsha"
 client: "Voco by IHG"
 sector: "Hospitality"
 year: 2026

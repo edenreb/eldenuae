@@ -4,7 +4,7 @@ client: "The Warehouse Gym"
 sector: "Fitness"
 year: 2021
 location: "Ibn Battuta Mall, Dubai"
-scope: ["Complete Interior Fitout works"]
+scope: ["Complete Interior Fitout Works"]
 tier: "hero"
 cover: "../../assets/whgym-ibn/1.jpg"
 gallery:

@@ -3,7 +3,7 @@ title: "Flør Restaurant"
 client: "Flør"
 sector: "F&B"
 year: 2024
-location: "The Ritz Carlton, DIFC"
+location: "The Ritz-Carlton, DIFC"
 scope: ["Design", "Fitout"]
 tier: "standard"
 cover: "../../assets/flor/1.jpg"

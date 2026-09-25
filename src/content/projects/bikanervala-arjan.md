@@ -1,10 +1,10 @@
 ---
-title: "Bikanervala - Arjan"
+title: "Bikanervala — Arjan"
 client: "Bikanervala"
 sector: "F&B"
 year: 2023
 location: "Arjan, Dubai"
-scope: ["Complete Interior Fitout works"]
+scope: ["Complete Interior Fitout Works"]
 tier: "standard"
 cover: "../../assets/bikanervala-arjan/1.jpg"
 gallery:

@@ -1,10 +1,10 @@
 ---
-title: "TBK - Galleria Mall"
+title: "TBK — Galleria Mall"
 client: "TBK"
 sector: "F&B"
 year: 2022
 location: "Galleria Mall, Jumeirah, Dubai"
-scope: ["Complete Interior Fitout works"]
+scope: ["Complete Interior Fitout Works"]
 tier: "hero"
 cover: "../../assets/tbk-galleria/1.jpg"
 gallery:

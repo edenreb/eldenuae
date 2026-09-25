@@ -4,7 +4,7 @@ client: "The Warehouse Gym"
 sector: "Fitness"
 year: 2022
 location: "Yas Bay, Abu Dhabi"
-scope: ["Complete Interior Fitout works"]
+scope: ["Complete Interior Fitout Works"]
 tier: "hero"
 cover: "../../assets/whgym-yasbay/1.jpg"
 gallery:

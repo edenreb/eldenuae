@@ -1,5 +1,5 @@
 ---
-title: "Zara - Marina Mall"
+title: "Zara — Marina Mall"
 client: "Zara"
 sector: "Retail"
 year: 2018

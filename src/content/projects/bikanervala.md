@@ -1,5 +1,5 @@
 ---
-title: "Bikanervala - Sheikh Zayed Road"
+title: "Bikanervala — Sheikh Zayed Road"
 client: "Bikanervala"
 sector: "F&B"
 year: 2022
