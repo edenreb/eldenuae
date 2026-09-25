@@ -1,5 +1,5 @@
 ---
-title: "Zara - Marina Mall"
+title: "Zara — Marina Mall"
 client: "Zara"
 sector: "Retail"
 year: 2018
@@ -17,9 +17,3 @@ gallery:
   - "../../assets/zara/7.jpg"
 summary: "A flagship storefront fitout delivered to global brand-standard specification inside one of the region's busiest malls."
 ---
-
-<!-- PLACEHOLDER COPY: replace with verified project facts before launch -->
-
-A global retail rollout means near-zero tolerance on the brand's fixture and finish spec — the work here was less about design and more about disciplined, exact execution against a book that leaves very little room to interpret.
-
-Fitout and FF&E install delivered on a compressed retail handover timeline.

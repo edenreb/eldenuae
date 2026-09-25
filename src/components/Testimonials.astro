@@ -41,10 +41,10 @@ const quotes = [
         <blockquote class="flex flex-col">
           <div class="rule" data-reveal-rule></div>
           <div class="mt-[16px] flex items-center justify-between gap-[16px]">
-            {/* Static 5/5 — no rating was ever collected from these clients;
-                presentation, not sourced data. Confirm before launch or drop it. */}
-            <p class="text-body leading-none tracking-[0.2em] text-[#d9a531]" aria-label="Rated 5 out of 5">
-              <span aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            {/* Decorative only, not a rating claim: no score was collected,
+                so it is hidden from screen readers and carries no label. */}
+            <p class="text-body leading-none tracking-[0.2em] text-[#d9a531]" aria-hidden="true">
+              &#9733;&#9733;&#9733;&#9733;&#9733;
             </p>
             <p class="meta text-muted">({String(i + 1).padStart(2, "0")})</p>
           </div>

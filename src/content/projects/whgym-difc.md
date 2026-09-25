@@ -16,9 +16,3 @@ gallery:
   - "../../assets/whgym-difc/6.jpg"
 summary: "The chain's flagship financial-district location, fitted to a higher finish specification for a corporate membership base."
 ---
-
-<!-- PLACEHOLDER COPY: replace with verified project facts before launch -->
-
-DIFC's building regulations and shared base-build services meant a tighter approvals process than the standalone retail sites — every MEP run was submitted and signed off against the tower's core infrastructure before work started.
-
-Delivered as a premium-tier fitout with an extended FF&E package to match the location's membership positioning.

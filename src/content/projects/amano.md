@@ -15,11 +15,5 @@ gallery:
   - "../../assets/amano/5.jpg"
   - "../../assets/amano/6.jpg"
   - "../../assets/amano/7.jpg"
-summary: "An Italian kitchen fitout on the JBR beachfront, with a street-facing terrace built into the wider walk."
+summary: "An Italian kitchen at Eastern Mangroves in Abu Dhabi, with a street-facing terrace opening onto the promenade."
 ---
-
-<!-- PLACEHOLDER COPY: replace with verified project facts before launch -->
-
-A beachfront retail unit with a strict landlord façade approval process — every signage panel and awning detail was submitted and revised against The Walk's design guidelines before fabrication started.
-
-Full interior fitout plus the external terrace and signage package.

@@ -14,9 +14,3 @@ gallery:
   - "../../assets/equities-first/4.jpg"
 summary: "A financial-services reception and office fitout with a backlit marble feature wall."
 ---
-
-<!-- PLACEHOLDER COPY: replace with verified project facts before launch -->
-
-A compact reception area with a backlit stone feature wall as the sole focal point — the brief was restraint: one strong material moment at the entrance, everything else kept quiet.
-
-Design and fitout delivered as a single turnkey scope for the DIFC office.

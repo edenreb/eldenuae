@@ -16,9 +16,3 @@ gallery:
   - "../../assets/avyanco-office/6.jpg"
 summary: "A headquarters office fitout with a warm, plant-filled reception and break-out lounge."
 ---
-
-<!-- PLACEHOLDER COPY: replace with verified project facts before launch -->
-
-The client asked for a reception that didn't read as corporate — a softer, hospitality-influenced material palette was used up front, then the workstation zones behind it were built to a more conventional office standard for cost and speed.
-
-Full design-to-handover office fitout, including reception joinery and break-out furniture.

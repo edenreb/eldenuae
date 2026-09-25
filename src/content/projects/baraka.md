@@ -17,9 +17,3 @@ gallery:
   - "../../assets/baraka/7.jpg"
 summary: "A tech-office fitout with open desking, acoustic wall panels, and print-led meeting-room feature walls."
 ---
-
-<!-- PLACEHOLDER COPY: replace with verified project facts before launch -->
-
-A fast-scaling company needed desking that could be reconfigured without reopening the ceiling — power and data were run on an accessible raised floor rather than hard-wired through the slab, so headcount changes don't mean a re-fit.
-
-Full workplace fitout, including acoustic treatment and AV-ready meeting rooms.

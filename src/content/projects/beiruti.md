@@ -19,9 +19,3 @@ gallery:
   - "../../assets/beiruti/9.jpg"
 summary: "A full-service Lebanese restaurant built around an open show kitchen, arched steelwork, and a live open-fire grill."
 ---
-
-<!-- PLACEHOLDER COPY: replace with verified project facts before launch -->
-
-The open kitchen sits at the centre of the room rather than at the back, which meant running exhaust, gas, and cold-store services through the middle of the floor plate instead of along a back wall — a materially harder services route, worked out early with the kitchen consultant before any partitions went up.
-
-Full turnkey scope: structural steelwork for the arched screens, complete commercial kitchen and bar build, and the FF&E package for the dining room.
