@@ -19,9 +19,3 @@ gallery:
   - "../../assets/foret-cafe/9.jpg"
 summary: "A lakeside café fitout with a covered outdoor terrace built to take advantage of the waterside setting."
 ---
-
-<!-- PLACEHOLDER COPY: replace with verified project facts before launch -->
-
-Most of the design effort went into the terrace rather than the interior — a shaded outdoor dining structure and planting scheme that reads as an extension of the park around it, not a separate add-on.
-
-Fitout and terrace construction delivered as a single scope, coordinated with the landlord's landscaping team.

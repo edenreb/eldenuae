@@ -24,7 +24,7 @@ const formatter = new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "sho
 
   <section class="gutter pt-[48px] pb-[120px] md:pt-[88px] md:pb-[200px]">
     <div class="rule"></div>
-    <p class="meta py-[14px] text-muted">{posts.length} articles</p>
+    <p class="meta py-[14px] text-muted">{posts.length} {posts.length === 1 ? "article" : "articles"}</p>
     <div class="rule"></div>
 
     <div class="mt-[24px] grid grid-cols-1 gap-x-[16px] gap-y-[64px] sm:grid-cols-2 lg:grid-cols-3">

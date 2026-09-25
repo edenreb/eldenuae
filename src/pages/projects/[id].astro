@@ -73,9 +73,11 @@ const facts = [
 
       <div class="md:col-span-7 md:col-start-6">
         <p class="text-statement">{data.summary}</p>
-        <div class="prose-body mt-[32px] max-w-[62ch] text-body text-muted">
-          <Content />
-        </div>
+        {project.body?.trim() && (
+          <div class="prose-body mt-[32px] max-w-[62ch] text-body text-muted">
+            <Content />
+          </div>
+        )}
       </div>
     </div>
   </section>

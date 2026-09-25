@@ -17,9 +17,3 @@ gallery:
   - "../../assets/haldiram/7.jpeg"
 summary: "A mall food-hall unit built around a long banquette run and a lit signage wall reading 'your home away from home'."
 ---
-
-<!-- PLACEHOLDER COPY: replace with verified project facts before launch -->
-
-A curved banquette was the backbone of the seating plan, run the full length of the unit to maximise cover count without the space feeling like a canteen. Planting troughs along the top of the banquette do double duty as a sightline break to the mall corridor.
-
-Fitout scope included the illuminated feature wall, all joinery, and kitchen-line MEP coordination.

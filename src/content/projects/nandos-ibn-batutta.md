@@ -17,9 +17,3 @@ gallery:
   - "../../assets/nandos-ibn-batutta/7.jpg"
 summary: "A flame-grill kitchen and dining room built to the brand's global fitout standard inside a themed mall unit."
 ---
-
-<!-- PLACEHOLDER COPY: replace with verified project facts before launch -->
-
-International franchise fitouts run against a strict global brand standard — every finish, fixture, and kitchen line had to match the brand's specification book while still being coordinated against the mall's own base-build constraints.
-
-Turnkey fitout delivered against a franchise design pack, including full commercial kitchen build-out.

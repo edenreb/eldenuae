@@ -17,9 +17,3 @@ gallery:
   - "../../assets/anantara-penthouse/7.jpg"
 summary: "A signature penthouse suite fitout with book-matched stone, a sculptural pendant fitting, and full-height glazing."
 ---
-
-<!-- PLACEHOLDER COPY: replace with verified project facts before launch -->
-
-A signature suite carries the hotel's design reputation more than any other room, so tolerances here were tighter than a standard guest floor — every stone joint and lighting seam was mocked up and approved before installation.
-
-Full turnkey scope: joinery, stone work, bespoke lighting, and the complete FF&E package.

@@ -18,9 +18,3 @@ gallery:
   - "../../assets/golden-goose/8.jpg"
 summary: "A luxury sneaker boutique fitout built around the brand's distressed-finish retail concept."
 ---
-
-<!-- PLACEHOLDER COPY: replace with verified project facts before launch -->
-
-The brand's signature distressed and reclaimed-look finishes are deliberately hard to fabricate consistently — sourcing and installing them to match the brand's international stores was the core execution challenge on this fitout.
-
-Delivered against an international brand fitout pack, coordinated with the landlord's mall design team.
